@@ -2444,12 +2444,8 @@ The *EFI_PKCS7_VERIFY_PROTOCOL* is used to verify data signed using PKCS7 struct
      - See [RFC2315] and OID definition by different standard bodies.
    * - Digest Encryption
      - See [RFC2315] and OID definition by different standard bodies.
-   * - Certificate validity dates
-     - See *TimeStampDb* description
    * - Signature authenticatedAttributes
      - Ignored by function
-   * - Timestamping
-     - See TimeStampDb description
 
 
 **References**
@@ -2511,11 +2507,11 @@ AllowedDb
 .. TODO fix above reference
 
 RevokedDb
-  Optional pointer to a list of pointers to *EFI_SIGNATURE_LIST* structures. The list is terminated by a null pointer. List of X.509 certificates of revoked signers and revoked file hashes. Except as noted in description of  *TimeStampDb,* signature verification will always fail if the signer of the file or the hash of the data component of the buffer is in *RevokedDb* list. This list is optional and caller may pass Null or pointer to NULL if not required.
+  Optional pointer to a list of pointers to *EFI_SIGNATURE_LIST* structures. The list is terminated by a null pointer. List of X.509 certificates of revoked signers and revoked file hashes. Signature verification will always fail if the signer of the file or the hash of the data component of the buffer is in *RevokedDb* list. This list is optional and caller may pass Null or pointer to NULL if not required.
 
 TimeStampDb
-  Optional pointer to a list of pointers to *EFI_SIGNATURE_LIST* structures. The list is terminated by a null pointer. This parameter can be used to pass a list of X.509 certificates of trusted time stamp signers. This list is optional and caller may pass Null or pointer to **NULL** if not required.
-
+  This is no longer supported and should be NULL.  This parameter will not be evaluated 
+  
 Content
   On input, points to an optional caller-allocated buffer into which the function will copy the content portion of the file after verification succeeds. This parameter is optional and if **NULL**, no copy of content from file is performed.
 
@@ -2531,9 +2527,8 @@ The *SignedData* buffer must be ASN.1 DER-encoded format with structure accordin
 
 The *VerifyBuffer()* function performs several steps. First, the buffer containing the user-provided signature is parsed, the content is located and a hash calculated, and the PKCS7 signature of that hash is verified by decrypting the hash calculated at time of signing. Match of current hash with decrypted hash provides indication the structure contained in buffer has not been modified since signing. Next the protocol function attempts to match the signing certificate included within the signed data again the members of an (optional) list of caller-provided revoked certificates ( *RevokedDb* ). The hash of the data is also compared against any hash items contained in *RevokedDb* list. Next the signing certificate is matched against the caller-provided list of trusted signatures. If the signature is valid, the certificate or hash are not in the revoked list, and the certificate is in the trusted list, the file passes verification. 
 
-When *TimeStampDb* list is present this information modifies the processing of revoked certificates found in both *AllowedDb* and *RevokedDb.* When PCKS7 signings that are time-stamped by trusted signer in *TimeStampDb* list, and which time-stamping occurred prior to the time of certificate revocation noted in certificate in *RevokedDb* list, the signing will be allowed and return *EFI_SUCCESS.* *TimeStampDb* parameter is optional and may be NULL or a pointer to NULL when not used. Except in the processing of certificates found in both *AllowedDb* and *RevokedDb,* *TimeStampDb* is not used and time-stamping is not otherwise required for signings verified by certificate only in *AllowedDb.* 
 
-**NOTE:** *This method is intended to be suitable to implement Secure Boot image validation, and as such the contents of* AllowedDb, RevokedDb, *and* TimeStampDb *must also conform with the requirements of* :ref:`authorization-process` , *bullet item 3 (UEFI Image Validation Succeeded)*.
+**NOTE:** *This method is intended to be suitable to implement Secure Boot image validation, and as such the contents of* AllowedDb and RevokedDb and *must also conform with the requirements of* :ref:`authorization-process` , *bullet item 3 (UEFI Image Validation Succeeded)*.
 
 ..  TODO had to enter chapter name for ref both above and in the chapter bookmark, otherwise did not work
 
@@ -2556,7 +2551,7 @@ None
    :class: longtable
 
    * - EFI_SUCCESS
-     - Content signature was verified against hash of content, the signer’s certificate was not found in *RevokedDb,* and was found in *AllowedDb* or if in signer is found in both *AllowedDb* and *RevokedDb,* the signing was allowed by reference to *TimeStampDb* as described above, and no hash matching content hash was found in *RevokedDb.*
+     - Content signature was verified against hash of content, the signer’s certificate was not found in *RevokedDb,* and was found in *AllowedDb*, and no hash matching content hash was found in *RevokedDb.*
    * - EFI_SECURITY_VIOLATION
      - The *SignedData* buffer was correctly formatted but signer was in *RevokedDb* or not in *AllowedDb.* Also returned if matching content hash found in *RevokedDb.*
    * - EFI_COMPROMISED_DATA
@@ -2566,7 +2561,7 @@ None
    * - EFI_INVALID_PARAMETER
      - Content is not NULL and *ContentSize* is NULL.
    * - EFI_ABORTED
-     - Unsupported or invalid format in *TImeStampDb,* *RevokedDb* or *AllowedDb* list contents was detected.
+     - Unsupported or invalid format in *RevokedDb* or *AllowedDb* list contents was detected.
    * - EFI_NOT_FOUND
      - Content not found because *InData* is NULL and no content embedded in *SIgnedData.*
    * - EFI_UNSUPPORTED
@@ -2635,7 +2630,7 @@ RevokedDb
   Pointer to a list of pointers to *EFI_SIGNATURE_LIST* structures. The list is terminated by a null pointer. List of X.509 certificates of revoked signers and revoked file hashes. Signature verification will always fail if the signer of the file or the hash of the data component of the buffer is in *RevokedDb* list. This parameter is optional and caller may pass Null if not required.
 
 TimeStampDb
-  Optional pointer to a list of pointers to *EFI_SIGNATURE_LIST* structures. The list is terminated by a null pointer. This parameter can be used to pass a list of X.509 certificates of trusted time stamp counter-signers. 
+  This is no longer supported and should be NULL.  This parameter will not be evaluated
 
 
 **Description**
@@ -2645,8 +2640,6 @@ This function processes the buffer *Signature* for PCKS7 verification using hash
 The hash size passed in *InHashSize* must match the size of the signed hash embedded within the PKCS signature structure or an error is returned. 
 
 The *SignedData* buffer must be ASN.1 DER-encoded format with structure according to the subset defined in the introduction to this protocol. Both embedded content and detached signature formats are supported however embedded data is ignored. To pass verification the X.509 public certificate of the signer of the file must be found in *AllowedDb* and not be present in *RevokedDb.* Additionally, if *RevokedDb* contains a specific Hash signature that matches the hash calculated for the content, the file will also fail verification. 
-
-When *TimeStampDb* list is present this information modifies the processing of revoked certificates found in both *AllowedDb* and *RevokedDb.* When PCKS7 signings that are time-stanped by trusted signer in *TimeStampDb* list, and which time-stamping occurred prior to the time of certificate revocation noted in certificate in *RevokedDb* list, the signing will be allowed and return *EFI_SUCCESS.* *TimeStampDb* parameter is optional and may be NULL or a pointer to NULL when not used. Except in the processing of certificates found in both *AllowedDb* and *RevokedDb,* *TimeStampDb* is not used and time-stamping is not otherwise required for signings verified by certificate only in *AllowedDb.* 
 
 The *VerifySignature()* function performs several steps. First, the buffer containing the user-provided signature is parsed, (any embedded content is ignored), and the PKCS7 signature of hash data is verified by decrypting the hash calculated at time of signing. Match of caller provided hash with decrypted hash provides indication the signed data has not been modified since signing. Next the protocol function attempts to match the signing certificate included within the signed data again the members of an (optional) list of caller-provided revoked certificates ( *RevokedDb* ). The hash of the data is also compared against any hash items contained in *RevokedDb* list. Next the signing certificate is matched against the caller-provided list of trusted signatures. If the signature is valid, the certificate or hash are not in the revoked list, and the certificate is in the trusted list, the file passes verification. 
 
@@ -2667,7 +2660,7 @@ None
    :class: longtable
 
    * - EFI_SUCCESS
-     - Signed hash was verified against caller-provided hash of content, the signer’s certificate was not found in *RevokedDb,* and was found in *AllowedDb* or if in signer is found in both *AllowedDb* and *RevokedDb,* the signing was allowed by reference to *TimeStampDb* as described above, and no hash matching content hash was found in *RevokedDb.*
+     - Signed hash was verified against caller-provided hash of content, the signer’s certificate was not found in *RevokedDb*, and was found in *AllowedDb*, and no hash matching content hash was found in *RevokedDb.*
    * - EFI_SECURITY_VIOLATION
      - The *SignedData* buffer was correctly formatted but signer was in *RevokedDb* or not in *AllowedDb.* Also returned if matching content hash found in *RevokedDb.*
    * - EFI_COMPROMISED_DATA
@@ -2675,7 +2668,7 @@ None
    * - EFI_INVALID_PARAMETER
      - *Signature* is NULL or *SignatureSize* is zero. *InHash* is NULL or *InhashSize* is zero. *AllowedDb* is NULL.
    * - EFI_ABORTED
-     - Unsupported or invalid format in *TimeStampDb,* *RevokedDb* or *AllowedDb* list contents was detected.
+     - Unsupported or invalid format in * *RevokedDb* or *AllowedDb* list contents was detected.
    * - EFI_UNSUPPORTED
      - The *Signature* buffer was not correctly formatted for processing by the function.
 
