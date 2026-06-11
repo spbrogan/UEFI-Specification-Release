@@ -870,7 +870,7 @@ Firmware that implements the SetVariable() service and supports the EFI_VARIABLE
 
 5. If the variable is the global PK variable or the global KEK variable, verify that the signature has been made with the current Platform Key.
 
-   - If the variable is the "db", "dbt", "dbr", or "dbx" variable mentioned in step 3, verify that the signer’s certificate chains to a certificate in the Key Exchange Key database (or that the signature was made with the current Platform Key).
+   - If the variable is the "db", "dbr", or "dbx" variable mentioned in step 3, verify that the signer’s certificate chains to a certificate in the Key Exchange Key database (or that the signature was made with the current Platform Key).
 
    - If the variable is the "OsRecoveryOrder" or "OsRecovery####" variable mentioned in step 3, verify that the signer's certificate chains to a certificate in the "dbr" database or the Key Exchange Key database, or that the signature was made with the current Platform Key.
 
@@ -2023,9 +2023,7 @@ The firmware and an Operating System may exchange information through the *OsInd
 
 -  The *OsIndicationsSupported* variable returns a UINT64 bitmask owned by the firmware and indicates which of the OS indication features and actions that the firmware supports. This variable is recreated by  firmware every boot, and cannot be modified by the OS.
 
-The EFI_OS_INDICATIONS_BOOT_TO_FW_UI bit can be set in the *OsIndicationsSupported* variable by the firmware, if the firmware supports OS requests to stop at a firmware user interface. The EFI_OS_INDICATIONS_BOOT_TO_FW_UI bit can be set by the OS in the *OsIndications* variable, if the OS desires for the firmware to stop at a firmware user interface on the next boot. Once the firmware consumes this bit in the *OsIndications* variable and stops at the firmware user interface, the firmware should clear the bit from the *OsIndications* variable in order to acknowledge to the OS that the information was consumed and, more importantly, to prevent the firmware user interface from showing again on subsequent boots.
-
-The EFI_OS_INDICATIONS_TIMESTAMP_REVOCATION bit can be set in the *OSIndicationsSupported* variable by the firmware, if the firmware supports timestamp based revocation and the " *dbt* " uthorized timestamp database variable. 
+The EFI_OS_INDICATIONS_BOOT_TO_FW_UI bit can be set in the *OsIndicationsSupported* variable by the firmware, if the firmware supports OS requests to stop at a firmware user interface. The EFI_OS_INDICATIONS_BOOT_TO_FW_UI bit can be set by the OS in the *OsIndications* variable, if the OS desires for the firmware to stop at a firmware user interface on the next boot. Once the firmware consumes this bit in the *OsIndications* variable and stops at the firmware user interface, the firmware should clear the bit from the *OsIndications* variable in order to acknowledge to the OS that the information was consumed and, more importantly, to prevent the firmware user interface from showing again on subsequent boots. 
 
 The EFI_OS_INDICATIONS_FMP_CAPSULE_SUPPORTED bit is set in *OsIndicationsSupported* variable if platform supports processing of Firmware Management Protocol update capsule as defined in :ref:`dependency-expression-instruction-set`. If set in *OsIndications* variable, the EFI_OS_INDICATIONS_FMP_CAPSULE_SUPPORTED bit has no function and is cleared on the next reboot. 
 
@@ -2053,7 +2051,7 @@ If set in the *OsIndicationsSupported* variable, the EFI_OS_INDICATIONS_JSON_CON
 .. code-block::
   
    #define EFI_OS_INDICATIONS_BOOT_TO_FW_UI                           0x0000000000000001
-   #define EFI_OS_INDICATIONS_TIMESTAMP_REVOCATION \                  0x0000000000000002
+   #define EFI_OS_INDICATIONS_NO_LONGER_VALID \                       0x0000000000000002  // EFI_OS_INDICATIONS_TIMESTAMP_REVOCATION Feature removed in UEFI 2.12
    #define EFI_OS_INDICATIONS_FILE_CAPSULE_DELIVERY_SUPPORTED         0x0000000000000004
    #define EFI_OS_INDICATIONS_FMP_CAPSULE_SUPPORTED \                 0x0000000000000008
    #define EFI_OS_INDICATIONS_CAPSULE_RESULT_VAR_SUPPORTED            0x0000000000000010
