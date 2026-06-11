@@ -13,15 +13,15 @@ Two types of services are described here:
 
 During boot, system resources are owned by the firmware and are controlled through boot services interface functions. These functions can be characterized as "global" or "handle-based." The term "global" simply means that a function accesses system services and is available on all platforms (since all platforms support all system services). The term "handle-based" means that the function accesses a specific device or device functionality and may not be available on some platforms (since some devices are not available on some platforms). Protocols are created dynamically. This section discusses the "global" functions and runtime functions; subsequent sections discuss the "handle-based."
 
-UEFI applications (including UEFI OS loaders) must use boot services functions to access devices and allocate memory. On entry, an image is provided a pointer to a system table which contains the Boot Services dispatch table and the default handles for accessing the console. All  boot services functionality is available until a UEFI OS loader loads enough of its own environment to take control of the system’s continued operation and then terminates boot services with a call to ExitBootServices().
+UEFI applications (including UEFI OS loaders) must use boot services functions to access devices and allocate memory. On entry, an image is provided a pointer to a system table which contains the Boot Services dispatch table and the default handles for accessing the console. All boot services functionality is available until a UEFI OS loader loads enough of its own environment to take control of the system’s continued operation and then terminates boot services with a call to ExitBootServices().
 
-In principle, the ExitBootServices() call is intended for use by the operating system to indicate that its loader is ready to assume control of the platform and all platform resource management. Thus boot services are available up to this point to assist the UEFI OS loader in preparing to boot the operating system. Once the UEFI OS loader takes control of the system and completes the operating system boot process, only runtime services may be called. Code other than the UEFI OS loader, however, may or may not choose to call ExitBootServices(). This choice may in part depend upon whether or not such code is designed to make continued use of EFI boot services or the boot services environment.
+In principle, the ExitBootServices() call is intended for use by the operating system to indicate that its loader is ready to assume control of the platform and all platform resource management. Thus, boot services are available up to this point to assist the UEFI OS loader in preparing to boot the operating system. Once the UEFI OS loader takes control of the system and completes the operating system boot process, only runtime services may be called. Code other than the UEFI OS loader, however, may or may not choose to call ExitBootServices(). This choice may in part depend upon whether or not such code is designed to make continued use of EFI boot services or the boot services environment.
 
 The rest of this section discusses individual functions. Runtime Services fall into these categories:
 
 -  Runtime Rules and Restrictions ( :ref:`runtime-services-rules-and-restrictions`)
 
--  Variable Services ( :ref:`exception-for-machine-check-init-and-nmi`)
+-  Variable Services ( :ref:`variable-services`)
 
 -  Time Services ( :ref:`time-services`)
 
@@ -228,10 +228,8 @@ Data
    #define EFI_VARIABLE_HARDWARE_ERROR_RECORD                  0x00000008 \  
    //This attribute is identified by the mnemonic 'HR' elsewhere  
    //in this specification.  
-   #define EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS             0x00000010  
-   //NOTE: EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS is deprecated  
-   //and should be considered reserved.  
-   #define EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS \0x00000020  
+   Reserved                                                    0x00000010   
+   #define EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS  0x00000020  
    #define EFI_VARIABLE_APPEND_WRITE                           0x00000040  
    #define EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS          0x00000080  
    //This attribute indicates that the variable payload begins  
@@ -246,7 +244,7 @@ Each vendor may create and manage its own variables without the risk of name con
 
 If the *Data* buffer is too small to hold the contents of the variable, the error *EFI_BUFFER_TOO_SMALL* is returned and DataSize is set to the required buffer size to obtain the data.
 
-The EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS and the EFI_VARIABLE\_ AUTHENTICATED_WRITE_ACCESS attributes may both be set in the returned *Attributes* bitmask parameter of a GetVariable() call, though it should be noted that the EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS attribute is deprecated and should no longer be used. The EFI_VARIABLE_APPEND_WRITE attribute will never be set in the returned *Attributes* bitmask parameter. 
+The EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS may be set in the returned *Attributes* bitmask parameter of a GetVariable() call. The EFI_VARIABLE_APPEND_WRITE attribute will never be set in the returned *Attributes* bitmask parameter. 
 
 Variables stored with the EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS attribute set will return metadata in addition to variable data when GetVariable() is called. If a GetVariable() call indicates that this attribute is set, the GetVariable() payload must be interpreted according to the metadata headers. In addition to the headers described in SetVariable(), the following header is used to indicate what certificate may be currently associated with a variable.
 
@@ -428,40 +426,13 @@ Attributes
   Attributes bitmask to set for the variable. Refer to the :ref:`getvariable` function description.
 
 DataSize 
-  The size in bytes of the *Data* buffer. Unless the EFI_VARIABLE_APPEND_WRITE, EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS, EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS, or EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS attribute is set, a size of zero causes the variable to be deleted. When the EFI_VARIABLE_APPEND_WRITE attribute is set, then a SetVariable() call with a *DataSize* of zero will not cause any change to the variable value (the timestamp associated with the variable may be updated however, even if no new data value is provided;see the description of the EFI_VARIABLE_AUTHENTICATION_2 descriptor below). In this case the DataSize will not be zero since the EFI_VARIABLE_AUTHENTICATION_2 descriptor will be populated).
+  The size in bytes of the *Data* buffer. Unless the EFI_VARIABLE_APPEND_WRITE, EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS, EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS, or EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS attribute is set, a size of zero causes the variable to be deleted. When the EFI_VARIABLE_APPEND_WRITE attribute is set, then a SetVariable() call with a *DataSize* of zero will not cause any change to the variable value (the timestamp associated with the variable may be updated however, even if no new data value is provided; see the description of the EFI_VARIABLE_AUTHENTICATION_2 descriptor below). In this case the DataSize will not be zero since the EFI_VARIABLE_AUTHENTICATION_2 descriptor will be populated).
 
 Data 
   The contents for the variable.
 
 
 **Related Definitions**
-
-.. code-block::
-
-   //******************************************************
-   // Variable Attributes
-   //******************************************************
-
-   // NOTE: This interface is deprecated and should no longer be
-   used!
-   //
-   // EFI_VARIABLE_AUTHENTICATION descriptor
-   //
-   // A counter-based authentication method descriptor template
-   //
-   typedef struct {
-     UINT64                       MonotonicCount;
-     WIN_CERTIFICATE_UEFI_GUID    AuthInfo;
-   } EFI_VARIABLE_AUTHENTICATION;
-  
-         
-
-MonotonicCount
-  Included in the signature of AuthInfo. Used to ensure freshness/no replay. Incremented during each "Write" access.
-
-AuthInfo
-  Provides the authorization for the variable access. It is a signature across the variable data and the Monotonic Count value. Caller uses Private key that is associated with a public key that has been provisioned via the key exchange.
-
 
 .. code-block::
 
@@ -475,12 +446,12 @@ AuthInfo
      WIN_CERTIFICATE_UEFI_GUID     AuthInfo;
    } EFI_VARIABLE_AUTHENTICATION_2;
 
-
 TimeStamp
   Time associated with the authentication descriptor. For the *TimeStamp* value, components *Pad1*, *Nanosecond*, *TimeZone*, *Daylight* and *Pad2* shall be set to 0. This means that the time shall always be expressed in GMT.
 
 AuthInfo
   Provides the authorization for the variable access. Only a *CertType* of EFI_CERT_TYPE_PKCS7_GUID is accepted.
+
 
 .. code-block::
 
@@ -537,6 +508,7 @@ NonceSize
 Nonce (Not a formal structure member)
   Unique, random value that guarantees a signed payload cannot be shared between multiple machines or machine families. On SetVariable(), if the Nonce field is all 0’s, the host machine will try to use an internally generated random number. Will return *EFI_UNSUPPORTED* if not possible. Also, on SetVariable() if the variable already exists and the nonce is identical to the current nonce, will return EFI_INVALID_PARAMETER.
 
+
 **Description**
 
 Variables are stored by the firmware and may maintain their values across power cycles. Each vendor may create and manage its own variables without the risk of name conflicts by using a unique *VendorGuid*.
@@ -559,9 +531,7 @@ The Attributes have the following usage rules:
 
 -  Setting a data variable with no access attributes causes it to be deleted.
 
--   EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS is deprecated and should not be used. Platforms should return EFI_UNSUPPORTED if a caller to SetVariable() specifies this attribute.
-
--  Unless the EFI_VARIABLE_APPEND_WRITE, EFI_VARIABLE_TIME_BASED_AUTHENTICATED _WRITE_ACCESS, or EFI_VARIABLE_ENHANCED_AUTHENTICATED_WRITE_ACCESS attribute is set, setting a data variable with zero *DataSize* specified, causes it to be deleted.
+-  Unless the EFI_VARIABLE_APPEND_WRITE, EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS, or EFI_VARIABLE_ENHANCED_AUTHENTICATED_WRITE_ACCESS attribute is set, setting a data variable with zero *DataSize* specified, causes it to be deleted.
 
 -  Runtime access to a data variable implies boot service access. Attributes that have EFI_VARIABLE_RUNTIME_ACCESS set must also have EFI_VARIABLE_BOOTSERVICE_ACCESS set. The caller is responsible for following this rule.
 
@@ -573,7 +543,7 @@ The Attributes have the following usage rules:
 
 -  If both the EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS and the EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS attribute are set in a SetVariable() call, then the firmware must return EFI_INVALID_PARAMETER.
 
--  If the EFI_VARIABLE_APPEND_WRITE attribute is set in a SetVariable() call, then any existing variable value shall be appended with the value of the *Data* parameter. If the firmware does not support the append operation, then the SetVariable() call shall return EFI_INVALID_PARAMETER.
+-  If the EFI_VARIABLE_APPEND_WRITE attribute is set in a SetVariable() call, then any existing variable value shall be appended with the value of the *Data* parameter. If the firmware does not support the append operation, then the SetVariable() call shall return EFI_INVALID_PARAMETER. If the variable does not exist and EFI_VARIABLE_APPEND_WRITE is set and the size is non-zero, the variable is created. If the variable does not exist and EFI_VARIABLE_APPEND_WRITE is set and the size is zero, the variable is not created and EFI_SUCCESS is returned.
 
 -  If the EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS attribute is set in a SetVariable() call, and firmware does not support signature type of the certificate included in the EFI_VARIABLE_AUTHENTICATION_2 descriptor, then the SetVariable() call shall return EFI_INVALID_PARAMETER. The list of signature types supported by the firmware is defined by the SignatureSupport variable. Signature type of the certificate is defined by its digest and encryption algorithms.
 
@@ -664,6 +634,8 @@ The QueryVariableInfo() function allows a caller to obtain the information about
 The *MaximumVariableSize* value will reflect the overhead associated with the saving of a single EFI variable with the exception of the overhead associated with the length of the string name of the EFI variable.
 
 The returned *MaximumVariableStorageSize*, *RemainingVariableStorageSize*, *MaximumVariableSize* information may change immediately after the call based on other runtime activities including asynchronous error events. Also, these values associated with different attributes are not additive in nature.
+
+If a call to QueryVariableInfo() specifies a combination of both unsupported and invalid attributes, EFI_UNSUPPORTED should be returned.
 
 After the system has transitioned into runtime (after ExitBootServices() is called), an implementation may not be able to accurately return information about the Boot Services variable store. In such cases, EFI_INVALID_PARAMETER should be returned.
 
@@ -760,13 +732,13 @@ A caller to SetVariable() attempting to create, update, or delete a variable wit
 
    - Caller specified value for a pre-generated nonce.
 
-#. Hash a serialization of the payload. Serialization    shall contain the following elements in this order:
+#. Hash a serialization of the payload. Serialization shall contain the following elements in this order:
 
-   a - VariableName, VendorGuid, Attributes, and theSecondary Descriptor if it exists for this Type.
+   a - VariableName, VendorGuid, Attributes, and the Secondary Descriptor if it exists for this Type.
 
-   b - Variable’s new value (ie. the Data parameter’s new variable content).
+   b - Variable’s new value (i.e., the Data parameter’s new variable content).
 
-   c - If this is an update to or deletion of a variable with type EFI_VARIABLE_AUTHENTICATION_3_NONCE, serialize the current nonce. The current nonce is the one currently associated with this variable, not the one in the Secondary Descriptor. Serialize only the nonce buffer contents, not the size or any additional data. If this is an attempt to create a new variable (ie. there is no current nonce), skip this step.
+   c - If this is an update to or deletion of a variable with type EFI_VARIABLE_AUTHENTICATION_3_NONCE, serialize the current nonce. The current nonce is the one currently associated with this variable, not the one in the Secondary Descriptor. Serialize only the nonce buffer contents, not the size or any additional data. If this is an attempt to create a new variable (i.e., there is no current nonce), skip this step.
 
    d - If the authority cert for this variable is being updated and the EFI_VARIABLE_AUTHENTICATION_3.Flags field indicates the presence of a NewCert structure, serialize the entire NewCert structure (described at  the beginning of this section).
 
@@ -819,7 +791,7 @@ Firmware that implements the SetVariable() services and supports the EFI_VARIABL
 
 #. If NewCert is provided, verify the NewCert signature by:
 
-   a - Parsing entire payload according todescriptors.
+   a - Parsing entire payload according to descriptors.
 
    b - Compute a digest of the tbsCertificate of x509 certificate in NewCert and compare with the result of applying NewCert’s public key to the signature.
 
@@ -915,54 +887,6 @@ For variables with the GUID EFI_IMAGE_SECURITY_DATABASE_GUID (i.e. where the dat
 The firmware shall associate the new timestamp with the updated value (in the case when the EFI_VARIABLE_APPEND_WRITE attribute is set, this only applies if the new TimeStamp value is later than the current timestamp associated with the variable).
 
 If the variable did not previously exist, and is not one of the variables listed in step 3 above, then firmware shall associate the signer's public key with the variable for future verification purposes.
-
-
-
-
-.. _using-the-efi-variable-authentication-descriptor:
-
-Using the EFI_VARIABLE_AUTHENTICATION descriptor
-################################################
-
-**NOTE**:  *This interface is deprecated and should no longer be used! It will be removed from future versions of the spec*.
-
-When the attribute EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS is set, but the EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS is not set (i.e. when the EFI_VARIABLE_AUTHENTICATION descriptor s used), then the* *Data* buffer shall begin with an instance of the authentication descriptor *AuthInfo* prior to the data payload and *DataSize* should reflect the data and descriptor size. The authentication descriptor is not part of the variable data and is not returned by the subsequent calls to *GetVariable*. The caller shall digest the Monotonic Count value and the associated data for the variable update using the SHA-256 1-way hash algorithm. The ensuing the 32-byte digest will be signed using the private key associated w/ the public 2048-bit RSA key *PublicKey* described in the EFI_CERT_BLOCK_RSA_2048_SHA256 structure.
-
-The WIN_CERTIFICATE shall be used to describe the signature of the variable \*Data. In addition, the signature will also include the MonotonicCount value to guard against replay attacks. The MonotonicCount value must be increased by the caller prior to an update of the \*Data* when the EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS is set.
-
-From the EFI_CERT_BLOCK_RSA_2048_SHA256, the *HashType* will be EFI_SHA256_HASH* and the ANYSIZE_ARRAY of *Signature* will be 256.The WIN_CERTIFICATE_PKCS1_15 could have been used but was not for the following reason: There are possibly various different principals to create authenticated variables, so the public key corresponding to a given principal is added to the *EFI_CERT_BLOCK_RSA_2048_SHA256* within the WIN_CERTIFICATE. This does not lend cryptographic value so much as it provides something akin to a handle for the platform firmware to use during its verification operation.
-
-The *MonotonicCount* value must be strictly greater for each successive variable update operation. This allows for ensuring freshness of the update operation and defense against replay attacks (i.e., if someone had the value of a former *AuthInfo*, such as a Man-in-the-Middle they could not re-invoke that same update session). For maintenance, the party who initially provisioned the variable (i.e., caller of SetVariable) and set the monotonic count will have to pass the credential (key-pair and monotonic count) to any party who is delegated to make successive updates to the variable with the EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS set. This 3-tuple of {public key, private key, monotonic count} becomes part of the management metadata for these access-controlled items. 
-
-The responsibility of the caller that invokes the SetVariable() service with the EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS attribute will do the following prior to invoking the service:
-
--   Update the Monotonic Count value.
-
--   Hash the variable contents (Data, Size, Monotonic count) using the *HashType* in the *AuthInfo* structure.
-
--   Sign the resultant hash of above step using a caller private key and create the digital signature *Signature*. Ensure that the public key associated with signing private key is in the *AuthInfo* structure.
-
--   Invoke SetVariables with *EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS* attribute set. 
-
-The responsibility of the firmware that implements the SetVariable() service and supports the EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS attribute will do the following in response to being called:
-
--  The first time it uses SetVariable with the EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS attribute set. Use the public key in the *AuthInfo* structure for subsequent verification.
-
--  Hash the variable contents (Data, Size, Monotonic count) using the *HashType* in the *AuthInfo* structure.
-
--  Compare the public key in the *AuthInfo* structure with the public key passed in on the first invocation.
-
--  Verify the digital signature *Signature* of the signed hash using the stored public key associated with the variable.
-
--  Compare the verification of the signature with the instance generated by the caller
-
--  If comparison fails, return EFI_SECURITY_VIOLATION. 
-
--  Compare the new monotonic count and ensure that it is greater than the last SetVariable operation with the EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS attribute set.
-
--  If new monotonic count is not strictly greater, then return EFI_SECURITY_VIOLATION.
-
-**NOTE**: *Special processing by SetVariable() for Secure Boot variables and the Platform Key is defined in* :ref:`firmware-os-key-exchange-creating-trust-relationships`.
 
 
 .. _hardware-error-record-persistence:
@@ -1906,7 +1830,7 @@ $$$$$$$$$$$$$$$$$$
 
 A capsule is simply a contiguous set of data that starts with an EFI_CAPSULE_HEADER. The *CapsuleGuid* field in the header defines the format of the capsule.
 
-The capsule contents are designed to be communicated from an OS-present environment to the system firmware. To allow capsules to persist across system reset, a level of indirection is required for the description of a capsule, since the OS primarily uses virtual memory and the firmware at boot time uses physical memory. This level of abstraction is accomplished via the EFI_CAPSULE_BLOCK_DESCRIPTOR. The EFI_CAPSULE_BLOCK_DESCRIPTOR allows the OS to allocatecontiguous virtual address space and describe this address space to the firmware as a discontinuous set of physical address ranges. The firmware is passed both physical and virtual addresses and pointers to describe the capsule so the firmware can process the capsule immediately or defer processing of the capsule until after a system reset.
+The capsule contents are designed to be communicated from an OS-present environment to the system firmware. To allow capsules to persist across system reset, a level of indirection is required for the description of a capsule, since the OS primarily uses virtual memory and the firmware at boot time uses physical memory. This level of abstraction is accomplished via the EFI_CAPSULE_BLOCK_DESCRIPTOR. The EFI_CAPSULE_BLOCK_DESCRIPTOR allows the OS to allocate contiguous virtual address space and describe this address space to the firmware as a discontinuous set of physical address ranges. The firmware is passed both physical and virtual addresses and pointers to describe the capsule so the firmware can process the capsule immediately or defer processing of the capsule until after a system reset.
 
 In most instruction sets and OS architecture, allocation of physical memory is possible only on a "page" granularity (which can range for 4 KiB to at least 1 MiB). The EFI_CAPSULE_BLOCK_DESCRIPTOR must have the following properties to ensure the safe and well defined transition of the data:
 
@@ -2048,7 +1972,7 @@ Returns if the capsule can be supported via UpdateCapsule().
   
 
 CapsuleHeaderArray
-  Virtual pointer to an array of virtual pointers to the capsules being passed into update capsule. The capsules are assumed to stored in contiguous virtual memory. 
+  Virtual pointer to an array of virtual pointers to the capsules being passed into update capsule. The capsules are assumed to be stored in contiguous virtual memory. 
 
 CapsuleCount*
   Number of pointers to EFI_CAPSULE_HEADER in *CapsuleHeaderArray*.
@@ -2128,19 +2052,14 @@ If set in the *OsIndicationsSupported* variable, the EFI_OS_INDICATIONS_JSON_CON
 
 .. code-block::
   
-   #define EFI_OS_INDICATIONS_BOOT_TO_FW_UI                           0x0000000000000001 
-
+   #define EFI_OS_INDICATIONS_BOOT_TO_FW_UI                           0x0000000000000001
    #define EFI_OS_INDICATIONS_TIMESTAMP_REVOCATION \                  0x0000000000000002
-
    #define EFI_OS_INDICATIONS_FILE_CAPSULE_DELIVERY_SUPPORTED         0x0000000000000004
-
    #define EFI_OS_INDICATIONS_FMP_CAPSULE_SUPPORTED \                 0x0000000000000008
-
    #define EFI_OS_INDICATIONS_CAPSULE_RESULT_VAR_SUPPORTED            0x0000000000000010
-
    #define EFI_OS_INDICATIONS_START_OS_RECOVERY                       0x0000000000000020
-
-   #define EFI_OS_INDICATIONS_START_PLATFORM_RECOVERY \               0x0000000000000040   #define EFI_OS_INDICATIONS_JSON_CONFIG_DATA_REFRESH \              0x0000000000000080
+   #define EFI_OS_INDICATIONS_START_PLATFORM_RECOVERY \               0x0000000000000040
+   #define EFI_OS_INDICATIONS_JSON_CONFIG_DATA_REFRESH \              0x0000000000000080
   
 
 .. _delivery-of-capsules-via-file-on-mass-storage-device:
@@ -2148,11 +2067,9 @@ If set in the *OsIndicationsSupported* variable, the EFI_OS_INDICATIONS_JSON_CON
 Delivery of Capsules via file on Mass Storage Device
 ####################################################
 
-As an alternative to the UpdateCapsule() runtime API, capsules of any type supported by platform may also be delivered to firmware via a file within the EFI system partition on the mass storage device targeted for boot. Capsules staged using this method are processed on the next system restart. This method is only available when booting from mass storage devices which are formatted with GPT and contain an EFI System Partition in the device image. System firmware will search for capsule when EFI_OS_INDICATIONS_FILE_CAPSULE_DELIVERY_SUPPORTED bit in *OsIndications* is set as described in :ref:`exchanging-information-between-the-os-and-firmware`.
+As an alternative to the UpdateCapsule() runtime API, capsules of any type supported by platform may also be delivered to firmware via a file within the EFI system partition on the mass storage device targeted for boot. Capsules staged using this method are processed on the next system restart. This method is only available when booting from mass storage devices which are formatted with GPT (:numref:`guid-partition-table-gpt-disk-layout`) and contain an EFI System Partition in the device image. System firmware will search for capsule when EFI_OS_INDICATIONS_FILE_CAPSULE_DELIVERY_SUPPORTED bit in *OsIndications* is set as described in :ref:`exchanging-information-between-the-os-and-firmware`.
 
-.. TODO this reference, which comes after GPT (above) needs fixing: ( :ref:`guid-partition-table-gpt-disk-layout`) 
-
-The directory \EFI\UpdateCapsule (letter case ignored) within the active EFI System Partition is defined for delivery of capsule to firmware. The binary structure of a capsule file on mass storage device is identical to the contents of capsule delivered via the EFI RunTime API except that fragmentation using EFI_CAPSULE_BLOCK_DESCRIPTOR is not supported and the single capsule must be stored in contiguous bytes within the file starting with EFI_CAPSULE_HEADER. The size of the file must equal EFI_CAPSULE_HEADER. *CapsuleImageSize* or error will be generated and the capsule ignored. Only a single capsule with a single EFI_CAPSULE_HEADER may be submitted within a file but more than one file each containing a capsule may be submitted during a single restart.
+The directory ``\EFI\UpdateCapsule`` (letter case ignored) within the active EFI System Partition is defined for delivery of capsule to firmware. The binary structure of a capsule file on mass storage device is identical to the contents of capsule delivered via the EFI RunTime API except that fragmentation using EFI_CAPSULE_BLOCK_DESCRIPTOR is not supported and the single capsule must be stored in contiguous bytes within the file starting with EFI_CAPSULE_HEADER. The size of the file must equal EFI_CAPSULE_HEADER. *CapsuleImageSize* or error will be generated and the capsule ignored. Only a single capsule with a single EFI_CAPSULE_HEADER may be submitted within a file but more than one file each containing a capsule may be submitted during a single restart.
 
 The file name of the capsule shall be chosen by submitter using 8-bit ASCII characters appropriate to the file system of the EFI system partition (:ref:`system-partition`). After examination and processing of a file placed in this directory the file will (if possible) be deleted by firmware. The deletion is performed in case of successful processing and also in the case of error but failure to successfully delete is not itself a reportable error.
 
@@ -2160,9 +2077,9 @@ More than one capsule file each containing a single capsule image may be stored 
 
 If a capsule processing is terminated by error any remaining additional capsule files will be processed normally.
 
-The directory \EFI\UpdateCapsule is checked for capsules only within the EFI system partition on the device specified in the active boot option determine by reference to BootNext variable or *BootOrder* variable processing. The active Boot Variable is the variable with highest priority *BootNext* or within *BootOrder* that refers to a device found to be present. Boot variables in *BootOrder* but referring to devices not present are ignored when determining active boot variable.
+The directory ``\EFI\UpdateCapsule`` is checked for capsules only within the EFI system partition on the device specified in the active boot option determine by reference to BootNext variable or *BootOrder* variable processing. The active Boot Variable is the variable with highest priority *BootNext* or within *BootOrder* that refers to a device found to be present. Boot variables in *BootOrder* but referring to devices not present are ignored when determining active boot variable.
 
-The device to be checked for \EFI\UpdateCapsule is identified by reference to *FilePathList* field within the selected active *Boot####* variable. The system firmware is not required to check mass storage devices that do not contain boot target that is highest priority for boot nor to check a second EFI system partition not the target of the active boot variable.
+The device to be checked for ``\EFI\UpdateCapsule`` is identified by reference to *FilePathList* field within the selected active *Boot####* variable. The system firmware is not required to check mass storage devices that do not contain boot target that is highest priority for boot nor to check a second EFI system partition not the target of the active boot variable.
 
 In all cases that a capsule is identified for processing the system is restarted after capsule processing is completed. In case where *BootNext* variable was set, this variable is cleared when capsule processing is performed without actual boot of the variable indicated.
 

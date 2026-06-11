@@ -19,11 +19,11 @@ The processor/platform abstraction is presented as a pair of protocol interfaces
 
 The Debug Support protocol abstracts the processor’s debugging facilities, namely a mechanism to manage the processor’s context via caller-installable exception handlers. 
 
-The Debug Port protocol abstracts the device that is used for communication between the host and target. Typically this will be a 16550 serial port, 1394 device, or other device that is nominally a serial stream. 
+The Debug Port protocol abstracts the device that is used for communication between the host and target. Typically, this will be a 16550 serial port, 1394 device, or other device that is nominally a serial stream. 
 
 Furthermore, a table driven, quiescent, memory-only mechanism for determining the base address of PE32+ images is provided to enable the debugger host to determine where images are located in memory. 
 
-Aside from timing differences that occur because of running code associated with the debug agent and user initiated changes to the machine context, the operation of the on-target debugger component must be transparent to the rest of the system. In addition, no portion of the debug agent that runs in interrupt context may make any calls to EFI services or other protocol interfaces. 
+Aside from timing differences that occur because of running code associated with the debug agent and user-initiated changes to the machine context, the operation of the on-target debugger component must be transparent to the rest of the system. In addition, no portion of the debug agent that runs in interrupt context may make any calls to EFI services or other protocol interfaces. 
 
 The services described in this document do not comprise a complete debugger, rather they provide a minimal abstraction required to implement a wide variety of debugger solutions.
 
@@ -110,7 +110,9 @@ InvalidateInstructionCache
   
 Refer to the Microsoft PE/COFF Specification revision 6.2 or later for *IMAGE_FILE_MACHINE* definitions.
 
-**Note:**  At the time of publication of this specification, the latest   revision of the PE/COFF specification was 6.2. The   definition of *IMAGE_FILE_MACHINE* _EBC is not included in   revision 6.2 of the PE/COFF specification. It will be added   in a future revision of the PE/COFF specification.
+.. note::
+   The definition of IMAGE_FILE_MACHINE_EBC is not included in revision 6.2 of the PE/COFF specification. It can be found in an article about the PE/COFF format at https://learn.microsoft.com/en-us/windows/win32/debug/pe-format
+
 
 .. code-block::   
 
@@ -118,15 +120,15 @@ Refer to the Microsoft PE/COFF Specification revision 6.2 or later for *IMAGE_FI
    // Machine type definition
    //
    typedef enum {
-     IsaIa32 = IMAGE_FILE_MACHINE_I386,   // 0x014C
-     IsaX64 = IMAGE_FILE_MACHINE_X64,   // 0x8664
-     IsaIpf = IMAGE_FILE_MACHINE_IA64,  // 0x0200
-     IsaEbc = IMAGE_FILE_MACHINE_EBC,   // 0x0EBC
-     IsaArm = IMAGE_FILE_MACHINE_ARMTHUMB_MIXED   // 0x1C2
-     IsaAArch64 = IMAGE_FILE_MACHINE_AARCH64  // 0xAA64
-     IsaRISCV32 = I\nMAGE_FILE_MACHINE_RISCV32  // 0x5032
-     IsaRISCV64 = IMAGE_FILE_MACHINE_RISCV64  // 0x5064
-     IsaRISCV128 = IMAGE_FILE_MACHINE_RISCV128  // 0x5128
+     IsaIa32 = IMAGE_FILE_MACHINE_I386,               // 0x014C
+     IsaX64 = IMAGE_FILE_MACHINE_X64,                 // 0x8664
+     IsaIpf = IMAGE_FILE_MACHINE_IA64,                // 0x0200
+     IsaEbc = IMAGE_FILE_MACHINE_EBC,                 // 0x0EBC
+     IsaArm = IMAGE_FILE_MACHINE_ARMTHUMB_MIXED       // 0x1C2
+     IsaAArch64 = IMAGE_FILE_MACHINE_AARCH64          // 0xAA64
+     IsaRISCV32 = IMAGE_FILE_MACHINE_RISCV32          // 0x5032
+     IsaRISCV64 = IMAGE_FILE_MACHINE_RISCV64          // 0x5064
+     IsaRISCV128 = IMAGE_FILE_MACHINE_RISCV128        // 0x5128
      IsaLoongArch32 = IMAGE_FILE_MACHINE_LOONGARCH32  // 0x6232
      IsaLoongArch64 = IMAGE_FILE_MACHINE_LOONGARCH64  // 0x6264
    } EFI_INSTRUCTION_SET_ARCHITECTURE;
@@ -177,7 +179,7 @@ MaxProcessorIndex
 
 The *GetMaximumProcessorIndex()* function returns the maximum processor index in the output parameter *MaxProcessorIndex*. This value is the largest value that may be used in the *ProcessorIndex* parameter for both *RegisterPeriodicCallback()* and *RegisterExceptionCallback()* . All values between 0 and *MaxProcessorIndex* must be supported by *RegisterPeriodicCallback()* and *RegisterExceptionCallback()*.
 
-It is the responsibility of the caller to insure all parameters are correct. There is no provision for parameter checking by *GetMaximumProcessorIndex()*. The implementation behavior when an invalid parameter is passed is not defined by this specification.
+It is the responsibility of the caller to ensure all parameters are correct. There is no provision for parameter checking by *GetMaximumProcessorIndex()*. The implementation behavior when an invalid parameter is passed is not defined by this specification.
 
 
 **Status Codes Returned**
@@ -614,9 +616,9 @@ The implementation must handle saving and restoring the processor context to/fro
 
 If the interrupt is also used by the firmware for the EFI time base or some other use, two rules must be observed. First, the registered callback function must be called before any EFI processing takes place. Second, the Debug Support implementation must perform the necessary steps to pass control to the firmware’s corresponding interrupt handler in a transparent manner. 
 
-There is no quality of service requirement or specification regarding the frequency of calls to the registered *PeriodicCallback* function. This allows the implementation to mitigate a potential adverse impact to EFI timer based services due to the latency induced by the context save/restore and the associated callback function. 
+There is no quality-of-service requirement or specification regarding the frequency of calls to the registered *PeriodicCallback* function. This allows the implementation to mitigate a potential adverse impact to EFI timer based services due to the latency induced by the context save/restore and the associated callback function. 
 
-It is the responsibility of the caller to insure all parameters are correct. There is no provision for parameter checking by *RegisterPeriodicCallback()*. The implementation behavior when an invalid parameter is passed is not defined by this specification. 
+It is the responsibility of the caller to ensure all parameters are correct. There is no provision for parameter checking by *RegisterPeriodicCallback()*. The implementation behavior when an invalid parameter is passed is not defined by this specification. 
 
 **Status Codes Returned**
 
@@ -819,7 +821,6 @@ ExceptionType
    #define EXCEPT_RISCV_LOAD_PAGE_FAULT               13
    #define EXCEPT_RISCV_STORE_AMO_PAGE_FAULT          15
 
-
    ///
    /// RISC-V processor interrupt types.
    ///
@@ -831,9 +832,23 @@ ExceptionType
    #define EXCEPT_RISCV_SUPERVISOR_EXTERNAL_INT       9
    #define EXCEPT_RISCV_MACHINE_EXTERNAL_INT          11
 
-   //
-   // LoongArch processor exception types.
-   //
+   ///
+   /// LoongArch processor exception types.
+   ///
+   /// The exception types is located in the CSR ESTAT
+   /// register offset 16 bits, width 6 bits.
+   ///
+   /// If you want to register an exception hook, you can
+   /// shfit the number left by 16 bits, and the exception
+   /// handler will know the types.
+   ///
+   /// For example:
+   /// mCpu->CpuRegisterInterruptHandler (
+   ///   mCpu,
+   ///   (EXCEPT_LOONGARCH_PPI << CSR_ESTAT_EXC_SHIFT),
+   ///   PpiExceptionHandler
+   ///   );
+   ///
    #define EXCEPT_LOONGARCH_INT                       0
    #define EXCEPT_LOONGARCH_PIL                       1
    #define EXCEPT_LOONGARCH_PIS                       2
@@ -853,10 +868,22 @@ ExceptionType
    #define EXCEPT_LOONGARCH_SXD                       16
    #define EXCEPT_LOONGARCH_ASXD                      17
    #define EXCEPT_LOONGARCH_FPE                       18
+   #define EXCEPT_LOONGARCH_WPE                       19
+   #define EXCEPT_LOONGARCH_BTD                       20
+   #define EXCEPT_LOONGARCH_BTE                       21
+   #define EXCEPT_LOONGARCH_GSPR                      22
+   #define EXCEPT_LOONGARCH_HVC                       23
+   #define EXCEPT_LOONGARCH_GCXC                      24
 
-   //
-   // LoongArch processor Interrupt types.
-   //
+   ///
+   /// For coding convenience, define the maximum valid
+   /// LoongArch exception.
+   ///
+   #define MAX_LOONGARCH_EXCEPTION                    64
+
+   ///
+   /// LoongArch processor Interrupt types.
+   ///
    #define EXCEPT_LOONGARCH_INT_SIP0                  0
    #define EXCEPT_LOONGARCH_INT_SIP1                  1
    #define EXCEPT_LOONGARCH_INT_IP0                   2
@@ -871,12 +898,11 @@ ExceptionType
    #define EXCEPT_LOONGARCH_INT_TIMER                 11
    #define EXCEPT_LOONGARCH_INT_IPI                   12
 
-   //
-   // For coding convenience, define the maximum valid
-   // LoongArch interrupt.
-   //
-   #define MAX_LOONGARCH_INTERRUPT                    14
-
+   ///
+   /// For coding convenience, define the maximum valid
+   /// LoongArch interrupt.
+   ///
+   #define MAX_LOONGARCH_INTERRUPT                    16
 
 
 **Description**
@@ -885,7 +911,7 @@ The *RegisterExceptionCallback()* function registers and enables an exception ca
 
 The implementation must handle saving and restoring the processor context to/from the system context record around calls to the registered callback function. No chaining of exception handlers is allowed. 
 
-It is the responsibility of the caller to insure all parameters are correct. There is no provision for parameter checking by *RegisterExceptionCallback()*. The implementation behavior when an invalid parameter is passed is not defined by this specification.
+It is the responsibility of the caller to ensure all parameters are correct. There is no provision for parameter checking by *RegisterExceptionCallback()*. The implementation behavior when an invalid parameter is passed is not defined by this specification.
 
 
 **Status Codes Returned**
@@ -947,7 +973,7 @@ Typical operation of a debugger may require modifying the code image that is und
 
 The *InvalidateInstructionCache()* function abstracts this operation from the debug agent and provides a general purpose capability to invalidate the processor’s instruction cache. 
 
-It is the responsibility of the caller to insure all parameters are correct. There is no provision for parameter checking by  `EFI_DEBUG_SUPPORT_PROTOCOL.REGISTEREXCEPTIONCALLBACK()`_ . The implementation behavior when an invalid parameter is passed is not defined by this specification.
+It is the responsibility of the caller to ensure all parameters are correct. There is no provision for parameter checking by  `EFI_DEBUG_SUPPORT_PROTOCOL.REGISTEREXCEPTIONCALLBACK()`_ . The implementation behavior when an invalid parameter is passed is not defined by this specification.
 
 
 **Status Codes Returned**
@@ -1065,7 +1091,7 @@ This
 
 The *Reset()* function resets the debugport device. 
 
-It is the responsibility of the caller to insure all parameters are valid. There is no provision for parameter checking by *Reset()*. The implementation behavior when an invalid parameter is passed is not defined by this specification.
+It is the responsibility of the caller to ensure all parameters are valid. There is no provision for parameter checking by *Reset()*. The implementation behavior when an invalid parameter is passed is not defined by this specification.
 
 
 **Status Codes Returned**
@@ -1124,7 +1150,7 @@ Buffer
 
 The *Write()* function writes the specified number of bytes to a debugport device. If a timeout error occurs while data is being sent to the debugport, transmission of this buffer will terminate, and *EFI_TIMEOUT* will be returned. In all cases the number of bytes actually written to the debugport device is returned in *BufferSize*. 
 
-It is the responsibility of the caller to insure all parameters are valid. There is no provision for parameter checking by *Write()*. The implementation behavior when an invalid parameter is passed is not defined by this specification.
+It is the responsibility of the caller to ensure all parameters are valid. There is no provision for parameter checking by *Write()*. The implementation behavior when an invalid parameter is passed is not defined by this specification.
 
 
 **Status Codes Returned**
@@ -1185,7 +1211,7 @@ Buffer
 
 The *Read()* function reads a specified number of bytes from a debugport. If a timeout error or an overrun error is detected while data is being read from the debugport, then no more characters will be read, and *EFI_TIMEOUT* will be returned. In all cases the number of bytes actually read is returned in * *BufferSize*. 
 
-It is the responsibility of the caller to insure all parameters are valid. There is no provision for parameter checking by *Read()*. The implementation behavior when an invalid parameter is passed is not defined by this specification. 
+It is the responsibility of the caller to ensure all parameters are valid. There is no provision for parameter checking by *Read()*. The implementation behavior when an invalid parameter is passed is not defined by this specification. 
 
 
 **Status Codes Returned**

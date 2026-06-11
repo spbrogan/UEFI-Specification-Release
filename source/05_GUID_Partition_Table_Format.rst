@@ -259,7 +259,7 @@ One of the Partition Records shall be as defined in table 12, reserving the enti
    * - *BootIndicator*
      - 0
      - 1
-     - Set to 0x00 to indicate a non-bootable partition. If set to any value other than 0x00 the behavior of this flag on non-UEFI systems is undefined. Must be ignored by UEFI i mplementations.
+     - Set to 0x00 to indicate a non-bootable partition. If set to any value other than 0x00 the behavior of this flag on non-UEFI systems is undefined. Must be ignored by UEFI implementations.
    * - *StartingCHS*
      - 1
      - 3
@@ -417,7 +417,7 @@ See Table (below) which defines the GPT Header.
      - 32
      - 8
      - LBA address of the alternate GPT Header.
-   * - * FirstUsableLBA*
+   * - *FirstUsableLBA*
      - 40
      - 8
      - The first usable logical block that may be used by a partition described by a GUID Partition Entry.
@@ -429,22 +429,22 @@ See Table (below) which defines the GPT Header.
      - 56
      - 16
      - GUID that can be used to uniquely identify the disk.
-   * - *Par titionEntryLBA*
+   * - *PartitionEntryLBA*
      - 72
      - 8
      - The starting LBA of the GUID Partition Entry array.
-   * - *NumberOfPa rtitionEntries*
+   * - *NumberOfPartitionEntries*
      - 80
      - 4
      - The number of Partition Entries in the GUID Partition Entry array.
-   * - *SizeOf PartitionEntry*
+   * - *SizeOfPartitionEntry*
      - 84
      - 4
-     - The size, in bytes, of each the GUID Partition Entry structures in the GUID Partition Entry array. This field shall be set to a value of 128 x 2 *n* where n is an integer greater than or equal to zero (e.g., 128, 256, 512, etc.).  NOTE: Previous versions of this specification allowed any multiple of 8..
-   * - *PartitionE ntryArrayCRC32*
+     - The size, in bytes, of each the GUID Partition Entry structures in the GUID Partition Entry array. This field shall be set to a value of 128 x 2 *n* where n is an integer greater than or equal to zero (e.g., 128, 256, 512, etc.).  NOTE: Previous versions of this specification allowed any multiple of 8.
+   * - *PartitionEntryArrayCRC32*
      - 88
      - 4
-     - The CRC32 of the GUID Partition Entry array.  Starts at *Par titionEntryLBA* and is computed over a byte length of *NumberOfP artitionEntries \* SizeOfP artitionEntry.*
+     - The CRC32 of the GUID Partition Entry array.  Starts at *PartitionEntryLBA* and is computed over a byte length of *NumberOfPartitionEntries \* SizeOfPartitionEntry.*
    * - *Reserved*
      - 92
      - BlockSize - 92
@@ -501,7 +501,7 @@ The GPT Partition Entry Array contains an array of GPT Partition Entries.  See T
    * - *UniquePartitionGUID*
      - 16
      - 16
-     - GUID that is unique for every partition entry. Every partition ever created will have a unique GUID. This GUID must be assigned when the GPT Partition Entry is created. The GPT Partition Entry is created whenever the *NumberOfPa rtitionEntries* in the GPT Header is increased to include a larger range of addresses.
+     - GUID that is unique for every partition entry. Every partition ever created will have a unique GUID. This GUID must be assigned when the GPT Partition Entry is created. The GPT Partition Entry is created whenever the *NumberOfPartitionEntries* in the GPT Header is increased to include a larger range of addresses.
    * - *StartingLBA*
      - 32
      - 8

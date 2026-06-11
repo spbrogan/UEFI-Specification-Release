@@ -156,7 +156,7 @@ The *<ConfigRequest>* provides a mechanism to request the current configuration 
 
 The *<AltCfgId>* is the identifier of a configuration declared in the corresponding IFR.
 
-The name ‘GUID’ is also used to separate *<String>* or  *<ConfigRequest>* elements in the equivalent *Multi* version. That is:
+The name ‘GUID’ is also used to separate *<String>* or *<ConfigRequest>* elements in the equivalent *Multi* version. That is:
 
 .. code-block::
 

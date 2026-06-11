@@ -288,7 +288,7 @@ The System Partition contains directories, data files, and UEFI Images. UEFI Ima
 File System Format
 $$$$$$$$$$$$$$$$$$
 
-The first block (sector) of a partition contains a data structure called the BIOS Parameter Block (BPB) that defines the type and location of FAT file system on the drive. The BPB contains a data structure that defines the size of the media, the size of reserved space, the number of FAT tables, and the location and size of the root directory (not used in FAT32). The first block (sector) also contains code that will be executed as part of the boot process on a legacy system. This code in the first block (sector) usually contains code that can read a file from the root directory into memory and transfer control to it. Since EFI firmware contains a file system driver, EFI firmware can load any file from the file system with out nhe FAT32, FAT16, and FAT12 variants of the EFI file system. What variant of EFI FAT to use is defined by the size of the media. The rules defining theeeding to execute any code from the media.
+The first block (sector) of a partition contains a data structure called the BIOS Parameter Block (BPB) that defines the type and location of FAT file system on the drive. The BPB contains a data structure that defines the size of the media, the size of reserved space, the number of FAT tables, and the location and size of the root directory (not used in FAT32). The first block (sector) also contains code that will be executed as part of the boot process on a legacy system. This code in the first block (sector) usually contains code that can read a file from the root directory into memory and transfer control to it. Since EFI firmware contains a file system driver, EFI firmware can load any file from the file system without needing to execute any code from the media.
 
 The EFI firmware must support the FAT32, FAT16, and FAT12 variants of the EFI file system. What variant of EFI FAT to use is defined by the size of the media. The rules defining the relationship between media size and FAT variants is defined in the specification for the EFI file system.
 
@@ -317,7 +317,7 @@ FAT 8.3 file names are always stored as uppercase ASCII characters. LFN can eith
 Directory Structure
 $$$$$$$$$$$$$$$$$$$
 
-An EFI system partition that is present on a hard disk must contain an EFI defined directory in the root directory. This directory is named EFI. All OS loaders and applications will be stored in subdirectories below EFI. Applications that are loaded by other applications or drivers are not required to be stored in any specific location in the EFI system partition. The choice of the subdirectory name is up to the vendor, but all vendors must pick names that do not collide with any other vendor’s subdirectory name. This applies to system manufacturers, operating system vendors, BIOS vendors, and third party tool vendors, or any other vendor that wishes to install files on an EFI system partition. There must also only be one executable EFI image for each supported processor architecture in each vendor subdirectory. This guarantees that there is only one image that can be loaded from a vendor subdirectory by the EFI Boot Manager. If more than one executable EFI image is present, then the boot behavior for the system will not be deterministic. There may also be an optional vendor subdirectory called BOOT. 
+An EFI system partition that is present on a hard disk must contain an EFI defined directory in the root directory. This directory is named EFI. All OS loaders and applications will be stored in subdirectories below EFI. Applications that are loaded by other applications or drivers are not required to be stored in any specific location in the EFI system partition. The choice of the subdirectory name is up to the vendor, but all vendors must pick names that do not collide with any other vendor’s subdirectory name. This applies to system manufacturers, operating system vendors, BIOS vendors, and third-party tool vendors, or any other vendor that wishes to install files on an EFI system partition. There must also only be one executable EFI image for each supported processor architecture in each vendor subdirectory. This guarantees that there is only one image that can be loaded from a vendor subdirectory by the EFI Boot Manager. If more than one executable EFI image is present, then the boot behavior for the system will not be deterministic. There may also be an optional vendor subdirectory called BOOT.
 
 This directory contains EFI images that aide in recovery if the boot selections for the software installed on the EFI system partition are ever lost. Any additional UEFI-compliant executables must be in subdirectories below the vendor subdirectory. The following is a sample directory structure for an EFI system partition present on a hard disk.
 
@@ -716,7 +716,7 @@ FlushEx
 
 The EFI_FILE_PROTOCOL provides file IO access to supported file systems.
 
-An EFI_FILE_PROTOCOL provides access to a file’s or directory’s contents, and is also a reference to a location in the directory tree of the file system in which the file resides. With any given file handle, other files may be opened relative to this file’s location, yielding new file handles.
+An EFI_FILE_PROTOCOL provides access to a file’s or directory’s contents, and is also a reference to a location in the directory tree of the file system in which the file resides. With any given file handle that references a directory, other files may be opened relative to that directory, yielding new file handles.
 
 On requesting the file system protocol on a device, the caller gets the *EFI_FILE_PROTOCOL* to the volume. This interface is used to open the root directory of the file system when needed. The caller must  `EFI_FILE_PROTOCOL.Close()`_ the file handle to the root directory, and any other opened file handles before exiting. While there are open files on the device, usage of underlying device protocol(s) that the file system is abstracting must be avoided. For example, when a file system that is layered on a `EFI_DISK_IO_PROTOCOL`_   `EFI_BLOCK_IO_PROTOCOL`_ , direct block access to the device for the blocks that comprise the file system must be avoided while there are open file handles to the same device. 
 
@@ -733,7 +733,7 @@ EFI_FILE_PROTOCOL.Open()
 
 **Summary**
 
-Opens a new file relative to the source file’s location.
+Opens a new file relative to the source directory’s location.
 
 
 **Prototype**
@@ -839,6 +839,8 @@ If the medium of the device changes, all accesses (including the File handle) wi
      - Not enough resources were available to open the file.
    * - EFI_VOLUME_FULL
      - The volume is full.
+   * - EFI_INVALID_PARAMETER
+     - *This* refers to a regular file, not a directory.
 
 
 .. _efi-file-protocol-close:
@@ -958,7 +960,7 @@ This
  A pointer to the :ref:`efi-file-protocol` instance that is the file handle to read data from. See the type EFI_FILE_PROTOCOL description.
 
 BufferSize
- On input, the size of the Buffer. On output, the amount of data returned in Buffer. In both cases, the size ismeasured in bytes.
+ On input, the size of the Buffer. On output, the amount of data returned in Buffer. In both cases, the size is measured in bytes.
 
 Buffer
  The buffer into which the data is read.
@@ -1095,7 +1097,7 @@ Opens a new file relative to the source directory’s location.
 **Parameters**
 
 This
- A pointer to the *EFI_FILE_PROTOCOL* instance that is the file handle to read data from. See the type *EFI_FILE_PROTOCOL* description  
+ A pointer to the *EFI_FILE_PROTOCOL* instance that is the file handle to the source location. This would typically be an open handle to a directory. See the type *EFI_FILE_PROTOCOL* description.
 
 NewHandle
  A pointer to the location to return the opened handle for the new file. See the type *EFI_FILE_PROTOCOL* description. For asynchronous I/O, this pointer must remain valid for the duration of the asynchronous operation.
@@ -1170,9 +1172,9 @@ Buffer
        | *Event* will be signaled upon completion.  Returned in the token after signaling *Event*  
        | The file was opened successfully. 
    * - EFI_NOT_FOUND
-     - The device has no medium.
-   * - EFI_NO_MEDIA
      - The specified file could not be found on the device.
+   * - EFI_NO_MEDIA
+     - The device has no medium.
    * - EFI_VOLUME_CORRUPTED
      - The file system structures are corrupted.
    * - EFI_WRITE_PROTECTED
@@ -1183,6 +1185,8 @@ Buffer
      - Unable to queue the request or open the file due to lack of resources.
    * - EFI_VOLUME_FULL
      - The volume is full.
+   * - EFI_INVALID_PARAMETER
+     - *This* refers to a regular file, not a directory.
 
 
 .. _efi-file-protocol-readex:
@@ -3192,7 +3196,7 @@ WriteCaching
  **TRUE** if the WriteBlocks() function caches write data.
   
 BlockSize
- The intrinsic block size of the device. If the media changes, then this field is updated.Returns the number of bytes per logical block. For ATA devices, this is reported in IDENTIFY DEVICE data words 117-118 (i.e., Words per Logical Sector) (see ATA8-ACS). For SCSI devices, this is reported in the READ CAPACITY (16) parameter data Logical Block Length In Bytes field (see SBC-3).
+ The intrinsic block size of the device. If the media changes, then this field is updated. Returns the number of bytes per logical block. For ATA devices, this is reported in IDENTIFY DEVICE data words 117-118 (i.e., Words per Logical Sector) (see ATA8-ACS). For SCSI devices, this is reported in the READ CAPACITY (16) parameter data Logical Block Length In Bytes field (see SBC-3).
   
 IoAlign
  Supplies the alignment requirement for any buffer used in a data transfer. IoAlign values of 0 and 1 mean that the buffer can be placed anywhere in memory. Otherwise, IoAlign must be a power of 2, and the requirement is that the start address of a buffer must be evenly divisible by IoAlign with no remainder.
@@ -4860,7 +4864,7 @@ Drivers for RAID controllers that do not allow access to the physical devices wi
 
 The Attributes field also contains the *EFI_ATA_PASS_THRU_ATTRIBUTES_NONBLOCKIO* bit. All *EFI_ATA_PASS_THRU_PROTOCOL* interfaces must support blocking I/O. If this bit is set, then the interface supports both blocking I/O and non-blocking I/O. 
 
-Each *EFI_ATA_PASS_THRU_PROTOCOL* instance must have an associated device path. Typically this will have an ACPI device path node and a PCI device path node, although variation will exist. 
+Each *EFI_ATA_PASS_THRU_PROTOCOL* instance must have an associated device path. Typically, this will have an ACPI device path node and a PCI device path node, although variation will exist. 
 
 Additional information about the ATA controller can be obtained from protocols attached to the same handle as the *EFI_ATA_PASS_THRU_PROTOCOL,* or one of its parent handles. This would include the device I/O abstraction used to access the internal registers and functions of the ATA controller. 
 
@@ -5230,6 +5234,8 @@ If *PortMultiplierPort* points to *0xFFFF,* then the port multiplier port number
 If *PortMultiplierPort* is not *0xFFFF* and the value pointed to by *PortMultiplierPort* was not returned on a previous call to *GetNextDevice(),* then *EFI_INVALID_PARAMETER* is returned. 
 
 If *PortMultiplierPort* is the port multiplier port number of the last ATA device on the port of the ATA controller, then *EFI_NOT_FOUND* is returned.
+
+When port multiplier is not connected to the Port, GetNextDevice() may either return EFI_SUCCESS and set PortMultiplierPort to 0xFFFF or return EFI_NOT_FOUND (in which case the PortMultiplierPort value is undefined).
 
 
 **Status Codes Returned**
@@ -5879,7 +5885,7 @@ The *Attributes* field also contains the *EFI_NVM_EXPRESS_PASS_THRU_ATTRIBUTES_N
 
 The *Attributes* field also contains the *EFI_NVM_EXPRESS_PASS_THRU_ATTRIBUTES_CMD_SET_NVM* bit. If this bit is set, the controller supports the NVM Express command set.   
 
-- Each *EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL* instance must have an associated device path. Typically this will have an *ACPI* device path node and a *PCI* device path node, although variation will exist.
+- Each *EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL* instance must have an associated device path. Typically, this will have an *ACPI* device path node and a *PCI* device path node, although variation will exist.
 
 
 .. _efi-nvm-express-pass-thru-protocol-passthru:
@@ -6211,7 +6217,7 @@ DevicePath
   A pointer to the device path node that describesan NVM Express namespace on the NVM Express controller.
 
 NamespaceId
-  The NVM Express namespace ID contained in thedevice path node.
+  The NVM Express namespace ID contained in the device path node.
 
 
 **Description**
@@ -6246,9 +6252,9 @@ EFI_SD_MMC_PASS_THRU_PROTOCOL
 
 This section provides a detailed description of the *EFI_SD_MMC_PASS_THRU_PROTOCOL*.
 
-The protocol provides services that allow SD/eMMC commands to be sent to an SD/eMMC controller. All interfaces anddefinitions from this section apply equally to SD and eMMCcontrollers.
+The protocol provides services that allow SD/eMMC commands to be sent to an SD/eMMC controller. All interfaces anddefinitions from this section apply equally to SD and eMMC controllers.
 
-For the sake of brevity, the rest of this section refers only to SD devices and controllers and does not specifically mentioneMMC devices and controllers.
+For the sake of brevity, the rest of this section refers only to SD devices and controllers and does not specifically mention eMMC devices and controllers.
 
 **GUID** 
 
@@ -6284,13 +6290,13 @@ GetNextSlot
   Retrieves a next slot on an SD controller. Seethe *GetNextSlot()* function description.
 
 BuildDevicePath
-  Allocates and builds a device path nodefor an SD card on the SD controller. See the *BuildDevicePath()* function description.
+  Allocates and builds a device path node for an SD card on the SD controller. See the *BuildDevicePath()* function description.
 
 GetSlotNumber
-  Retrieves the SD card slot number based onthe input device path. See the *GetSlotNumber()* function description.
+  Retrieves the SD card slot number based on the input device path. See the *GetSlotNumber()* function description.
 
 ResetDevice
-  Resets an SD card connected to the SDcontroller. See the *ResetDevice()*  function description.
+  Resets an SD card connected to the SD controller. See the *ResetDevice()*  function description.
 
 
 .. _efi-sd-mmc-pass-thru-protocol.passthru:
@@ -6330,7 +6336,7 @@ Packet
   A pointer to the SD command data structure. See "Related Definitions" below for a description of *EFI_SD_MMC_PASS_THRU_COMMAND_PACKET*.
 
 Event
-  If non-blockingI/O is not supported then *Event* is ignored, and blocking I/O is performed. If *Event* is *NULL,* then blockingI/O is performed. If *Event* is not *NULL* and non-blockingI/O is supported, then non-blockingI/O is performed, and *Event* will be signaled when the SDcommand completes
+  If non-blocking I/O is not supported then *Event* is ignored, and blocking I/O is performed. If *Event* is *NULL,* then blocking I/O is performed. If *Event* is not *NULL* and non-blocking I/O is supported, then non-blocking I/O is performed, and *Event* will be signaled when the SD command completes.
 
 **Related Definitions**
 
@@ -6354,7 +6360,7 @@ SdMmcStatusBlk
   A pointer to a command specific response data buffer allocated by the caller and filled by the PassThru function. See "Related Definitions" below for a description of *EFI_SD_MMC_STATUS_BLOCK*.
   
 Timeout
-  The timeout, in 100 ns units, to use for the execution of this SDcommand. A *Timeout* value of 0 means that this function will wait indefinitely for the SDcommand to execute. If *Timeout* is greater than zero, then this function will return *EFI_TIMEOUT* if the time required to execute the SDcommand is greater than *Timeout*.
+  The timeout, in 100 ns units, to use for the execution of this SD command. A *Timeout* value of 0 means that this function will wait indefinitely for the SD command to execute. If *Timeout* is greater than zero, then this function will return *EFI_TIMEOUT* if the time required to execute the SD command is greater than *Timeout*.
   
 InDataBuffer
   A pointer to a buffer for the data transferred from the SD card during processing of read and bidirectional commands. For all write and non-data commands this field is optional and may be *NULL*.
@@ -7247,13 +7253,11 @@ Free
 
    // Constants for Flags field
    #define EFI_NVDIMM_LABEL_FLAGS_ROLABEL         0x00000001
-   #define EFI_NVDIMM_LABEL_FLAGS_LOCAL           0x00000002
+   #define EFI_NVDIMM_LABEL_FLAGS_LOCAL           0x00000002                                       
    #define EFI_NVDIMM_LABEL_FLAGS_SPACOOKIE_BOUND 0x00000010
 
-   // This reserved flag is utilized on older implementations
-   // and has been deprecated. Do not use
-   #define EFI_NVDIMM_LABEL_FLAGS_RESERVED        0x00000004
-   #define EFI_NVDIMM_LABEL_FLAGS_UPDATING        0x00000008
+   Reserved                                       0x00000004
+   Reserved                                       0x00000008
 
    typedef struct EFI_NVDIMM_LABEL{
      EFI_GUID      Uuid;

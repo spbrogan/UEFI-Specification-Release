@@ -384,12 +384,16 @@ Decompression Source Code
     UINT16 Avail;
     UINT16 NextCode;
     UINT16 Mask;
+    UINT16 MaxTableLength;
 
    for (i = 1; i <= 16; i ++) {
     Count[i] = 0;
    }
 
    for (i = 0; i < NumOfChar; i++) {
+    if (BitLen[i] > 16) {
+     return (UINT16) BAD_TABLE;
+    }
     Count[BitLen[i]]++;
    }
 
@@ -425,6 +429,7 @@ Decompression Source Code
 
    Avail = NumOfChar;
    Mask = (UINT16)(1U << (15 - TableBits));
+   MaxTableLength = (UINT16) (1U << TableBits);
 
    for (Char = 0; Char < NumOfChar; Char++) {
 
@@ -437,6 +442,9 @@ Decompression Source Code
     if (Len <= TableBits) {
 
      for (i = Start[Len]; i < NextCode; i ++) {
+      if (i >= MaxTableLength) {
+       return (UINT16) BAD_TABLE;
+      }
       Table[i] = Char;   
      }
 
@@ -861,6 +869,13 @@ Decompression Source Code
       if (di >= WNDSIZ) {
        return;
       }
+
+      if (di >= Sd->mOrigSize) {
+       Sd->mBadTableFlag = (UINT16) BAD_TABLE;
+       return;
+      }
+
+      Sd->mBuffer[di++] = Sd->mBuffer[Sd->mDataIdx++];
       Sd->mBytesRemain --;
      }
     }

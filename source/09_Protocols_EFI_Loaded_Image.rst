@@ -36,7 +36,7 @@ Can be used on any image handle to obtain information about the loaded image.
 
 **Protocol Interface Structure**
 
-.. code-block:: 
+.. code-block::
 
    typedef struct {
       UINT32                        Revision;
@@ -63,42 +63,42 @@ Can be used on any image handle to obtain information about the loaded image.
 **Parameters**
 
 Revision
-  Defines the revision of the EFI_LOADED_IMAGE_PROTOCOL structure. All future revisions will be backward compatible to the current revision. 
+  Defines the revision of the EFI_LOADED_IMAGE_PROTOCOL structure. All future revisions will be backward compatible to the current revision.
 
-ParentHandle 
-  Parent image’s image handle. NULL if the image is loaded directly from the firmware’s boot manager. Type EFI_HANDLE is defined in Services – Boot Services.
+ParentHandle
+  Parent image’s image handle. NULL if the image is loaded directly from the firmware’s boot manager. Type EFI_HANDLE is defined in :ref:`services-boot-services`.
 
-SystemTable 
+SystemTable
   The image’s EFI system table pointer. Type EFI_SYSTEM_TABLE defined in :ref:`efi-system-table`.
 
-DeviceHandle 
-  The device handle that the EFI Image was loaded from. Type EFI_HANDLE is defined in Services – Boot Services. 
+DeviceHandle
+  The device handle that the EFI Image was loaded from. Type EFI_HANDLE is defined in :ref:`services-boot-services`.
 
-FilePath 
+FilePath
   A pointer to the file path portion specific to DeviceHandle that the EFI Image was loaded from. EFI_DEVICE_PATH_PROTOCOL  is defined in  :ref:`efi-device-path-protocol` .
 
-Reserved 
+Reserved
   Reserved. DO NOT USE.
 
-LoadOptionsSize 
+LoadOptionsSize
   The size in bytes of LoadOptions.
 
-LoadOptions 
+LoadOptions
   A pointer to the image’s binary load options. See the OptionalData parameter in the :ref:`load-options` section of the Boot Manager chapter for information on the source of the LoadOptions data.
 
-ImageBase 
+ImageBase
   The base address at which the image was loaded.
 
-ImageSize 
+ImageSize
   The size in bytes of the loaded image.
 
-ImageCodeType 
-  The memory type that the code sections were loaded as. Type EFI_MEMORY_TYPE is defined in Services – Boot Services.
+ImageCodeType
+  The memory type that the code sections were loaded as. Type EFI_MEMORY_TYPE is defined in :ref:`services-boot-services`.
 
-ImageDataType 
-  The memory type that the data sections were loaded as. Type *EFI_MEMORY_TYPE* is defined in in Services – Boot Services. 
+ImageDataType
+  The memory type that the data sections were loaded as. Type *EFI_MEMORY_TYPE* is defined in :ref:`services-boot-services`.
 
-Unload 
+Unload
   Function that unloads the image - see :numref:`efi-loaded-image-protocol-unload`.
 
 **Description**
@@ -118,8 +118,8 @@ Unloads an image from memory.
 **Prototype**
 
 .. code-block::
-  
-   typedef  
+
+   typedef
    EFI_STATUS
    (EFIAPI *EFI_IMAGE_UNLOAD) (
      IN EFI_HANDLE               ImageHandle,
@@ -127,12 +127,14 @@ Unloads an image from memory.
 
 **Parameters**
 
-ImageHandle 
+ImageHandle
   The handle to the image to unload. Type EFI_HANDLE  :ref:`driver-model-boot-services`
 
 **Description**
 
 The Unload() function is a callback that a driver registers to do cleanup when the UnloadImage boot service function is called.
+
+If the Unload() function pointer in an EFI_LOADED_IMAGE_PROTOCOL instance is NULL, the image does not support unload.
 
 **Status Codes Returned**
 
@@ -142,7 +144,7 @@ The Unload() function is a callback that a driver registers to do cleanup when t
 
    * - EFI_SUCCESS
      - The image was unloaded.
-   * - EFI_INVALID_PARAMETER 
+   * - EFI_INVALID_PARAMETER
      - The *ImageHandle* was not valid.
 
 
@@ -169,6 +171,6 @@ When installed, the Loaded Image Device Path Protocol specifies the device path 
 
 **Description**
 
-The Loaded Image Device Path Protocol uses the same protocol interface structure as the Device Path Protocol defined in Chapter 9. The only difference between the Device Path Protocol and the Loaded Image Device Path Protocol is the protocol GUID value. 
+The Loaded Image Device Path Protocol uses the same protocol interface structure as the :ref:`efi-device-path-protocol` defined in Chapter 10. The only difference between the Device Path Protocol and the Loaded Image Device Path Protocol is the protocol GUID value.
 
 The Loaded Image Device Path Protocol must be installed onto the image handle of a PE/COFF image loaded through the EFI Boot Service LoadImage(). A copy of the device path specified by the *DevicePath* parameter to the EFI Boot Service LoadImage() is made before it is installed onto the image handle. It is legal to call LoadImage() for a buffer in memory with a NULL *DevicePath* parameter. In this case, the Loaded Image Device Path Protocol is installed with a NULL interface pointer.

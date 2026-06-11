@@ -1056,7 +1056,7 @@ RequestTimeout
  Maximum amount of time (in seconds) to wait for return packets in each of the retries. Timeout values of zero will default to a timeout value of one second. Set to **NULL** to use default timeout values.
 
 ClientAddress
- For a DHCPDISCOVER, setting this parameter to the previously allocated IP address will cause the EFI DHCPv4 Protocol driver to enter the *Dhcp4InitReboot* state. Also, set this field to 0.0.0.0 to enter the *Dhcp4Init* state.For a DHCPINFORM this parameter should be set to the client network address which was assigned to the client during a DHCPDISCOVER.
+ For a DHCPDISCOVER, setting this parameter to the previously allocated IP address will cause the EFI DHCPv4 Protocol driver to enter the *Dhcp4InitReboot* state. Also, set this field to 0.0.0.0 to enter the *Dhcp4Init* state. For a DHCPINFORM this parameter should be set to the client network address which was assigned to the client during a DHCPDISCOVER.
 
 Dhcp4Callback
  The callback function to intercept various events that occurred in the DHCP configuration process. Set to **NULL** to ignore all those events. Type *EFI_DHCP4_CALLBACK* is defined below.
@@ -1161,7 +1161,7 @@ Dhcp4RcvdNak
  A DHCPNAK packet was received and will be passed to *Dhcp4Callback.* The EFI DHCPv4 Protocol driver will then return to the *Dhcp4Init* state no matter what status code is returned from the callback function.
 
 Dhcp4SendDecline
- A decline packet is about to be sent. *Dhcp4Callback* can modify or replace this packet.The EFI DHCPv4 Protocol driver will then be set to the *Dhcp4Init* state.
+ A decline packet is about to be sent. *Dhcp4Callback* can modify or replace this packet. The EFI DHCPv4 Protocol driver will then be set to the *Dhcp4Init* state.
 
 Dhcp4BoundCompleted
  The DHCP configuration process has completed. No packet is associated with this event.
@@ -2003,7 +2003,7 @@ Retrieve the current operating mode data and configuration data for the EFI DHCP
 
 
 ClientId
-  Pointer to the DHCPv6 unique identifier. The caller is responsible for freeing this buffer. Typ *e EFI_DHCP6_DUI* D is defined below.
+  Pointer to the DHCPv6 unique identifier. The caller is responsible for freeing this buffer. Type *EFI_DHCP6_DUID* is defined below.
 
 Ia
   Pointer to the configured IA of current instance. The caller can free this buffer after using it. Type *EFI_DHCP6_IA* is defined below.
@@ -2108,7 +2108,7 @@ An IA which carries assigned temporary address.
    }  EFI_DHCP6_STATE;
 
 
-The Table below, :ref:`field-descriptions` , describes the fields in the above enumeration.
+The following Field Descriptions table defines the fields in the above enumeration.
 
 .. list-table:: Field Descriptions
    :widths: 15 45
@@ -2911,7 +2911,7 @@ This
 
 **Description**
 
-The *Stop* () function is used to stop the DHCPv6 S.A.R.R process. If this function is called successfully, all the IPv6 addresses of the configured IA will be released and the state of the configured IA will be transferred to *Dhcp6Init.*
+The *Stop()* function is used to stop the DHCPv6 S.A.R.R. process. If this function is called successfully, all the IPv6 addresses of the configured IA will be released and the state of the configured IA will be transferred to *Dhcp6Init.*
 
 
 **Status Codes Returned**
@@ -2956,16 +2956,16 @@ Parse the option data in the DHCPv6 packet.
 **Parameters**
 
 This
-  Pointer to the *EFI_DHCP6_PROTOCOL i* nstance.
+  Pointer to the *EFI_DHCP6_PROTOCOL* instance.
 
 Packet
-  \Pointer to packet to be parsed. Type *EFI_DHCP6_PACKET* is defined in *EFI_DHCP6_PROTOCOL.GetModeData().*
+  Pointer to packet to be parsed. Type *EFI_DHCP6_PACKET* is defined in ``EFI_DHCP6_PROTOCOL.GetModeData()``.
 
 OptionCount
   On input, the number of entries in the PacketOptionList. On output, the number of DHCPv6 options in the Packet.
 
 PacketOptionList
-  List of pointers to the DHCPv6 options in the *Packet.* Type *EFI_DHCP6_PACKET_OPTION* is defined in *EFI_DHCP6_PROTOCOL.Config* ure(). The *OpCode* and *OpLen* in *EFI_DHCP6_PACKET_O* PTION are both stored in network byte order.
+  List of pointers to the DHCPv6 options in the Packet. Type *EFI_DHCP6_PACKET_OPTION* is defined in ``EFI_DHCP6_PROTOCOL.Configure()``. The *OpCode* and *OpLen* in *EFI_DHCP6_PACKET_OPTION* are both stored in network byte order.
 
 
 **Description**
@@ -3048,7 +3048,7 @@ This protocol provides the function to get the host name and address mapping, al
 
 The EFI_DNS4_Protocol is primarily intended to retrieve host addresses using the standard DNS protocol (RFC1035), and support for this protocol is required. Implementations may optionally also support local network name resolution methods such as LLMNR (RFC4795) however DNS queries shall always take precedence, and any use of local network name protocols would be restricted to cases where resolution using DNS protocol fails. 
 
-As stated above, all instances of EFI_DNS4_Protocol will utilize a common DNS cache containing the successful results of previous queries on any interface. However, it should be noted that every instance of EFI_DNS4_Protocol is associated with a specific network device or interface, and that all network actions initiated using a specific instance of the DNS protocol will occur only via use of the associated network interface. This means, in a system with multiple network interfaces, that a specific DNS server will often only be reachable using a specific network instance, and therefore the protocol user will need to take steps to insure the DNS instance associated with the proper network interface is used. Or alternatively, the caller may perform DNS functions against all interfaces until successful result is achieved.
+As stated above, all instances of EFI_DNS4_Protocol will utilize a common DNS cache containing the successful results of previous queries on any interface. However, it should be noted that every instance of EFI_DNS4_Protocol is associated with a specific network device or interface, and that all network actions initiated using a specific instance of the DNS protocol will occur only via use of the associated network interface. This means, in a system with multiple network interfaces, that a specific DNS server will often only be reachable using a specific network instance, and therefore the protocol user will need to take steps to ensure the DNS instance associated with the proper network interface is used. Or alternatively, the caller may perform DNS functions against all interfaces until successful result is achieved.
 
 
 **GUID**
@@ -3871,7 +3871,7 @@ This protocol provides the function to get the host name and address mapping, al
 
 The EFI_DNS6_Protocol is primarily intended to retrieve host addresses using the standard DNS protocol (RFC3596), and support for this protocol is required. Implementations may optionally also support local network name resolution methods such as LLMNR (RFC4795) however DNS queries shall always take precedence, and any use of local network name protocols would be restricted to cases where resolution using DNS protocol fails. 
 
-As stated above, all instances of EFI_DNS6_Protocol will utilize a common DNS cache containing the successful results of previous queries on any interface. However, it should be noted that every instance of EFI_DNS6_Protocol is associated with a specific network device or interface, and that all network actions initiated using a specific instance of the DNS protocol will occur only via use of the associated network interface. This means, in a system with multiple network interfaces, that a specific DNS server will often only be reachable using a specific network instance, and therefore the protocol user will need to take steps to insure the DNS instance associated with the proper network interface is used. Or alternatively, the caller may perform DNS functions against all interfaces until successful result is achieved.
+As stated above, all instances of EFI_DNS6_Protocol will utilize a common DNS cache containing the successful results of previous queries on any interface. However, it should be noted that every instance of EFI_DNS6_Protocol is associated with a specific network device or interface, and that all network actions initiated using a specific instance of the DNS protocol will occur only via use of the associated network interface. This means, in a system with multiple network interfaces, that a specific DNS server will often only be reachable using a specific network instance, and therefore the protocol user will need to take steps to ensure the DNS instance associated with the proper network interface is used. Or alternatively, the caller may perform DNS functions against all interfaces until successful result is achieved.
 
 
 **GUID**
@@ -5066,8 +5066,25 @@ The HTTP driver is expected to close existing (if any) underlying TCP instance a
 Method
   The HTTP method (e.g. GET, POST) for this HTTP Request.
 
-Url
-  The URI of a remote host. From the information in this field, the HTTP instance will be able to determine whether to use HTTP or HTTPS and will also be able to determine the port number to use. If no port number is specified, port 80 (HTTP) is assumed. See RFC 3986 for more details on URI syntax. 
+URI
+  The URI of a remote host. From the information in this field, the HTTP instance will be able to determine whether to use HTTP or HTTPS and will also be able to determine the port number to use. If no port number is specified, port 80 (HTTP) or 443 (HTTPS) is assumed. See RFC 3986 for more details on URI syntax. 
+
+In cases when the Method field in the Request structure is set to HttpMethodConnect, the HTTP driver expects that the supplied Request structure type is EFI_HTTP_CONNECT_REQUEST_DATA.
+
+.. code-block::
+
+   //*******************************************
+   // EFI_HTTP_CONNECT_REQUEST_DATA
+   //*******************************************
+   typedef struct {
+     EFI_HTTP_REQUEST_DATA   Base;
+     CHAR16                  *ProxyUrl;
+   } EFI_HTTP_CONNECT_REQUEST_DATA;
+
+The EFI_HTTP_CONNECT_REQUEST_DATA structure begins with the base EFI_HTTP_REQUEST_DATA structure (Base) for backward compatibility. HTTP driver is expected to type-cast EFI_HTTP_MESSAGE Request field to EFI_HTTP_CONNECT_REQUEST_DATA in order to obtain additional fields required to establish a connection with a proxy server:
+
+ProxyURI
+  The URI of a Proxy Host, to be used only when using HttpMethodConnect in Base->Method. From the information in this field, the HTTP instance will be able to determine whether to use HTTP or HTTPS and will also be able to determine the port number to use. If no port number is specified, port 80 (HTTP) or 443 (HTTPS) is assumed. While ProxyUrl determines the HTTP/HTTPS protocol between the Client and Proxy Host, Base->Url determines the protocol between the Proxy Host and Endpoint Server. See RFC 3986 for more details on URI syntax.
 
 
 .. code-block::
@@ -6431,7 +6448,7 @@ RestExConfigDataLength
    } EFI_REST_EX_SERVICE_TYPE; 
 
 
-*EFI_REST_EX_SERVICE_UNSPECIFIC* indicates this EFI REST EX driver instance is not used to communicate with any particular REST service. The EFI REST EX driver instance which reports this service type is REST service independent and only provides SendReceive()function to EFI REST client. EFI REST client uses this function to send and receive HTTP message to any target URI and handles the follow up actions by itself. The EFI REST EX driver instance in this type must returns EFI_UNSUPPORTED in below REST EX protocol interfaces, GetServiceTime(), AyncSendReceive() and EventService().
+*EFI_REST_EX_SERVICE_UNSPECIFIC* indicates this EFI REST EX driver instance is not used to communicate with any particular REST service. The EFI REST EX driver instance which reports this service type is REST service independent and only provides SendReceive()function to EFI REST client. EFI REST client uses this function to send and receive HTTP message to any target URI and handles the follow up actions by itself. The EFI REST EX driver instance in this type must return EFI_UNSUPPORTED in below REST EX protocol interfaces, GetServiceTime(), AyncSendReceive() and EventService().
 
 *EFI_REST_EX_SERVICE_REDFISH* indicates this EFI REST EX driver instance is used to communicate with Redfish REST service.
 
@@ -6603,7 +6620,7 @@ RestExConfigData
 
 This function is used to configure the setting of underlying protocol of REST EX child instance. The type of configuration is according to the implementation of EFI REST EX driver instance. For example, HTTP-aware EFI REST EX driver instance uses EFI HTTP protocol as the undying protocol to communicate with REST service. The type of configuration is *EFI_REST_EX_CONFIG_TYPE_HTTP* and *RestExConfigData* is in the format of *EFI_REST_EX_HTTP_CONFIF_DATA.* 
 
-Akin to HTTP configuration, REST EX child instance can be configure to use different HTTP local access point for the data transmission. Multiple REST clients may use different configuration of HTTP to distinguish themselves, such as to use the different TCP port. For those non HTTP-aware REST EX driver instance, the type of configuration is *EFI_REST_EX_CONFIG_TYPE_UNSPECIFIC.* *RestExConfigData* refers to the non industrial standard. Instead, the format of configuration data is system/platform specific definition such as BMC. In this case, EFI REST client and EFI REST EX driver instance have to refer to the specific system/platform spec which is out of the UEFI scope. Besides *GetService()* function, no other EFI REST EX functions can be executed by this instance until *Configure()* is executed and returns successfully. All other functions must returns *EFI_NOT_READY* if this instance is not configured yet. Set *RestExConfigData* to **NULL** means to put EFI REST EX child instance into the unconfigured state.
+Akin to HTTP configuration, REST EX child instance can be configure to use different HTTP local access point for the data transmission. Multiple REST clients may use different configuration of HTTP to distinguish themselves, such as to use the different TCP port. For those non HTTP-aware REST EX driver instance, the type of configuration is *EFI_REST_EX_CONFIG_TYPE_UNSPECIFIC.* *RestExConfigData* refers to the non industrial standard. Instead, the format of configuration data is system/platform specific definition such as BMC. In this case, EFI REST client and EFI REST EX driver instance have to refer to the specific system/platform spec which is out of the UEFI scope. Besides *GetService()* function, no other EFI REST EX functions can be executed by this instance until *Configure()* is executed and returns successfully. All other functions must return *EFI_NOT_READY* if this instance is not configured yet. Set *RestExConfigData* to **NULL** means to put EFI REST EX child instance into the unconfigured state.
 
 
 **Status Codes Returned**
@@ -6675,7 +6692,7 @@ TimeOutInMilliSeconds
 
 This function is used to send REST request with asynchronous REST service response within certain timeout declared. REST service sometime takes long time to create resource. Sometimes REST service returns response to REST client late because of the shortage of bandwidth or bad network quality. To prevent from unfriendly user experience due to system stuck while waiting for the response from REST service, *EFI_REST_EX_PROTOCOL.AsyncSendReceive()* provides the capability to send asynchronous REST request. Caller sends the REST request and still can execute some other processes on background while waiting the event signaled by REST EX Protocol driver instance. 
 
-The implementation of underlying mechanism of asynchronous REST request depends on the mechanism of REST service. HTTP protocol, In-Band management protocol and other protocols has its own way to support asynchronous REST request. Similar to *EFI_REST_EX_PROTOCOL* *.SendReceive(),* It’s the REST EX protocol’s responsibility to handle the implementation details and return only the REST resource to the caller. REST EX Protocol driver instance which doesn’t support asynchronous REST request can just return *EFI_UNSUPPORTED* to caller. Also, this function must returns *EFI_UNSUPPORTED* if *EFI_REST_EX_SERVICE_TYPE* returned in *EFI_REST_EX_SERVICE_INFO* from GetService() is *EFI_REST_EX_SERVICE_UNSPECIFIC.* 
+The implementation of underlying mechanism of asynchronous REST request depends on the mechanism of REST service. HTTP protocol, In-Band management protocol and other protocols has its own way to support asynchronous REST request. Similar to *EFI_REST_EX_PROTOCOL* *.SendReceive(),* It’s the REST EX protocol’s responsibility to handle the implementation details and return only the REST resource to the caller. REST EX Protocol driver instance which doesn’t support asynchronous REST request can just return *EFI_UNSUPPORTED* to caller. Also, this function must return *EFI_UNSUPPORTED* if *EFI_REST_EX_SERVICE_TYPE* returned in *EFI_REST_EX_SERVICE_INFO* from GetService() is *EFI_REST_EX_SERVICE_UNSPECIFIC.* 
 
 REST clients do not have to know the preprocessors of asynchronous REST request between REST EX Protocol driver instance and REST service. The responsibility of REST EX Protocol driver instance is to monitor the status of resource readiness and to signal caller’s *RestExToken* when the status of returning resource is ready. REST EX Protocol driver instance sets *Status* field in *RestExToken* to *EFI_SUCCESS* and sets *ResponseMessage* pointer to the final response from REST service. Then signal caller’s event to notify REST client the desired REST resource is received. REST EX Protocol driver instance also has to create an EFI timer to handle the timeout situation. REST EX Protocol driver must drops the asynchronous REST request once the timeout is expired. In this case, REST EX Protocol driver instance sets Status field in RestExToken to *EFI_TIMEOUT* and signal caller’s event token. 
 
@@ -6775,7 +6792,7 @@ RestExToken
 
 This function is used to subscribe an event through REST Event service if REST service supports event service. This function listens on resource change of specific REST URI resource. The type of URI resource change event is varied and REST service specific, such as URI resource updated, resource added, resource removed, alert, etc. The way to subscribe REST Event service is also REST service specific, usually described in HTTP body. With the implementation of *EFI_REST_EX_PROTOCOL.EventService(),* REST client can register an REST EX token of particular URI resource change, usually of a time critical nature, until subscription is deleted from REST Event service. 
 
-The implementation of underlying mechanism of REST Event service depends on the interface of REST EX Protocol driver instance. HTTP protocol, In-Band management protocols or other protocols can have its own implementation to support REST Event Service request. REST EX Protocol driver instance has knowledge of how to handle the REST Event service. The REST client creates and submits an HTTP-like header/body content in *RequestMessage* which required by REST Event services. How does REST EX Protocol driver instance handle REST Event service and monitor event is REST service-specific. REST EX driver instance can just returns *EFI_UNSUPPORTED* if REST service has no event capability. Also, this function must returns *EFI_UNSUPPORTED* if *EFI_REST_EX_SERVICE_TYPE* returned in *EFI_REST_EX_SERVICE_INFO* from *GetService()* is *EFI_REST_EX_SERVICE_UNSPECIFIC.* 
+The implementation of underlying mechanism of REST Event service depends on the interface of REST EX Protocol driver instance. HTTP protocol, In-Band management protocols or other protocols can have its own implementation to support REST Event Service request. REST EX Protocol driver instance has knowledge of how to handle the REST Event service. The REST client creates and submits an HTTP-like header/body content in *RequestMessage* which required by REST Event services. How does REST EX Protocol driver instance handle REST Event service and monitor event is REST service-specific. REST EX driver instance can just returns *EFI_UNSUPPORTED* if REST service has no event capability. Also, this function must return *EFI_UNSUPPORTED* if *EFI_REST_EX_SERVICE_TYPE* returned in *EFI_REST_EX_SERVICE_INFO* from *GetService()* is *EFI_REST_EX_SERVICE_UNSPECIFIC.* 
 
 The REST EX Protocol driver instance is responsible to monitor the resource change event pushed from REST service. REST EX Protocol driver instance signals caller’s *RestExToken* when the event of resource change is pushed to REST EX Protocol driver instance. The way how REST service pushes event to REST EX Protocol driver instance is implementation-specific and transparent to REST client. REST EX Protocol driver instance sets Status field in *RestExToken* to *EFI_SUCCESS* and sets ResponseMessage pointer to the event resource returned from REST Event service. Then REST EX Protocol driver instance signals caller’s event to notify REST client a new REST event is received. REST EX Protocol driver instance also responsible to terminate event subscription and clear up the internal resource associated with REST Event service if the status of subscription resource is returned error. 
 
@@ -6950,9 +6967,9 @@ The following code example shows how a consumer of REST EX driver would use EFI 
 EFI_REST_EX_PROTOCOL.AsyncSendReceive()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-To those HTTP-aware underlying mechanisms of the REST EX Protocol driver instance and "respond-async" prefer header aware REST service, REST EX Protocol driver instance adds additional HTTP Prefer header field (Refer to IEFT RFC7240) which is set to "respond-async" in the *RequestMessage.* HTTP 202 Accepted Status Code is returned from REST service which indicates the REST request is accepted by REST service, however, the final result is left unknown. The way how REST service returns final response to REST EX Protocol driver instance is REST service implementation-specific and transparent to the REST client. Whether or not the REST service has a proper response to "respond-async" is REST service implementation-specific. AsyncSendReceive() must returns *EFI_UNSUPPORTED* if the REST service that the REST EX instance communicates with is incapable of asynchronous response.
+To those HTTP-aware underlying mechanisms of the REST EX Protocol driver instance and "respond-async" prefer header aware REST service, REST EX Protocol driver instance adds additional HTTP Prefer header field (Refer to IEFT RFC7240) which is set to "respond-async" in the *RequestMessage.* HTTP 202 Accepted Status Code is returned from REST service which indicates the REST request is accepted by REST service, however, the final result is left unknown. The way how REST service returns final response to REST EX Protocol driver instance is REST service implementation-specific and transparent to the REST client. Whether or not the REST service has a proper response to "respond-async" is REST service implementation-specific. AsyncSendReceive() must return *EFI_UNSUPPORTED* if the REST service that the REST EX instance communicates with is incapable of asynchronous response.
 
-REST EX Protocol driver instance must returns *EFI_SUCCESS* to caller once it gets HTTP 202 Accepted Status Code from REST service. The HTTP Location header field can be returned in HTTP 202 Accepted Status Code. REST EX Protocol driver instance may create an EFI timer to poll the status of URI returned in HTTP Location header field. The content of URI which pointed by HTTP Location header is REST service implementation-specific and not defined in REST EX Protocol specification. REST EX Protocol driver instance provider should have knowledge about how to poll the status of returning resource from given HTTP Location header. 
+REST EX Protocol driver instance must return *EFI_SUCCESS* to caller once it gets HTTP 202 Accepted Status Code from REST service. The HTTP Location header field can be returned in HTTP 202 Accepted Status Code. REST EX Protocol driver instance may create an EFI timer to poll the status of URI returned in HTTP Location header field. The content of URI which pointed by HTTP Location header is REST service implementation-specific and not defined in REST EX Protocol specification. REST EX Protocol driver instance provider should have knowledge about how to poll the status of returning resource from given HTTP Location header. 
 
 The following flowchart describes the flow of establishing asynchronous REST request on HTTP-aware infrastructure:
 

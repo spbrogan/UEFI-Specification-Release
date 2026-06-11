@@ -1558,6 +1558,7 @@ Attribute
    #define EFI_MEMORY_RO              0x0000000000020000
    #define EFI_MEMORY_SP              0x0000000000040000
    #define EFI_MEMORY_CPU_CRYPTO      0x0000000000080000
+   #define EFI_MEMORY_HOT_PLUGGABLE   0x0000000000100000
    #define EFI_MEMORY_RUNTIME         0x8000000000000000
    #define EFI_MEMORY_ISA_VALID       0x4000000000000000
    #define EFI_MEMORY_ISA_MASK        0x0FFFF00000000000
@@ -1600,6 +1601,9 @@ EFI_MEMORY_SP
 
 EFI_MEMORY_CPU_CRYPTO 
   If this flag is set, the memory region is capable of being protected with the CPU’s memory cryptographic capabilities. If this flag is clear, the memory region is not capable of being protected with the CPU’s memory cryptographic capabilities or the CPU does not support CPU memory cryptographic capabilities.
+  
+EFI_MEMORY_HOT_PLUGGABLE
+  If this flag is set, the memory region is present and capable of having memory dynamically removed from the platform. This attribute serves as a hint to the OS prior to its ACPI subsystem initialization to avoid allocating this memory for core OS data or code that cannot be dynamically relocated at runtime. If this flag is clear, the memory region is not capable of being dynamically removed from the platform at runtime.
 
 EFI_MEMORY_RUNTIME 
   Runtime memory attribute: The memory region needs to be given a virtual mapping by the operating system when :ref:`setvirtualaddressmap` is called (described in :ref:`Virtual-Memory-Services`.
@@ -3084,7 +3088,7 @@ ChildHandle
 
 **Description**
 
-This function disconnects one or more drivers from the controller specified by *ControllerHandle*. If *DriverImageHandle* is NULL, then all of the drivers currently managing *ontrollerHandle* are disconnected from *ControllerHandle*. If *DriverImageHandle* is not NULL, then only the driver specified by *DriverImageHandle* is disconnected from *ControllerHandle*. If *ChildHandle* is NULL, then all of the children of *ControllerHandle* are destroyed before the drivers are disconnected from *ControllerHandle*. If *ChildHandle* is not NULL, then only the child controller specified by *ChildHandle* is destroyed. If *ChildHandle* is the only child of *ControllerHandle*, then the driver specified by *DriverImageHandle* will be disconnected from *ontrollerHandle*. A driver is disconnected from a controller by calling the Stop() service of the EFI_DRIVER_BINDING_PROTOCOL. The EFI_DRIVER_BINDING_PROTOCOL is on the driver image handle, and the handle of the controller is passed into the Stop() service. The list of drivers managing a controller, and the list of children for a specific controller can be retrieved from the handle database with the boot service  `EFI_BOOT_SERVICES.OpenProtocolInformation()`_. If all the required drivers are disconnected from *ControllerHandle*, then EFI_SUCCESS is returned.
+This function disconnects one or more drivers from the controller specified by *ControllerHandle*. If *DriverImageHandle* is NULL, then all of the drivers currently managing *ControllerHandle* are disconnected from *ControllerHandle*. If *DriverImageHandle* is not NULL, then only the driver specified by *DriverImageHandle* is disconnected from *ControllerHandle*. If *ChildHandle* is NULL, then all of the children of *ControllerHandle* are destroyed before the drivers are disconnected from *ControllerHandle*. If *ChildHandle* is not NULL, then only the child controller specified by *ChildHandle* is destroyed. If *ChildHandle* is the only child of *ControllerHandle*, then the driver specified by *DriverImageHandle* will be disconnected from *ControllerHandle*. A driver is disconnected from a controller by calling the Stop() service of the EFI_DRIVER_BINDING_PROTOCOL. The EFI_DRIVER_BINDING_PROTOCOL is on the driver image handle, and the handle of the controller is passed into the Stop() service. The list of drivers managing a controller, and the list of children for a specific controller can be retrieved from the handle database with the boot service  `EFI_BOOT_SERVICES.OpenProtocolInformation()`_. If all the required drivers are disconnected from *ControllerHandle*, then EFI_SUCCESS is returned.
 
 If *ControllerHandle* is NULL, then EFI_INVALID_PARAMETER is returned. If no drivers are managing *ControllerHandle*, then EFI_SUCCESS is returned. If *DriverImageHandle* is not NULL, and *DriverImageHandle* is *not a valid EFI_HANDLE*, then EFI_INVALID_PARAMETER is returned. If *DriverImageHandle* is not NULL, and *DriverImageHandle* is not currently managing *ControllerHandle*, then EFI_SUCCESS is returned. If *ChildHandle* is not NULL, and *ChildHandle* is *not a valid EFI_HANDLE*, then EFI_INVALID_PARAMETER is returned. If there are not enough resources available to disconnect drivers from *ControllerHandle*, then EFI_OUT_OF_RESOURCES is returned.
 
@@ -4334,7 +4338,7 @@ Count
 
 **Description**
 
-The GetNextMonotonicCount() function returns a 64-bit value that is numerically larger then the last time the function was called.
+The GetNextMonotonicCount() function returns a 64-bit value that is numerically larger than the last time the function was called.
 
 The platform’s monotonic counter is comprised of two parts: the high 32 bits and the low 32 bits. The low 32-bit value is volatile and is reset to zero on every system reset. It is increased by 1 on every call to GetNextMonotonicCount(). The high 32-bit value is nonvolatile and is increased by one on whenever the system resets or the low 32-bit counter overflows.
 

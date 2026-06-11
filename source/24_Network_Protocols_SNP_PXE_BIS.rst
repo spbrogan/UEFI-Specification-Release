@@ -205,13 +205,13 @@ MacAddressChangeable
   **TRUE** if the HW MAC address can be changed.
 
 MultipleTxSupported
-  **TRUE** if the network interface can transmit more than one  packet at a time.
+  **TRUE** if the network interface can transmit more than one packet at a time.
 
 MediaPresentSupported
   **TRUE** if the presence of media can be determined; otherwise **FALSE**. If **FALSE**, *MediaPresent* cannot be used.
 
 MediaPresent
-  **TRUE** if media are connected to the network interface; othrwise **FALSE**. This field shows the media present status as of the most recent *GetStatus()* call.
+  **TRUE** if media are connected to the network interface; otherwise **FALSE**. This field shows the media present status as of the most recent *GetStatus()* call.
 
 .. code-block::
 
@@ -1867,7 +1867,7 @@ This section defines the types of filter operations that can be used with the  `
    #define EFI_PXE_BASE_CODE_UDP_OPFLAGS_ANY_DEST_PORT      0x0008
    #define EFI_PXE_BASE_CODE_UDP_OPFLAGS_USE_FILTER         0x0010
    #define EFI_PXE_BASE_CODE_UDP_OPFLAGS_MAY_FRAGMENT       0x0020
-   #define DEFAULT_TTL                                      16
+   #define DEFAULT_TTL                                      64
    #define DEFAULT_ToS                                      0
 
 
@@ -3136,11 +3136,9 @@ Netboot6
 
 For IPv4, PXE drivers typically install a LoadFile protocol on the NIC handle. In the case of supporting both IPv4 and IPv6 where two PXE Base Code and LoadFile protocol instances need be produced, the PXE driver will have to create two child handles and install *EFI_LOAD_FILE_PROTOCOL,* *EFI_SIMPLE_NETWORK_PROTOCOL* and *PXE_BASE_CODE_PROTOCOL* on each child handle. To distinguish these two child handles, an IP device path node can be appended to the parent device path, for example:
 
-.. code-block::
-
    PciRoot(0x0)/Pci(0x19,0x0)/MAC(001320F4B4FF,0x0)/IPv4(...)
+   
    PciRoot(0x0)/Pci(0x19,0x0)/MAC(001320F4B4FF,0x0)/IPv6(...)
-
 
 These two instances allow for the boot manager to decide a preference of IPv6 versus IPv4 since the IETF and other bodies do not speak to this policy choice.
 
@@ -3219,7 +3217,7 @@ As PXE 2.1 specification describes step-by-step synopsis of the IPv4-based PXE p
 
 
 .. figure:: Images/Network_Protocols_SNP_PXE_BIS-2.png
-   :width: 60%
+   :width: 90%
    :name: IPv6-based-PXE-Boot-diagram
 
    IPv6-based PXE Boot
@@ -3283,7 +3281,7 @@ The netboot6 DHCP6 options may be supplied by the DHCP6 service or a Proxy DHCP6
 
 
 .. figure:: Images/Network_Protocols_SNP_PXE_BIS-3.png
-   :width: 60%
+   :width: 90%
    :name: netboot6-DHCP6-and-ProxyDHCP6-reside-on-the-same-server
 
    Netboot6 (DHCP6 and ProxyDHCP6 reside on the same server)
@@ -3292,7 +3290,7 @@ The Figure below, :ref:`IPv6-based-PXE-boot-DHCP6-and-ProxyDHCP6reside-on-the-di
 
 
 .. figure:: Images/Network_Protocols_SNP_PXE_BIS-4.png
-   :width: 60%
+   :width: 90%
    :name: IPv6-based-PXE-boot-DHCP6-and-ProxyDHCP6reside-on-the-different-server
 
    IPv6-based PXE boot (DHCP6 and ProxyDHCP6reside on the different server)
@@ -3382,7 +3380,7 @@ Callback function that is invoked when the PXE Base Code Protocol is about to tr
 **Parameters**
 
 This
-  Pointer to the  See :ref:`efi-pxe-base-code-protocol`  instance.
+  Pointer to the See :ref:`efi-pxe-base-code-protocol` instance.
 
 Function
   The PXE Base Code Protocol function that is waiting for an event.
@@ -3394,7 +3392,7 @@ PacketLen
   The length, in bytes, of *Packet*. This field will have a value of zero if this is a wait for receive event.
 
 Packet
-  If *Received* is **TRUE**, a pointer to the packet that was just received; otherwise a pointer to the packet that is about to be transmitted. This field will be NULL if this is not a packet event.
+  If *Received* is **TRUE**, a pointer to the packet that was just received; otherwise, a pointer to the packet that is about to be transmitted. This field will be NULL if this is not a packet event.
 
 
 **Related Definitions**
@@ -4106,7 +4104,7 @@ interoperable values to use.
 
 This function retrieves a list of digital certificate identifier, digital signature algorithm, hash algorithm, and key-length combinations that the platform supports. The list is an array of (certificate id, algorithm id, key length) triples, where the certificate id is derived from the platform’s Boot Object Authorization Certificate as described in the Related Definition for *BIS_CERT_ID* above, the algorithm id represents the combination of signature algorithm and hash algorithm, and the key length is expressed in bits. The number of array elements can be computed using the *Length* field of the retrieved *EFI_BIS_DATA**. 
 
-The retrieved list is in order of preference. A digital signature algorithm for which the platform has a currently configured Boot Object Authorization Certificate is preferred over any digital signature algorithm for which there is not a currently configured Boot Object Authorization Certificate. Thus the first element in the list has a *CertificateID* representing a Boot Object Authorization Certificate if the platform has one configured. Otherwise the *CertificateID* of the first element in the list is one of the reserved values representing a digital signature algorithm.
+The retrieved list is in order of preference. A digital signature algorithm for which the platform has a currently configured Boot Object Authorization Certificate is preferred over any digital signature algorithm for which there is not a currently configured Boot Object Authorization Certificate. Thus the first element in the list has a *CertificateID* representing a Boot Object Authorization Certificate if the platform has one configured. Otherwise, the *CertificateID* of the first element in the list is one of the reserved values representing a digital signature algorithm.
 
 
 **Status Codes Returned**
@@ -5045,7 +5043,7 @@ The following RFC documents documents should be consulted for network message de
 Concept configuration for a typical HTTP Bootscenario
 #####################################################
 
-HTTP Boot is client-server communication based application. It combines the DHCP, DNS, and HTTP protocols to provide the capability for system deployment and configuration over the network. This new capability can be utilized as a higher-performance replacement for tftp-based PXE boot
+HTTP Boot is client-server communication-based application. It combines the DHCP, DNS, and HTTP protocols to provide the capability for system deployment and configuration over the network. This new capability can be utilized as a higher-performance replacement for tftp-based PXE boot
 methods of network deployment.
 
 
@@ -5056,10 +5054,10 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 .. figure:: Images/Network_Protocols_SNP_PXE_BIS-5.png
-   :width: 60%
+   :width: 90%
    :name: http-boot-network-topology-concept-corporate-environment
 
-   HTTP Boot Network Topology Concept -Corporate Environment
+   HTTP Boot Network Topology Concept - Corporate Environment
 
 
 A typical network configuration which supports UEFI HTTP Boot may involve one or more UEFI client systems, and several server systems. The Figure above show a typical HTTP Boot network topology for a corporate environment. 
@@ -5072,6 +5070,15 @@ A typical network configuration which supports UEFI HTTP Boot may involve one or
 
 -   **DNS server** is optional; and provides standard domain name resolution service.
 
+-   **Proxy Host** is optional. It is located within the corporate environment and acts as an intermediary between the Client and Endpoint Server.
+
+
+.. figure:: Images/Network_Protocols_SNP_PXE_BIS-5a.png
+   :width: 90%
+   :name: http-boot-network-topology-proxy-concept-corporate-environment
+
+   HTTP Boot Network Topology with Proxy Concept - Corporate Environment
+
 
 .. _use-case-in-home-environment:
 
@@ -5082,7 +5089,7 @@ In a corporate environment, a standard DHCP server can be enhanced to support th
 
 
 .. figure:: Images/Network_Protocols_SNP_PXE_BIS-6.png
-   :width: 85%
+   :width: 90%
    :name: HTTP-Boot-Network-Topology-Concept2-Homeenvironments
 
    HTTP Boot Network Topology Concept2 — Homeenvironments
@@ -5102,7 +5109,7 @@ Protocol Layout for UEFI HTTP Boot Clientconcept configuration for a typical HTT
 
 
 .. figure:: Images/Network_Protocols_SNP_PXE_BIS-7.png
-   :width: 80%
+   :width: 60%
    :name: uefi-http-boot-protocol-layout
 
    UEFI HTTP Boot Protocol Layout
@@ -5110,7 +5117,7 @@ Protocol Layout for UEFI HTTP Boot Clientconcept configuration for a typical HTT
 
 This figure illustrates the UEFI network layers related to how the HTTP Boot works. 
 
-The HTTP Boot driver is layered on top of a UEFI Network stack implementation. It consumes DHCP service to do the Boot service discovery, and DNS service to do domain name resolution if needed. It also consumes HTTP serviced to retrieve images from the HTTP server. The functionality needed in the HTTP Boot scenario is limited to client initiated requests to download the boot image. 
+The HTTP Boot driver is layered on top of a UEFI Network stack implementation. It consumes DHCP service to do the Boot service discovery, and DNS service to do domain name resolution if needed. It also consumes HTTP serviced to retrieve images from the HTTP server. The functionality needed in the HTTP Boot scenario is limited to client-initiated requests to download the boot image. 
 
 TLS is consumed if HTTPS functionality is needed. The TLS design is covered in :ref:`efi-tls-protocol`. 
 
@@ -5124,37 +5131,44 @@ $$$$$$$$$$$
 
 If both IPv4 and IPv6 are supported, the HTTP Boot driver should create two child handles, with LoadFile and DevicePath installed on each child handle. For the device path, an IP device path node and a BootURI device path are appended to the parent device path, for example: 
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(0.0.0.0, 0, DHCP, 0.0.0.0, 0.0.0.0, 0.0.0.0)/Uri() 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(0.0.0.0, 0, DHCP, 0.0.0.0, 0.0.0.0, 0.0.0.0)/Uri() 
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(::/128, 0, Static, ::/128, ::/128, 0)/Uri() 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(::/128, 0, Static, ::/128, ::/128, 0)/Uri() 
+
 
 Also, after retrieving the boot resource information and IP address, the BootURI device path node will be updated to include the BootURI information. For example, if the NBP is a UEFI-formatted executable, the device patch will be updated to 
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(192.168.1.100, TCP, DHCP, 192.168.1.5, 192.168.1.1, 255.255.255.0)/Uri(http://192.168.1.100/shell.efi) 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(192.168.1.100, TCP, DHCP, 192.168.1.5, 192.168.1.1, 255.255.255.0)/Uri(http://192.168.1.100/shell.efi) 
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(2015::100, TCP, StatefulAutoConfigure, 2015::5, 2015::10, 64)/UriI(http://2015::100/shell.efi) 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(2015::100, TCP, StatefulAutoConfigure, 2015::5, 2015::10, 64)/Uri(http://2015::100/shell.efi) 
 
 These two instances allow for the boot manager to decide a preference of IPv6 versus IPv4. 
 
-If the NBP is a binary image which could be mounted as a RAM disk, the device path will be updated to 
+In cases where a Proxy Host is used to connect to the Endpoint Server, the ProxyURI device path and BootURI device path are appended to the parent device path, for example: 
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(192.168.1.100, TCP, DHCP, 192.168.1.5, 192.168.1.1, 255.255.255.0)/Uri(http://192.168.1.100/boot.iso [^]) 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(0.0.0.0, 0, DHCP, 0.0.0.0, 0.0.0.0, 0.0.0.0)/Uri(ProxyURI)/Uri(EndpointServerURI) 
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(2015::100, TCP, StatefulAutoConfigure, 2015::5, 2015::10, 64)/Uri (http://2015::100/boot.iso) 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(::/128, 0, Static, ::/128, ::/128, 0)/Uri(ProxyURI)/Uri(EndpointServerURI) 
 
-In this case, the HTTP Boot driver will register RAM disk with the downloaded NBP, by appending a RamDisk device node to the device path above, like 
+If the NBP is a binary image that could be mounted as a RAM disk, the device path will be updated to: 
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(192.168.1.100, TCP, DHCP, 192.168.1.5, 192.168.1.1, 255.255.255.0)/Uri(http://192.168.1.100/boot.iso )/RamDisk(0x049EA000, 0x5DEA000, 0, 3D5ABD30-4175-87CE-6D64-D2ADE523C4BB) 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(192.168.1.100, TCP, DHCP, 192.168.1.5, 192.168.1.1, 255.255.255.0)/Uri(http://192.168.1.100/boot.iso [^]) 
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(2015::100, TCP, StatefulAutoConfigure, 2015::5, 2015::10, 64)/Uri (http://2015::100/boot.iso)/ RamDisk(0x049EA000, 0x5DEA000, 0, 3D5ABD30-4175-87CE-6D64-D2ADE523C4BB) 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(2015::100, TCP, StatefulAutoConfigure, 2015::5, 2015::10, 64)/Uri (http://2015::100/boot.iso) 
 
-In some cases, Uri includes a host name and DNS become mandatory for translating the name to the IP address of the host. The HTTP Boot driver may append DNS device path node immediately before Uri device path node, for example: 
+In this case, the HTTP Boot driver will register RAM disk with the downloaded NBP, by appending a RamDisk device node to the device path above, like:
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(192.168.1.100, TCP, DHCP, 192.168.1.5, 192.168.1.1, 255.255.255.0)/Dns(192.168.22.100, 192.168.22.101)/Uri(http://www.bootserver.com/boot.iso )/ RamDisk(0x049EA000, 0x5DEA000, 0, 3D5ABD30-4175-87CE-6D64-D2ADE523C4BB) 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(192.168.1.100, TCP, DHCP, 192.168.1.5, 192.168.1.1, 255.255.255.0)/Uri(http://192.168.1.100/boot.iso )/RamDisk(0x049EA000, 0x5DEA000, 0, 3D5ABD30-4175-87CE-6D64-D2ADE523C4BB) 
 
-PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(2015::100, TCP, StatefulAutoConfigure, 2015::5, 2015::10, 64)/Dns(2016::100, 2016::101)/Uri (http:// www.bootserver.com/ boot.iso)/ RamDisk(0x049EA000, 0x5DEA000, 0, 3D5ABD30-4175-87CE-6D64-D2ADE523C4BB) 
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(2015::100, TCP, StatefulAutoConfigure, 2015::5, 2015::10, 64)/Uri (http://2015::100/boot.iso)/ RamDisk(0x049EA000, 0x5DEA000, 0, 3D5ABD30-4175-87CE-6D64-D2ADE523C4BB) 
 
-If HTTP Boot driver cannot obtain the DNS server addresses, it should not append an empty DNS device path node. 
+In some cases, URI includes a host name and DNS become mandatory for translating the name to the IP address of the host. The HTTP Boot driver may append DNS device path node immediately before Uri device path node, for example: 
+
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv4(192.168.1.100, TCP, DHCP, 192.168.1.5, 192.168.1.1, 255.255.255.0)/Dns(192.168.22.100, 192.168.22.101)/Uri(http://www.bootserver.com/boot.iso )/ RamDisk(0x049EA000, 0x5DEA000, 0, 3D5ABD30-4175-87CE-6D64-D2ADE523C4BB) 
+
+  PciRoot(0x0)/Pci(0x19, 0x0)/MAC(001230F4B4FF, 0x0)/IPv6(2015::100, TCP, StatefulAutoConfigure, 2015::5, 2015::10, 64)/Dns(2016::100, 2016::101)/Uri (http:// www.bootserver.com/ boot.iso)/ RamDisk(0x049EA000, 0x5DEA000, 0, 3D5ABD30-4175-87CE-6D64-D2ADE523C4BB) 
+
+If the HTTP Boot driver cannot obtain the DNS server addresses, it should not append an empty DNS device path node. 
 
 The boot manager could use the example device paths to match the device which produces a device path protocol including a URI device path node in the system, without matching the Specific Device Path data in IP device path node and URI device path node, because the IP device path node and URI device path node might be updated by HTTP Boot driver in different scenarios. 
 
@@ -5178,7 +5192,7 @@ The concept of HTTP Boot message exchange sequence is as follows. The client ini
 
 
 .. figure:: Images/Network_Protocols_SNP_PXE_BIS-8.png
-   :width: 75% 
+   :width: 90% 
    :name: http-boot-overall-flow
 
    HTTP Boot Overall Flow 
@@ -5326,8 +5340,8 @@ The server acknowledges the IP address by sending DHCP ACK packet to the client.
 
 .. _message-exchange-between-uefi-client-and-dhcp-server-not-using-dhcp-client-extensions:
 
-Message exchange between UEFI Client and DHCPserver not using DHCP Client Extensions
-$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Message exchange between UEFI Client and DHCP server not using DHCP Client Extensions
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 In a home environment, because the Boot URI Information will not be provided by the DHCP Offers, we need other channels to provide this information. The implementation suggestion is provisioning this information by OEM or input by end user through Setup Options, henceforth, the UEFI Boot Client already know the Boot URI before contacting the DHCP server. 
 
@@ -5354,20 +5368,20 @@ In the HTTP Boot scenario, HTTP GET message is used to get image from the Web se
 
 .. _concept-of-message-exchange-in-http-boot-scenario-ipv6:
 
-Concept of Message Exchange in HTTP Bootscenario (IPv6)
-#######################################################
+Concept of Message Exchange in HTTP Boot scenario (IPv6)
+########################################################
 
 
 .. _message-exchange-between-efi-client-and-dhcpv6-server-with-dhcp-client-extensions:
 
-Message exchange between EFI Client andDHCPv6 server with DHCP Client extensions
-$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Message exchange between EFI Client and DHCPv6 server with DHCP Client extensions
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 .. _client-multicast-a-dhcpv6-solicit-message-to-the-standard-dhcpv6-port-547:
 
-Client multicast a DHCPv6 Solicit messageto the standard DHCPv6 port (547)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Client multicast a DHCPv6 Solicit message to the standard DHCPv6 port (547)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Besides the options required for address auto-configuration, option field in this packet also contains the following:
 
@@ -5393,7 +5407,7 @@ Besides the options required for address auto-configuration, option field in thi
 
 .. _server-unicast-dhcpv6-advertisement-to-the-client-to-the-dhcpv6-port-546:
 
-Server unicast DHCPv6 Advertisement to theClient to the DHCPv6 port (546)
+Server unicast DHCPv6 Advertisement to the Client to the DHCPv6 port (546)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -5421,14 +5435,14 @@ This packet is the same with the DHCPv6 Solicit packet except for the message ty
 
 .. _server-unicast-the-dhcpv6-reply-to-acknowledge-the-client-ip-address-for-the-uefi-http-client:
 
-Server unicast the DHCPv6 Reply toacknowledge the Client IP address for the UEFI HTTPClient
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Server unicast the DHCPv6 Reply to acknowledge the Client IP address for the UEFI HTTP Client
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 .. _message-exchange-between-uefi-client-and-dhcpv6-server-not-using-dhcp-client-extensions:
 
-Message exchange between UEFI Client andDHCPv6 server not using DHCP Client Extensions
-$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Message exchange between UEFI Client and DHCPv6 server not using DHCP Client Extensions
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 In a home environment, the Boot URI Information will not be provided by the DHCPv6 Offers, we need other channels to provide this information. Like what is described in :ref:`Message-exchange-between-UEFI-Client-and-DHCP-server-not-using-DHCP-Client-Extensions` , the implementation suggestion is provisioning this information by OEM or input by end user through Setup Options, henceforth, the UEFI Boot Client already know the Boot URI before contacting the DHCP server. 
 
@@ -5439,8 +5453,8 @@ In the case of a home environment without a DHCPv6 server, the above message exc
 
 .. _message-exchange-between-uefi-client-and-dns6-server:
 
-Message exchange between UEFI Client and DNS6server
-$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Message exchange between UEFI Client and DNS6 server
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 The DNS Query/Reply for domain name resolution is the same process as described in  See `Message in DNS Query/Reply`_.
 
@@ -5450,7 +5464,28 @@ The DNS Query/Reply for domain name resolution is the same process as described 
 Message in HTTP Download
 $$$$$$$$$$$$$$$$$$$$$$$$
 
-HTTP Download process is the same process as described in :ref:`message-in-http-download-1` .
+HTTP Download process is the same process as described in :ref:`message-in-http-download-1`.
+
+
+.. _concept-of-message-exchange-in-http-boot-scenario-with-proxy-host:
+
+Concept of Message Exchange in HTTP Boot scenario (with Proxy Host)
+###################################################################
+
+The concept of HTTP Boot message exchange sequence with Proxy Host is as follows:
+
+  -  The client establishes connection with the DHCPv4/v6 server as described in :ref:`message-exchange-between-efi-client-and-dhcp-server-using-dhcp-client-extensions`, :ref:`message-exchange-between-uefi-client-and-dhcp-server-not-using-dhcp-client-extensions`, :ref:`message-exchange-between-efi-client-and-dhcpv6-server-with-dhcp-client-extensions` and :ref:`message-exchange-between-uefi-client-and-dhcpv6-server-not-using-dhcp-client-extensions`.
+  -  After several intermediate steps, besides the standard configuration such as address/subnet/router/dns-server, the client will initiate a HTTP CONNECT request to the Proxy Host to establish a TCP/IP tunnel. This allows the Proxy Host to forward the TCP connection from the client to the desired destination.
+  -  The client sends a HTTP GET/HEAD request with the Endpoint Server's boot resource location in the format of a URI to the Proxy Host. The URI points to the NBP which is appropriate for this client hardware configuration.
+  -  A boot option is created, and if selected by the system logic the client then uses HTTP to download the NBP from the HTTP server into memory.
+  -  The client executes the downloaded NBP image from memory. This image can then consume other UEFI interfaces for further system setup.
+
+.. figure:: Images/Network_Protocols_SNP_PXE_BIS-10.png
+   :width: 90% 
+   :name: http-boot-overall-flow-with-proxy-host
+
+   HTTP Boot Overall Flow with Proxy Host 
+
 
 .. _efi-http-boot-callback-protocol:
 
@@ -5543,16 +5578,17 @@ Data
 
 .. code-block:: 
   
-   //**********************************************  
-   // EFI_HTTP_BOOT_CALLBACK_DATA_TYPE  
-   //**********************************************  
-   typedef enum {  
-     HttpBootDhcp4,  
-     HttpBootDhcp6,  
-     HttpBootHttpRequest,  
-     HttpBootHttpResponse,  
-     HttpBootHttpEntityBody,  
-     HttpBootTypeMax  
+   //**********************************
+   // EFI_HTTP_BOOT_CALLBACK_DATA_TYPE
+   //**********************************
+   typedef enum {
+     HttpBootDhcp4,
+     HttpBootDhcp6,
+     HttpBootHttpRequest,
+     HttpBootHttpResponse,
+     HttpBootHttpEntityBody,
+     HttpBootHttpAuthInfo,
+     HttpBootTypeMax
    }   EFI_HTTP_BOOT_CALLBACK_DATA_TYPE;
   
 
@@ -5563,14 +5599,19 @@ HttpBootDhcp6
   *Data* points to a DHCP6 packet which is about to be transmit or has received.
 
 HttpBootHttpRequest 
-  *Data* points to an EFI_HTTP_MESSAGE structure, which contians a HTTP request message to be transmitted.
+  *Data* points to an EFI_HTTP_MESSAGE structure, which contains a HTTP request message to be transmitted.
 
 HttpBootHttpResponse
-  *Data* points to an EFI_HTTP_MESSAGE structure, which contians a received HTTP response message.
+  *Data* points to an EFI_HTTP_MESSAGE structure, which contains a received HTTP response message.
 
 HttpBootHttpEntityBody
   Part of the entity body has been received from the HTTP server. *Data* points to the buffer of the entity body data.
 
+HttpBootHttpAuthInfo
+  *Data* points to the authentication information to provide to the HTTP server.
+
+HttpBootTypeMax
+  This value is determined by the number of structure elements above. Currently has a value of 6. 
 
 **Description**
 

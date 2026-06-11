@@ -1,8 +1,8 @@
 .. Index file used by the Sphinx documentation generator
 
-========================
-UEFI Specification 2.10
-========================
+=======================
+UEFI Specification 2.11
+=======================
 
 .. include:: Frontmatter/Acknowledgments.rst
 

@@ -90,7 +90,7 @@ EFI_TIMESTAMP_PROTOCOL.GetProperties()
 
 **Summary**
 
-Obtains timestamp counter properties including frequency and value limits.   
+Obtains timestamp counter properties including frequency and value limits.
 
 
 **Prototype**
@@ -107,7 +107,7 @@ Obtains timestamp counter properties including frequency and value limits.
 **Parameters**
 
 Properties
-  The properties of the timestamp counter. See"Related Definitions" below.
+  The properties of the timestamp counter. See "Related Definitions" below.
 
 
 **Description**

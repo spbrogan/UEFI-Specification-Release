@@ -123,7 +123,7 @@ InfoSize
   The size of this info block in bytes. This value shall be identical across all BTT Info Blocks within all arenas within a namespace.
 
 NextOff
-  Offset of next arena, relative to the beginning of this arena. An offset of 0 indicates that no arenas follow the current arena. This field is provided for convience as the start of each arena can be calculated from the size of the namespace as described in the **Theory of Operation – Validating BTT Arenas** at start-up description. This value shall be identical in the primary and backup BTT Info Blocks within an arena.
+  Offset of next arena, relative to the beginning of this arena. An offset of 0 indicates that no arenas follow the current arena. This field is provided for convenience as the start of each arena can be calculated from the size of the namespace as described in the **Theory of Operation – Validating BTT Arenas** at start-up description. This value shall be identical in the primary and backup BTT Info Blocks within an arena.
 
 DataOff
   Offset of the data area for this arena, relative to the beginning of this arena. The internal-LBA number zero lives at this offset. This value shall be identical in the primary and backup BTT Info Blocks within an arena.
@@ -434,15 +434,15 @@ Note that the Flog entry recovery outlined here is intended to happen single-thr
 
 The following steps are executed for each flog entry in each arena, to recover any interrupted writes and to verify the flog entries are consistent at start up. Any consistency issues found during these steps results in setting the error state (EFI_BTT_INFO_BLOCK_FLAGS_ERROR) for the arena and terminates the flog validation process for this arena. 
 
-1.  The **Seq0** and **Seq1** fields are examined for the flog entry. If  both fields are zero, or both fields are equal to each  other, the flog entry is inconsistent. Otherwise, the higher  Seq field indicates which set of flog fields to use for the   next steps (**Lba0**, **OldMap0**, **NewMap0**, versus **Lba1**, **OldMap1**,   **NewMap1**). From this point on in this section, the chosen  fields are referenced as Lba, OldMap, and NewMap. 
+1.  The **Seq0** and **Seq1** fields are examined for the flog entry. If both fields are zero, or both fields are equal to each  other, the flog entry is inconsistent. Otherwise, the higher  Seq field indicates which set of flog fields to use for the next steps (**Lba0**, **OldMap0**, **NewMap0**, versus **Lba1**, **OldMap1**, **NewMap1**). From this point on in this section, the chosen fields are referenced as Lba, OldMap, and NewMap. 
 
-#.  If OldMap and NewMap are equal, this is a flog entry that   was never used since the initial layout of the BTT was created.
+#.  If OldMap and NewMap are equal, this is a flog entry that was never used since the initial layout of the BTT was created.
 
-#.  The Lba field is checked to ensure it is a valid pre-map LBA  (in the range zero to **ExternalNLba** – 1). If the check fails,  the flog entry is inconsistent.
+#.  The Lba field is checked to ensure it is a valid pre-map LBA (in the range zero to **ExternalNLba** – 1). If the check fails, the flog entry is inconsistent.
 
-#.  The BTT Map entry corresponding to the Flog entry Lba field   is fetched. Since the Map can contain special zero entries to indicate identity mappings, the fetched entry is adjusted to the corresponding internal LBA when a zero is encountered (by interpreting the entry as the same LBA as the Flog entry Lba field).
+#.  The BTT Map entry corresponding to the Flog entry Lba field is fetched. Since the Map can contain special zero entries to indicate identity mappings, the fetched entry is adjusted to the corresponding internal LBA when a zero is encountered (by interpreting the entry as the same LBA as the Flog entry Lba field).
 
-#.  If the adjusted map entry from the previous step does not   match the NewMap field in the Flog entry, and it matches the  OldMap field, then an interrupted BTT Map update has been detected. The recovery step is to write the NewMap field to   the BTT Map entry indexed by the Flog entry Lba field.
+#.  If the adjusted map entry from the previous step does not match the NewMap field in the Flog entry, and it matches the  OldMap field, then an interrupted BTT Map update has been detected. The recovery step is to write the NewMap field to the BTT Map entry indexed by the Flog entry Lba field.
 
 
 .. _read-path:
@@ -456,11 +456,11 @@ in the **Figure: BTT Read Path Overview** below:
 
 #.   If EFI_BTT_INFO_BLOCK_FLAGS_ERROR is set in the arena’s BTT Info Block, the BTT software may return an error for the read, or an implementation may choose to continue to provide read-only access and continue these steps.
 
-#. Use the external LBA provided with the read operation to determine which BTT Arena to access. Starting from the first arena (lowest offset in the namespace), and looping through the arena in order, the **ExternalNLba** field in the BTT Info Block describes how many exernal LBAs are in that area. Once the correct arena is identified, the external LBAs contained in the lower, skipped, arenas are subtracted from the provided LBA to obtain the pre-map LBA for the selected arena.
+#. Use the external LBA provided with the read operation to determine which BTT Arena to access. Starting from the first arena (lowest offset in the namespace), and looping through the arena in order, the **ExternalNLba** field in the BTT Info Block describes how many external LBAs are in that area. Once the correct arena is identified, the external LBAs contained in the lower, skipped, arenas are subtracted from the provided LBA to obtain the pre-map LBA for the selected arena.
 
-#.  Use the pre-map LBA to index into the arena’s BTT Map and   the map entry.
+#.  Use the pre-map LBA to index into the arena’s BTT Map and the map entry.
 
-#. If both the **Zero** and **Error** bits are set in the map entry,  this indicates a normal entry. The PostMapLba field in the  Map entry is used to index into the arena Data Area by  multiplying it by the **InternalLbaSize** and adding the result   to the **DataOff** field from the arena’s BTT Info Block. This  provides the location of the data in the arena and software   then copies **ExternalLbaSize** bytes into the provided buffer  to satisfy the read request.
+#. If both the **Zero** and **Error** bits are set in the map entry, this indicates a normal entry. The PostMapLba field in the  Map entry is used to index into the arena Data Area by  multiplying it by the **InternalLbaSize** and adding the result to the **DataOff** field from the arena’s BTT Info Block. This  provides the location of the data in the arena and software then copies **ExternalLbaSize** bytes into the provided buffer to satisfy the read request.
 
 #.  Otherwise, if only the **Error** bit is set in the map entry, a read error is returned. 
 
@@ -486,11 +486,11 @@ a single block of data while utilizing the BTT as is illustrated in the **Figure
 
 #. If EFI_BTT_INFO_BLOCK_FLAGS_ERROR is set in the arena’s BTT Info Block, the BTT software shall return an error for the write.
 
-#. Use the external LBA provided with the write operation to determine which BTT Arena to access. Starting from the first arena (lowest offset in the namespace), and looping through the arena in order, the **ExternalNLba** field in the BTT Info Block describes how many exernal LBAs are in that area. Once the correct arena is identified, the external LBAs contained in the lower, skipped, arenas are subtracted from the provided LBA to obtain the pre-map LBA for the selected arena.
+#. Use the external LBA provided with the write operation to determine which BTT Arena to access. Starting from the first arena (lowest offset in the namespace), and looping through the arena in order, the **ExternalNLba** field in the BTT Info Block describes how many external LBAs are in that area. Once the correct arena is identified, the external LBAs contained in the lower, skipped, arenas are subtracted from the provided LBA to obtain the pre-map LBA for the selected arena.
 
 #. The BTT software allocates one of the Flog entries in the arena to be used for this write. The Flog entry shall not be shared by multiple concurrent writes. The exact method for managing the exclusive use of the Flog entries is BTT software implementation-dependent. There’s no on-media indication of whether a Flog entry is currently allocated to a write request or not. Note that the free block tracked by  the Flog entry in the OldMap field, may still have reads from relatively slow threads operating on it. The BTT software implementation shall ensure any such reads have completed before moving to the next step.
 
-#. Lock out access to the BTT Map area associated with the pre-map LBA for the next three steps. The granularity of the locking is implementation-dependent; an implementation may choose to lock individual Map entries, lock the entire BTT   Map, or something in-between.
+#. Lock out access to the BTT Map area associated with the pre-map LBA for the next three steps. The granularity of the locking is implementation-dependent; an implementation may choose to lock individual Map entries, lock the entire BTT Map, or something in-between.
 
 #. Use the pre-map LBA to index into the arena’s BTT Map and fetch the old map entry.
 

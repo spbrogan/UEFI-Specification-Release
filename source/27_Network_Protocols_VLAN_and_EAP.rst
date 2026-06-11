@@ -990,7 +990,7 @@ Read the statistical information regarding the operation of the Supplicant assoc
 **Parameters**
 
 This
- A pointer to the *EFI_EAP_MANAGEMENT_PROTOCOL* instance that indicates the calling context. Type *EFI_EAP_MANAGEMENT_PROTOCOL* is defined in  `EAPManagement Protocol`_ .
+ A pointer to the *EFI_EAP_MANAGEMENT_PROTOCOL* instance that indicates the calling context. Type *EFI_EAP_MANAGEMENT_PROTOCOL* is defined in `EAPManagement Protocol`_ .
 Statistics 
  Returns the statistical information regarding the operation of the Supplicant for the Port. Type *EFI_EAPOL_SUPPLICANT_PAE_STATISTICS* is defined in "Related Definitions".
 
@@ -1018,40 +1018,40 @@ Statistics
    }   EFI_EAPOL_SUPPLICANT_PAE_STATISTICS;
   
 EapolFramesReceived
-  The number of EAPOL frames of any type that have been received by   this Supplicant.
+  The number of EAPOL frames of any type that have been received by this Supplicant.
 
 EapolFramesTransmitted
-  The number of EAPOL frames of any type that have been transmitted   by this Supplicant.
+  The number of EAPOL frames of any type that have been transmitted by this Supplicant.
 
 EapolStartFramesTransmitted
-  The number of EAPOL Start frames that have been transmitted by this   Supplicant.
+  The number of EAPOL Start frames that have been transmitted by this Supplicant.
 
 EapolLogoffFramesTransmitted
-  The number of EAPOL Logoff frames that have been transmitted bythis Supplicant.
+  The number of EAPOL Logoff frames that have been transmitted by this Supplicant.
 
 EapRespIdFramesTransmitted
-  The number of EAP Resp/Id frames that have been transmitted by this   Supplicant.
+  The number of EAP Resp/Id frames that have been transmitted by this Supplicant.
 
 EapResponseFramesTransmitted
-  The number of valid EAP Response frames (other than Resp/Id frames)  that have been transmitted by this Supplicant.
+  The number of valid EAP Response frames (other than Resp/Id frames) that have been transmitted by this Supplicant.
 
 EapReqIdFramesReceived
-  The number of EAP Req/Id frames that have been received by this  Supplicant. 
+  The number of EAP Req/Id frames that have been received by this Supplicant. 
 
 EapRequestFramesReceived
-  The number of EAP Request frames (other than Rq/Id frames)   that have been received by this Supplicant.
+  The number of EAP Request frames (other than Rq/Id frames) that have been received by this Supplicant.
 
 InvalidEapolFramesReceived
-  The number of EAPOL frames that have been received by this   Supplicant in which the frame type is not recognized.
+  The number of EAPOL frames that have been received by this Supplicant in which the frame type is not recognized.
 
 EapLengthErrorFramesReceived
-  The number of EAPOL frames that have been received by this   Supplicant in which the Packet Body Length field (7.5.5) is invalid.
+  The number of EAPOL frames that have been received by this Supplicant in which the Packet Body Length field (7.5.5) is invalid.
 
 LastEapolFrameVersion
-  The protocol version number carried in the most recently received   EAPOL frame.
+  The protocol version number carried in the most recently received EAPOL frame.
 
 LastEapolFrameSource
-  The source MAC address carried in the most recently received EAPOL   frame.
+  The source MAC address carried in the most recently received EAPOL frame.
 
 
 **Description**

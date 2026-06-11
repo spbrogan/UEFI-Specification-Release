@@ -882,7 +882,7 @@ When the form is submitted, the modified values are written to Value Storage. Wh
 
 When a question value is retrieved, the following process is used:
 
-#. Set the this internal constant to have the samevalue as the one read from the question’s storage.**
+#. Set the this internal constant to have the same value as the one read from the question’s storage.**
 
 #. If present, change the current question value to the value returned by a question’s nested *EFI_IFR_READ* operator. 
 
@@ -896,7 +896,7 @@ When a question value is retrieved, the following process is used:
 
 When a question value is changed, the following process is used:
 
-#. Set the this internal constant to have the samevalue as the current question value.
+#. Set the this internal constant to have the same value as the current question value.
 
 #. If present, evaluate the question’s nested *EFI_IFR_WRITE* ( `EFI_IFR_WRITE`_ ) operator.
 
@@ -940,7 +940,7 @@ Action buttons have no additional attributes other than the common question attr
 
 **Storage** —  There is no storage associated with the action button.
 
-**Results** —  There are no results associated with the action button.If used in an expression, the question value will always be *Undefined.*
+**Results** —  There are no results associated with the action button. If used in an expression, the question value will always be *Undefined.*
 
 
 **Syntax**
@@ -1531,9 +1531,9 @@ Users of these ranges are encouraged to use the specification defined ranges for
 
 When retrieving the default values for a question, the Forms Processor uses one of the following (listed from highest priority to lowest priority):
 
-#. The value returned from the *Callback()* memberfunction of the Config Access protocol associated with the question when called with the *Action* set to one of the*EFI_BROWSER_ACTION_DEFAULT_x* values ( :ref:`efi-hii-configuration-access-protocol-hii-configuration-processing-and-browser-protocol`  ) . It is recommended that this form only be used for questionswhere the default value alters dynamically at runtime.**
+#. The value returned from the *Callback()* memberfunction of the Config Access protocol associated with the question when called with the *Action* set to one of the*EFI_BROWSER_ACTION_DEFAULT_x* values ( :ref:`efi-hii-configuration-access-protocol-hii-configuration-processing-and-browser-protocol`  ) . It is recommended that this form only be used for questions where the default value alters dynamically at runtime.**
 
-#. The value returned in the *Response* parameter of the    *ConfigAccess()* member function (using the ALTCFG form).  See :ref:`String-Syntax-hii-configuration-processing-and-browser-protocol` . 
+#. The value returned in the *Response* parameter of the *ConfigAccess()* member function (using the ALTCFG form). See :ref:`String-Syntax-hii-configuration-processing-and-browser-protocol` . 
 
 #. The value specified by an *EFI_IFR_DEFAULT* opcodes appear within the scope of a question. ( `EFI_IFR_DEFAULT`_ ) 
 
@@ -2001,13 +2001,13 @@ Strings in the UEFI environment can be presented in environments with very diffe
 
 Careful user interface design can limit to a manageable number, the quantity of unexpected characters that the system could be called on to display. Knowing what strings the firmware is going to display limits the number of glyphs it is required to carry. 
 
-In addition, carefully designed firmware can support a system where a limited number of strings are displayed before system partition availability. This may be done while enabling the input and display of large numbers of characters/glyphs using a full font file stored on the system partition. In such a situation, the designer must ensure that enough information can be displayed. The designer must also insure that the configuration can be changed using only information from firmware-based non-volatile storage to obtain access to a satisfactory system partition. 
+In addition, carefully designed firmware can support a system where a limited number of strings are displayed before system partition availability. This may be done while enabling the input and display of large numbers of characters/glyphs using a full font file stored on the system partition. In such a situation, the designer must ensure that enough information can be displayed. The designer must also ensure that the configuration can be changed using only information from firmware-based non-volatile storage to obtain access to a satisfactory system partition. 
 
 UEFI requires platform support of a font containing the basic Latin character set. 
 
 While the system firmware will carry this standard font, there might be times when a UEFI application or driver requires the printing of a character not contained within the platform firmware. In this case, a UEFI driver or application can carry this font data and add it to the font already present in the HII Database. New font glyphs are accepted when there is no font glyph definition for the Unicode character already in the specified font. 
 
-In addition the standard system font and fonts extended by UEFI applications or drivers, it is possible for drivers that implement the EFI HII Font Glyph Generator Protocol to render additional font glyphs with specific font name, style, and size information, and add the new font packages to the HII Database. That is when HII Font Ex searches the glyph block in the existing HII font packages, it will try to locate *EFI_HII_FONT_GLYPH_GENERATOR_PROTOCOL* protocol for generating the corresponding glyph block and inserting the new glyph block into HII font package if the glyph block information is not exist in any HII font package. The HII font package which the new glyph block inserted can be an existing HII font package or a new HII font package created by HII Font Ex according to the *EFI_FONT_DISPLAY_INFO* of character. 
+In addition, the standard system font and fonts extended by UEFI applications or drivers, it is possible for drivers that implement the EFI HII Font Glyph Generator Protocol to render additional font glyphs with specific font name, style, and size information, and add the new font packages to the HII Database. That is when HII Font Ex searches the glyph block in the existing HII font packages, it will try to locate *EFI_HII_FONT_GLYPH_GENERATOR_PROTOCOL* protocol for generating the corresponding glyph block and inserting the new glyph block into HII font package if the glyph block information is not exist in any HII font package. The HII font package which the new glyph block inserted can be an existing HII font package or a new HII font package created by HII Font Ex according to the *EFI_FONT_DISPLAY_INFO* of character. 
 
 The figure below shows how fonts interact with the HII database and UEFI drivers, even if the font does not already exist in the database.
 
@@ -2026,7 +2026,7 @@ The figure below shows how fonts interact with the HII database and UEFI drivers
 Fixed Font Description
 $$$$$$$$$$$$$$$$$$$$$$
 
-To allow a UEFI application or driver to extend the existing fonts with additional characters, the UEFI driver must be able to provide characters that fit aesthetically with the system font. For this reason the capability to define attributes of different fonts and to suggest a reasonable default target for these parameters is important. 
+To allow a UEFI application or driver to extend the existing fonts with additional characters, the UEFI driver must be able to provide characters that fit aesthetically with the system font. For this reason, the capability to define attributes of different fonts and to suggest a reasonable default target for these parameters is important. 
 
 Fonts can vary in width, style, baseline, height, size, and so on. The fixed font definition includes white space and the glyph data, as well as the positioning of the glyph data. This prevents characters of different fixed fonts from being adjusted at runtime to fit aesthetically together. To provide UEFI drivers with a basic description of how to design fixed font characters, a subset of industry standard font terms are defined below:
 
@@ -2120,7 +2120,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 Unlike the fixed fonts, proportional fonts do not have a predefined character cell; instead the character cell is created based on the characters that are being displayed in the current line. In a proportional font only the glyph data is defined, no whitespace. Instead, the proportional font defines five parameters (Width, Height, Offset_X, Offset_Y, & Advance), which allow the glyph data to be position in the character cell and calculate the origin of the next character. 
 
-In the figure below, you can see these parameters (in ‘[...]’) for the characters shown, in addition you can see the actual byte storage (the padding to the nearest byte is shown shaded).    
+In the figure below, you can see these parameters (in ‘[...]’) for the characters shown, in addition, you can see the actual byte storage (the padding to the nearest byte is shown shaded).    
 
 
 .. figure:: Images/HII-23.png
@@ -2161,7 +2161,7 @@ As shown in the following figure, once the baseline value is found it is added t
 
 The starting position (upper left hand corner) of the glyph is defined by (Origin_X + Offset_X), (Origin_Y - (Offset_Y + Height)). The Origin of the next glyph is defined by (Origin_X + Advance), (Origin_Y). 
 
-In addition to determining the line height and baseline values; the scan of the characters also calculates the line width by totaling up all of the advance values.
+In addition, to determining the line height and baseline values; the scan of the characters also calculates the line width by totaling up all of the advance values.
 
 
 .. _proportional-font-design-guidelines:
@@ -2180,7 +2180,7 @@ The format of the images to be stored in the Human Interface Infrastructure (HII
 
 Video memory is arranged left-to-right, and then top-to-bottom. In a 1-bit or monochrome display, the most significant bit of the first byte defines the screen’s upper left most pixel. In a 4-bit or 16 color, display the most significant nibble of the first byte defines the screen’s upper left most pixel. In a 8-bit or 256 color display, the first byte defines the screen’s upper left most pixel. 
 
-In both the 24-bit and 32-bit TrueColor displays, the first three bytes defines the screen’s upper left most pixel. The first byte is the pixel’s blue component value, the next byte is the pixel’s green component value, and the third byte is the pixel’s red component value (B,G,R). Each color component value can vary from 0x00 (color off) to 0xFF (color full on), allowing 16.8 millions colors that can be specified. In the 32-bit TrueColor display modes, the fourth byte is a don’t care.
+In both the 24-bit and 32-bit TrueColor displays, the first three bytes defines the screen’s upper left most pixel. The first byte is the pixel’s blue component value, the next byte is the pixel’s green component value, and the third byte is the pixel’s red component value (B,G,R). Each color component value can vary from 0x00 (color off) to 0xFF (color full on), allowing 16.8 million colors that can be specified. In the 32-bit TrueColor display modes, the fourth byte is a don’t care.
 
 
 .. _converting-to-a-32-bit-display:
@@ -2200,9 +2200,9 @@ To display any of the non-TrueColor images (1-bit, 4-bit, and 8-bit), there is a
 Non-TrueColor Displays
 $$$$$$$$$$$$$$$$$$$$$$
 
-It is possible to display the HII database images on non-TrueColor video modes. You cannot however, display images beyond the bit depth of the target screen resolution. For example you would be able to display 1-bit, 4-bit, and 8-bit images in a 256 color video mode. To do this you must create a global palette (256 entries), by merging all images color needs to a best fit palette and then programming the hardware palette with that data. 
+It is possible to display the HII database images on non-TrueColor video modes. You cannot however, display images beyond the bit depth of the target screen resolution. For example, you would be able to display 1-bit, 4-bit, and 8-bit images in a 256 color video mode. To do this you must create a global palette (256 entries), by merging all images color needs to a best fit palette and then programming the hardware palette with that data. 
 
-The hardware palette color definition (R,G,B) is backwards from the screen pixel definition (B,G,R), and will have to be swapped before programming. In addition, the hardware palette may only support 6-bit of magnitude per color component instead of the 8-bit defined in the palette information section; therefore the values will have to be shifted before writing.
+The hardware palette color definition (R,G,B) is backwards from the screen pixel definition (B,G,R), and will have to be swapped before programming. In addition, the hardware palette may only support 6-bit of magnitude per color component instead of the 8-bit defined in the palette information section; therefore, the values will have to be shifted before writing.
 
 
 .. -database:
@@ -2432,14 +2432,14 @@ Note that the need for the forms processor to call into an alternate component d
    :width: 60%
    :name: typical-froms-processor-decisions-necessitating-a-callback-2
 
-   **Typical Forms Processor Decisions Necessitatinga Callback (2)**
+   **Typical Forms Processor Decisions Necessitating a Callback (2)**
 
 
 .. figure:: Images/HII-32.png
    :width: 60% 
    :name: typical-froms-processor-decisions-necessitating-a-callback-3
 
-   **Typical Forms Processor Decisions Necessitatinga Callback (3)**
+   **Typical Forms Processor Decisions Necessitating a Callback (3)**
 
 .. _driver-model-interaction:
 
@@ -2488,9 +2488,9 @@ In many cases, there is a one-to-one mapping between the questions exposed by th
 
 However, in other cases, there is not a one-to-one mapping. These cases break down into three broad categories:
 
-#. Value Shift. In this case, the configuration setting has the same scope as the question exposed by aconfiguration method, but the values used to describethem are different. It may be as simple as 1=5, 2=6, 3=7,etc. or something more complicated, where "ON"=1 and"OFF"=0.**
+#. Value Shift. In this case, the configuration setting has the same scope as the question exposed by a configuration method, but the values used to describe them are different. It may be as simple as 1=5, 2=6, 3=7, etc. or something more complicated, where "ON"=1 and "OFF"=0.**
 
-#. One-To-Many. In this case, the configuration setting maps to two or more questions exposed by a configuration meth od. For example the configuration setting might have the following enumerated values:
+#. One-To-Many. In this case, the configuration setting maps to two or more questions exposed by a configuration method. For example, the configuration setting might have the following enumerated values:
 
    | a.   0 = Disable Serial Port  
    | b.   1 = Enable Serial Port, I/O Port 0x3F8, IRQ 4
@@ -2612,8 +2612,8 @@ These become the following equations:
 
 .. _changing-multiple-configuration-settings-from-one-questions-value:
 
-Changing Multiple Configuration Settings FromOne Question’s Value
-$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Changing Multiple Configuration Settings From One Question’s Value
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 Rather than writing directly to storage, these standards map questions change their value using the *EFI_IFR_WRITE* ( `EFI_IFR_Write`_ ) operator. This operator can, in turn, use the *EFI_IFR_SET* ( `EFI_IFR_Set`_ ) operator to change one or more configuration settings. This operator can also change the type (integer, string, Boolean, etc.) of the value written so that, say, a configuration setting with a type of integer can be represented in a standards map form as a string question. 
 
@@ -4170,7 +4170,7 @@ Header
   Standard string block header, where *Header.BlockType* *= EFI_HII_SIBT_STRING_SCSU_FONT.*
 
 FontIdentifier
-  The identifier of the font to be used as the starting font for the entire string. The identifier must either be 0 for the default font or an identifier previously specified by an *EFI_HII_SIBT_FONT* block. Any string characters that deviates from this font family, size or style must provide an explicit control character. See `Common Control Codes`_ .
+  The identifier of the font to be used as the starting font for the entire string. The identifier must either be 0 for the default font or an identifier previously specified by an *EFI_HII_SIBT_FONT* block. Any string characters that deviate from this font family, size or style must provide an explicit control character. See `Common Control Codes`_ .
 
 StringText
   The string text is a null-terminated encoded string, which is assigned to the string identifier *StringIdCurrent.* 
@@ -4252,7 +4252,7 @@ StringCount
   Number of strings in *StringText.*
 
 FontIdentifier
-  The identifier of the font to be used as the starting font for the entire string. The identifier must either be 0 for the default font or an identifier previously specified by an *EFI_HII_SIBT_FONT* block. Any string characters that deviates from this font family, size or style must provide an explicit control character. See `Common Control Codes`_.
+  The identifier of the font to be used as the starting font for the entire string. The identifier must either be 0 for the default font or an identifier previously specified by an *EFI_HII_SIBT_FONT* block. Any string characters that deviate from this font family, size or style must provide an explicit control character. See `Common Control Codes`_.
 
 StringText
   The strings, where each string is a null-terminated encoded string. 
@@ -4290,7 +4290,7 @@ Header
   Standard header where *Header.BlockType* = *EFI_HII_SIBT_STRING_UCS2.*
 
 StringText
-  The string text is a null-terminated UCS-2 string, which is assigned to the string identifier *StringIdCurren* t. 
+  The string text is a null-terminated UCS-2 string, which is assigned to the string identifier *StringIdCurrent*. 
 
 
 **Description**
@@ -4326,7 +4326,7 @@ Header
   Standard header where *Header.BlockType* = *EFI_HII_SIBT_STRING_UCS2_FONT.*
 
 FontIdentifier
-  The identifier of the font to be used as the starting font for the entire string. The identifier must either be 0 for the default font or an identifier previously specified by an *EFI_HII_SIBT_FONT* block. Any string characters that deviates from this font family, size or style must provide an explicit control character. See `Common Control Codes`_ .
+  The identifier of the font to be used as the starting font for the entire string. The identifier must either be 0 for the default font or an identifier previously specified by an *EFI_HII_SIBT_FONT* block. Any string characters that deviate from this font family, size or style must provide an explicit control character. See `Common Control Codes`_ .
 
 StringText
   The string text is a null-terminated UCS-2 string, which is assigned to the string identifier *StringIdCurrent.* 
@@ -4368,7 +4368,7 @@ StringCount
   Number of strings in *StringText.*
 
 StringText
-  The string text is a series of null-terminated UCS-2 strings, which are assigned to the string identifiers *StringIdCurren* t.to *StringIdCurrent* + *StringCount - 1*.
+  The string text is a series of null-terminated UCS-2 strings, which are assigned to the string identifiers *StringIdCurrent* to *StringIdCurrent* + *StringCount - 1*.
 
 
 **Description**
@@ -4412,7 +4412,7 @@ StringCount
   Number of strings in *StringText.*
 
 StringText
-  The string text is a series of null-terminated UCS-2 strings, which are assigned to the string identifiers *StringIdCurren* t.through *StringIdCurrent* + *StringCount* *- 1.*
+  The string text is a series of null-terminated UCS-2 strings, which are assigned to the string identifiers *StringIdCurrent* through *StringIdCurrent* + *StringCount* *- 1.*
 
 
 **Description**
@@ -4852,7 +4852,7 @@ Bitmap
 
 **Description**
 
-This record assigns the 24-bit-per-pixel bitmap data to the *ImageIdCurrent* identifier and increment *ImageIdCurrent* by one. The image’s upper left hand corner pixel is composed of the first three bitmap bytes. The first byte is the pixel’s blue component value, the next byte is the pixel’s green component value, and the third byte is the pixel’s red component value (B,G,R). Each color component value can vary from 0x00 (color off) to 0xFF (color full on), allowing 16.8 millions colors that can be specified.
+This record assigns the 24-bit-per-pixel bitmap data to the *ImageIdCurrent* identifier and increment *ImageIdCurrent* by one. The image’s upper left hand corner pixel is composed of the first three bitmap bytes. The first byte is the pixel’s blue component value, the next byte is the pixel’s green component value, and the third byte is the pixel’s red component value (B,G,R). Each color component value can vary from 0x00 (color off) to 0xFF (color full on), allowing 16.8 million colors that can be specified.
 
 
 **Related Definitions**
@@ -5288,7 +5288,7 @@ Add a new image block structure for *EFI_HII_IIBT_IMAGE_PNG* . This supports the
 **Members**
 
 Header
-  Standard image block header, where H *eader.locktype* = *EFI_HII_IIBT_IMAGE_PNG.*
+  Standard image block header, where *Header.locktype* = *EFI_HII_IIBT_IMAGE_PNG.*
 
 Size
   Size of the PNG image.
@@ -5359,7 +5359,7 @@ PaletteValue
 
 **Description**
 
-Each palette information record is an array of 24-bit color structures. The first entry ( *PaletteValue[0]* ) corresponds to color 0 in the source image; the second entry ( *PaletteValue[1]* ) corresponds to color 1, etc. Each palette entry is a three byte entry, with the first byte equal to the blue component of the color, followed by green, and finally red (B,G,R). Each color component value can vary from 0x00 (color off) to 0xFF (color full on), allowing 16.8 millions colors that can be specified.
+Each palette information record is an array of 24-bit color structures. The first entry ( *PaletteValue[0]* ) corresponds to color 0 in the source image; the second entry ( *PaletteValue[1]* ) corresponds to color 1, etc. Each palette entry is a three byte entry, with the first byte equal to the blue component of the color, followed by green, and finally red (B,G,R). Each color component value can vary from 0x00 (color off) to 0xFF (color full on), allowing 16.8 million colors that can be specified.
 
 A black & white 1-bit image would have the following palette structure:
 
@@ -6082,15 +6082,15 @@ Header
 
 This opcode performs the following actions:
 
-#. Pop two values from the expression stack. Thefirst popped is the *right-hand* value. The secondpopped is the *left-hand* value.
+#. Pop two values from the expression stack. The first popped is the *right-hand* value. The secondpopped is the *left-hand* value.
 
-#. If the two values do not evaluate to unsigned    integers, push Undefined.
+#. If the two values do not evaluate to unsigned integers, push Undefined.
 
-#. Zero-extend the *left-hand* and *right-hand* values to    64-bits.
+#. Zero-extend the *left-hand* and *right-hand* values to 64-bits.
 
 #. Add the left-hand value to right-hand value.
 
-#. Push the lower 64-bits of the result. Overflow is    ignored.  
+#. Push the lower 64-bits of the result. Overflow is ignored.  
 
 
 .. _efi-ifr-and:
@@ -6291,7 +6291,7 @@ Header
 
 This opcode performs the following actions:
 
-#. Pop two expressions from the expressionstack. The first expression popped is the left valueand the second value popped is the *right* value. 
+#. Pop two expressions from the expressionstack. The first expression popped is the left value and the second value popped is the *right* value. 
 
 #.  If the left or right values cannot be evaluated as a string or a buffer, push Undefined. If the left or right values are of different types, then push Undefined.
 
@@ -6385,7 +6385,7 @@ Header
 
 This opcode performs the following actions:
 
-# Pop three values from the expression stack.The first value popped is the right value. The secondexpression popped is the middle value. The lastexpression popped is the left value.
+# Pop three values from the expression stack.The first value popped is the right value. The second expression popped is the middle value. The last expression popped is the left value.
 
 #. If the left value cannot be evaluated as a boolean, push Undefined.
 
@@ -6609,7 +6609,7 @@ Header
 
 **Description**
 
-#. Pop two expressions from the expressionstack. The first popped is the right-hand expression.The second popped is the left-hand expression.**
+#. Pop two expressions from the expressionstack. The first popped is the right-hand expression. The second popped is the left-hand expression.**
 
 #. If the two expressions do not evaluate to unsigned integers, push Undefined. If the right-hand expression is equal to zero, push Undefined.
 
@@ -6924,7 +6924,7 @@ Format
 
 This opcode performs the following actions:
 
-#. Pop three expressions from the expressionstack. The first expression popped is the right-handvalue and the second value popped is the middle valueand the last value popped is the left-hand value.
+#. Pop three expressions from the expressionstack. The first expression popped is the right-hand value and the second value popped is the middle value and the last value popped is the left-hand value.
 
 #. If the left-hand or middle values cannot be evaluated as a string, push Undefined. If the third expression cannot be evaluated as an unsigned integer, push Undefined.
 
@@ -7245,15 +7245,15 @@ Header
 
 This opcode performs the following actions:
 
-#. Pop two values from the expression stack. Thefirst value popped is the right-hand value and thesecond value popped is the left-hand value.
+#. Pop two values from the expression stack. The first value popped is the right-hand value and the second value popped is the left-hand value.
 
-#. If the two values do not evaluate to string, boolean    or unsigned integer, push Undefined.
+#. If the two values do not evaluate to string, boolean or unsigned integer, push Undefined.
 
-#. If the two values do not evaluate to the same type,    push Undefined.
+#. If the two values do not evaluate to the same type, push Undefined.
 
-#. Compare the two values. Strings are compared    lexicographically.
+#. Compare the two values. Strings are compared lexicographically.
 
-#. If the left-hand value is greater than or equal to the    right-hand value, push *TRUE.* Otherwise push *FALSE* . 
+#. If the left-hand value is greater than or equal to the right-hand value, push *TRUE.* Otherwise push *FALSE* . 
 
 
 .. _efi-ifr-greater-than:
@@ -7287,7 +7287,7 @@ Header
 
 This opcode performs the following actions:
 
-#. Pop two values from the expression stack. Thefirst value popped is the right-hand value and thesecond value popped is the left-hand value.
+#. Pop two values from the expression stack. The first value popped is the right-hand value and the second value popped is the left-hand value.
 
 #. If the two values do not evaluate to string, boolean or unsigned integer, push Undefined.
 
@@ -7512,7 +7512,7 @@ Header
 
 This opcode performs the following actions:
 
-#. Pop two values from the expression stack. Thefirst value popped is the right-hand value and thesecond value popped is the left-hand value.
+#. Pop two values from the expression stack. The first value popped is the right-hand value and the second value popped is the left-hand value.
 
 #. If the two values do not evaluate to string, boolean or unsigned integer, push Undefined.
 
@@ -7594,11 +7594,11 @@ This operator contains zero or more expression pairs nested within its scope. Ea
 
 This opcode performs the following actions:
 
-#. This operator pops a single value from theexpression stack.
+#. This operator pops a single value from the expression stack.
 
 #. Compare this value against the evaluated result of each of the match expressions.
 
-#. If there is a match, then the evaluated result of the    corresponding return expression is pushed on to the expression stack.
+#. If there is a match, then the evaluated result of the corresponding return expression is pushed on to the expression stack.
 
 #. If there is no match, then Undefined is pushed.
 
@@ -7633,7 +7633,7 @@ Header
 **Description**
 
 
-#. Pop two values from the expression stack. Thefirst value popped is the string and the second valuepopped is the pattern.
+#. Pop two values from the expression stack. The first value popped is the string and the second value popped is the pattern.
 
 #. If the string or the pattern cannot be evaluated as a string, then push Undefined.
 
@@ -7673,7 +7673,7 @@ Header
 
 **Description**
 
-#. Pop three values from the expression stack.The first value popped is the right value and thesecond value popped is the middle value and the lastexpression popped is the left value.** 
+#. Pop three values from the expression stack.The first value popped is the right value and the second value popped is the middle value and the last expression popped is the left value.** 
 
 #. If the left value cannot be evaluated as a string or a buffer, push Undefined. If the middle or right value cannot be evaluated as unsigned integers, push Undefined.
 
@@ -7771,7 +7771,7 @@ Header
 
 This opcode performs the following actions:
 
-#. Pop two values from the expression stack. Thefirst value popped is the right-hand value and thesecond value popped is the left-hand value.
+#. Pop two values from the expression stack. The first value popped is the right-hand value and the second value popped is the left-hand value.
 
 #. If the two values do not evaluate to unsigned integers, push Undefined. If the right-hand value to 0, push Undefined.
 
@@ -7812,7 +7812,7 @@ Header
 
 This opcode performs the following actions:
 
-#. Pop two values from the expression stack. Thefirst value popped is the right-hand expression andthe second value popped is the left-hand expression.
+#. Pop two values from the expression stack. The first value popped is the right-hand expression and the second value popped is the left-hand expression.
 
 #. If the two values do not evaluate to unsigned integers, push Undefined.
 
@@ -9091,7 +9091,7 @@ Flags
 
 This opcode performs the following actions:
 
-#. Pop three values from the expression stack.The first value popped is the right value and thesecond value popped is the middle value and the lastvalue popped is the left expression.
+#. Pop three values from the expression stack.The first value popped is the right value and the second value popped is the middle value and the last value popped is the left expression.
 
 #. If the left or middle values cannot be evaluated as a string, push Undefined. If the right value cannot be evaluated as an unsigned integer, push Undefined.
 
@@ -9325,7 +9325,7 @@ Header
 
 This opcode performs the following operations:
 
-#. Pop two values from the expression stack. Thefirst value popped is the right-hand value and thesecond value popped is the left-hand value.
+#. Pop two values from the expression stack. The first value popped is the right-hand value and the second value popped is the left-hand value.
 
 #. If the two values do not evaluate to unsigned integers, push Undefined.
 
@@ -9572,7 +9572,7 @@ Header
 
 This opcode performs the following actions:
 
-#. Pop a value from the expression stack. If thevalue is Undefined or cannot be evaluated as aBoolean, push Undefined. Otherwise push the Boolean onthe expression stack.
+#. Pop a value from the expression stack. If the value is Undefined or cannot be evaluated as a Boolean, push Undefined. Otherwise push the Boolean on the expression stack.
 
 #. When converting from an unsigned integer, zero will be converted to **FALSE** and any other value will be converted to **TRUE.**
 
@@ -10262,7 +10262,7 @@ SyntaxType
 
 This opcode performs the following actions:
 
-#. Pop two values from the expression stack. Thefirst value popped is the *string* and the secondvalue popped is the *pattern.*
+#. Pop two values from the expression stack. The first value popped is the *string* and the secondvalue popped is the *pattern.*
 
 #. If the *string* or the *pattern* cannot be evaluated as a string, then push Undefined.
 

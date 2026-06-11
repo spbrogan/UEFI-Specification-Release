@@ -9,9 +9,11 @@
 
 Many people have contributed to the contents of this specification, including the following:
 
-  * UEFI Specification Working Group (USWG)
-  * Tianocore Community Members
-  * Others noted in the Revision History below
+  \* UEFI Specification Working Group (USWG)
+
+  \* Tianocore Community Members
+
+  \* Others noted in the Revision History below
 
 
 **Changes in this release**
@@ -21,7 +23,59 @@ Many people have contributed to the contents of this specification, including th
    :class: longtable
    :widths: 10 60 30
 
-   **Revision** | **Mantis# - Description** | **Affected Content**
+   **Revision** | **Issue # - Description** | **Modified/Added Content**
+   2.11 | 2365 - New Memory Attribute for hot plug | :numref:`efi-boot-services-getmemorymap`
+   2.11 | 2371 - Correct the description of EFI_KMS_PROTOCOL.DeleteKey(), KeyDescriptors | :numref:`efi-key-management-service-protocol`, :numref:`efi-kms-protocol-deletekey`
+   2.11 | 2384 - Mandate the UEFI Arm implementation to allocate pages from the 48-bit address range first | :numref:`aarch64-platforms`
+   2.11 | 2386 - EFI_RNG_PROTOCOL Describe the DRBG algorithm used in the Arm RNDR instruction | :numref:`efi-rng-algorithm-definitions`
+   2.11 | 2388 - Add support for Proxy Host URI in HTTP Boot | :numref:`use-in-corporate-environment`, :numref:`device-path_network_protocols_snp_pxe_bis`, :numref:`concept-of-message-exchange-in-http-boot-scenario-with-proxy-host`, :numref:`efi-http-protocol-request`
+   2.11 | 2393 - Arm CPER processor error section, support FEAT_D128 | :numref:`arm-128-bit-translation-table-base-registers-type9`
+   2.11 | 2431 - CodeFirst: Adjust LoongArch exception and interrupt types | :numref:`efi-debug-support-protocol-registerexceptioncallback`
+   2.11 | 2437 - CodeFirst: Add new HTTP Boot Callback Type | :numref:`efi-http-boot-callback-protocol-callback`
+   2.11 | 2440 - CPER definition for FRU memory poison | :numref:`fru-memory-poison-section`
+   2.11 | 2443 - Add Storage Device Class for EFI_BOOT_MANAGER_POLICY_CONNECT_DEVICE_CLASS | :numref:`efi_boot_manager_policy_protocol.connectdeviceclass`
+   2.11 | 2448 - update UEFI spec version to 2.11 | Title page
+   2.11 | 2449 - RISC-V AP-TEE Confidential Computing Extension for UEFI | :numref:`risc-v-ap-tee`
+   2.11 | 2453 - Add SM2, SM3 crypto algorithm | :numref:`pe-coff-certificates-types-and-uefi-signature-database-certificate-types`, :numref:`signature-database`
+   2.11 | 2457- Code-First: Changes to CPER definition for PCIe | :numref:`pci-express-error-record`, :numref:`cxl-protocol-error-section`
+   2.11 | 2462 - Fix the Type mnemonic description in the ARM Processor Error Information Structure | :numref:`arm-processor-error-information`
+   2.11 | 2468 - Elaborate on EFI_LOADED_IMAGE_PROTOCOL.Unload() usage | :numref:`efi-loaded-image-protocol`, :numref:`efi-loaded-image-protocol-unload`, :numref:`efi-loaded-image-device-path-protocol`
+   2.11 | 2475 - Typo in the EFI_TABLE_HEADER "HeaderSize" field description | :numref:`efi-table-header`
+   2.11 | 2476 - Correct the section header for EFI_CC_MEASUREMENT_PROTOCOL.GetEventLog | :numref:`efi_cc_measurement_protocol-geteventlog`
+   2.11 | 2480 - Deprecate CryptoIndications variables | Modified :numref:`globally-defined-variables`, and removed Section 32.5 Firmware/OS Crypto Algorithm Exchange
+   2.11 | 2483 - Collection of Non-Functional Fixes | Various content and references in spec
+   
+
+**Changes in previous releases**
+
+.. csv-table::
+   :delim: |
+   :class: longtable
+   :widths: 10 60 30
+
+   **Revision** | **Issue # - Description** | **Modified/Added Content**
+   2.10A | 2016 - Compression/decompression clean up | :numref:`appendix-i-decompression-source-code-apx-i-decompression-source-code`
+   2.10A | 2359 - Update the PASS_THRU_PROTOCOL to Enhance the logic for AtaPassThruGetNextPort()/AtaPassThruGetNext | :numref:`efi-ata-pass-thru-protocol-getnextdevice`
+   2.10A | 2360 - Clarify that EFI_MEMORY_WB and _WT share ability attributes on AArch64 | :numref:`map-efi-cacheability-attributes-to-aarch64-memory-types`
+   2.10A | 2367 - EFI_FILE_PROTOCOL.Open() suggests that a file may be opened relative to a regular file | :numref:`efi-file-protocol`, :numref:`efi-file-protocol-open`, :numref:`efi-file-protocol-close`
+   2.10A | 2368 - mixed up error codes for EFI_FILE_PROTOCOL.OpenEx() | :numref:`efi-file-protocol-writeex`
+   2.10A | 2369 - EFI_TABLE_HEADER Revision field cannot represent version 2.10 | :numref:`revision-numbers`, :numref:`efi-table-header`
+   2.10A | 2373 - Typo in spec \EFIBOOTBOOT and \EFIBOOTBOOT{machine type short-name}.EFI type | :numref:`removable-media-boot-behavior`
+   2.10A | 2376 - Update the RISC-V Platforms section for more concise language | :numref:`risc-v-platforms`, :numref:`handoff-state-5`, :numref:`enabling-paging-or-alternate-translations-in-an-application-3`, :numref:`detailed-calling-convention-2`, :numref:`loongarch-platforms`
+   2.10A | 2408 - Recommended PCI Device Driver Layout missing RV and LoongArch | :numref:`recommended-pci-device-driver-layout`, :numref:`pci-hot-plug-events`
+   2.10A | 2411 - Fix incorrect references in the Platform-Specific Elements section. | :numref:`platform-specific-elements`
+   2.10A | 2412 - Update references and remove extraneous text. | :numref:`pci-option-roms`
+   2.10A | 2415 - Update reference links in chapters 8 and 32. | :numref:`services-runtime-services`, :numref:`clearing-the-platform-key`, :numref:`signature-database-update`, :numref:`device-signature-database-update`, :numref:`uefi-image-variable-guid-variable-name`
+   2.10A | 2417 - Remove old text from the VendorTable definition for the EFI_CONFIGURATION_TABLE | :numref:`efi-configuration-table`
+   2.10A | 2421 - Update DEFAULT_TTL to IANA's default value of 64. | :numref:`filter-operations-for-udp-readwrite-functions`
+   2.10A | 2428 - Update Status Codes Returned for EFI_FIRMWARE_MANAGEMENT_PROTOCOL.GetImageInfo() | :numref:`efi-firmware-mamagement-protocol-getimageinfo`
+   2.10A | 2438 - Wrong Text Device Node for NVDIMM Namespace path | :numref:`device-node-table`
+   2.10A | 2439 - Include ACPI Device Path Subtype 4 for NVDIMM Device | :numref:`device-node-table`
+   2.10A | 2445 - Fix typos and other cleanup | :numref:`removable-media-boot-behavior`, :numref:`delivery-of-capsules-via-file-on-mass-storage-device`, :numref:`EFI_DEBUG_SUPPORT_PROTOCOL`, :numref:`efi-dhcp6-protocol-parse`
+   2.10A | 2447 - Undefined behavior of SetVariable(EFI_VARIABLE_APPEND_WRITE) for non-existent variable | :numref:`setvariable`
+   2.10A | 2455 - Precedence of return codes for QueryVariableInfo | :numref:`queryvariableinfo`
+   2.10A | 2456 - Remove deprecated content | various content and references in spec
+   2.10A | 2462 - Arm CPER Processor Error Type values defined incorrectly | :numref:`arm-processor-error-information-structure`
    2.10 | 2205 - Enabling SHA-384/SHA-512 signing scheme for Authenticated Variables | :numref:`using-the-efi-variable-authentication-2-descriptor`
    2.10 | 2207 - EFI_SECURITY_VIOLATION can't be returned by EFI_FIRMWARE_MANAGEMENT_PROTOCOL.GetImage() | :numref:`efi-firmware-management-protocol-getimage`
    2.10 | 2217 - Device Authentication Signature Database | :numref:`globally-defined-variables`, :numref:`signature-database`, :numref:`device-authentication`, :numref:`uefi-device-signature-variable-guid-and-variable-name`
@@ -32,7 +86,7 @@ Many people have contributed to the contents of this specification, including th
    2.10 | 2271 - Introduce UEFI Conformance Profiles | :numref:`requirements`, :numref:`efi_conformance_profile_table`
    2.10 | 2277 - Code first - Uart() UEFI DevicePath binary/text confusion issue (Samer El-Haj-Mahmoud) | :numref:`text-device-node-reference`
    2.10 | 2278 - AARCH64 binding requirement for an OS calling RT services on platforms with SME | :numref:`aarch64-platforms`, :numref:`detailed-calling-convention-1`
-   2.10 | 2291 - Support crypto agile - Address crypto agile compatibility | :numref:`globally-defined-variables`, :numref:`firmware-os-crypto-algorithm-exchange`
+   2.10 | 2291 - Support crypto agile - Address crypto agile compatibility | [deprecated in UEFI 2.11]
    2.10 | 2292 - Forward Control Flow Guard Instruction runtime indicator | :numref:`efi-memory-attributes-table`
    2.10 | 2313 - Add LoongArch architecture support to UEFI specification | :numref:`loongarch-platforms`
    2.10 | 2315 - Add NVM Express over Fabrics messaging device path AND NVMe Trademark updates | :numref:`block-translation-table-btt-background`, :numref:`nvme-over-fabric-namespace-device-path-format`, :numref:`nvme-over-fabric-namespace-device-path`, :numref:`nvme-over-fabric-namespace-device-path-example`, :numref:`device-node-table`, :numref:`efi-nvm-express-pass-thru-protocol-passthru`
@@ -42,19 +96,8 @@ Many people have contributed to the contents of this specification, including th
    2.10 | 2329 - Update the UEFI to Version 2.10 | :numref:`efi-system-table-1`
    2.10 | 2336 - Feedback on UEFI 2.10 draft | *sections throughout*
    2.10 | 2337 - Code First -Add LoongArch to section UEFI Images Boot Manager PCI Option ROMs and Debugger Support sections (Li Chao) | *sections throughout*
-   2.10 | 2339 - Re-add RSA 4k support for UEFI 2.10 crypto agility | :numref:`firmware-os-crypto-algorithm-exchange`
+   2.10 | 2339 - Re-add RSA 4k support for UEFI 2.10 crypto agility | [deprecated in UEFI 2.11]
    2.10 | 2342 - GetHealthStatus: Make the statement and table consistent for EFI_UNSUPPORTED for Controller Handle Null case | :numref:`efi-driver-health-protocol-gethealthstatus-protocols-uefi-driver-model`
-   
-
-
-**Changes in previous releases**
-
-.. csv-table:: 
-   :delim: |
-   :class: longtable
-   :widths: 10 58 32
-
-   **Revision** | **Mantis # / Description** | **Affected Content**
    2.9A | 2225 - Clarify the specification requirements around processing Boot#### variable | :numref:`required-system-preparation-applications`, :numref:`global-variables`, :numref:`efi-boot-services-createeventex`
    2.9A | 2227 - Clarify NVMe device path EUI-64 byte order | :numref:`nvm-express-namespace-messaging-device-path-node`
    2.9A | 2235 - Clarify EFI_LOAD_OPTION.FilePathList[] device path definition | :numref:`load-options`
@@ -77,7 +120,7 @@ Many people have contributed to the contents of this specification, including th
    :class: longtable
 
    * -   Revision
-     -   Mantis # - Description
+     -   Issue # - Description
      -   Release Date 
    * -   2.9    
      -   1866 GetInfo() of Adapter  Information Protocol should have a  provision for IHV to return no data

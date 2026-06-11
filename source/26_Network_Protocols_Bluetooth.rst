@@ -347,7 +347,7 @@ Timeout
 
 **The SendACLData() function** sends HCI ACL data packet. *Buffer* holds the whole HCI ACL data packet, including Handle, PB flag, BC flag, data length, and data. (See in Bluetooth specification, HCI ACL Data Packet for more detail.) 
 
-**The SendACLData() function** and *ReceiveACLData()* function just send and receive data payload from application layer. In order to protect the payload data, the Bluetooth bus is required to call HCI_Set_Connection_Encryption command to enable hardware based encryption after authentication completed, according to pairing mode and host capability.
+**The SendACLData() function** and *ReceiveACLData()* function just send and receive data payload from application layer. In order to protect the payload data, the Bluetooth bus is required to call HCI_Set_Connection_Encryption command to enable hardware-based encryption after authentication completed, according to pairing mode and host capability.
 
 
 **Status Codes Returned**
@@ -2636,7 +2636,7 @@ SendRequest
  Send a "REQUEST" or "COMMAND" message to remote server and receive a "RESPONSE" message for "REQUEST" from remote server according to Bluetooth attribute protocol data unit (PDU). See the SendRequest() function description.
 
 RegisterForServerNotification
- Register or unregister a server initiated PDU, such as "NOTIFICATION" or "INDICATION" on a characteristic value on remote server. See the RegisterForServerInitiatedMessage() function description.
+ Register or unregister a server-initiated PDU, such as "NOTIFICATION" or "INDICATION" on a characteristic value on remote server. See the RegisterForServerInitiatedMessage() function description.
 
 GetServiceInfo
  Get discovered service data information from connected remote device. See GetServiceInfo() function description.
@@ -2754,7 +2754,7 @@ BLUETOOTH_ATTRIBUTE_PROTOCOL.RegisterForServerNotification
 ##########################################################
 
 Summary
-Register or unregister a server initiated message, such as NOTIFICATION or INDICATION, on a characteristic value on remote server.
+Register or unregister a server-initiated message, such as NOTIFICATION or INDICATION, on a characteristic value on remote server.
 
 
 **Prototype**
@@ -2780,14 +2780,14 @@ CallbackParameter
  The parameter of the callback.
 
 Callback
- Callback function for server initiated attribute protocol. NULL callback function means unregister the server initiated callback.
+ Callback function for server-initiated attribute protocol. NULL callback function means unregister the server-initiated callback.
 
 Context
  Data passed into Callback function. It is optional parameter and may be NULL.
 
 **Description**
 
-**The RegisterForServerNotification() function** can be issued to request Bluetooth to register or unregister a server initiated message, such as notification or indication, on a characteristic value on remote server. It can only be done if the characteristic supports that operation.
+**The RegisterForServerNotification() function** can be issued to request Bluetooth to register or unregister a server-initiated message, such as notification or indication, on a characteristic value on remote server. It can only be done if the characteristic supports that operation.
 
 **Related Definitions**
 
@@ -2812,7 +2812,7 @@ Version
  The version of the structure. A value of zero represents the EFI_BLUETOOTH_ATTRIBUTE_CALLBACK_PARAMETER structure as defined here. Future version of this specification may extend this data structure in a backward compatible way and increase the value of Version.
 
 AttributeOpCode
- The attribute opcode for server initiated attribute protocol. See Bluetooth specification, Vol 3, Part F, Attribute Protocol.
+ The attribute opcode for server-initiated attribute protocol. See Bluetooth specification, Vol 3, Part F, Attribute Protocol.
 
 AttributeHandle
  The attribute handle for notification or indication.
@@ -2828,7 +2828,7 @@ AttributeHandle
    * - EFI_SUCCESS
      - The callback function is registered or unregistered successfully                   
    * - EFI_INVALID_PARAMETER  
-     - The attribute opcode is not server initiated message opcode. See Bluetooth specification, Vol 3, Part F, Attribute Protocol.                                   
+     - The attribute opcode is not server-initiated message opcode. See Bluetooth specification, Vol 3, Part F, Attribute Protocol.                                   
    * - EFI_ALREADY_STARTED    
      - A callback function is already registered on the same attribute opcode and attribute handle, when the Callback is not NULL.    
    * - EFI_NOT_STARTED

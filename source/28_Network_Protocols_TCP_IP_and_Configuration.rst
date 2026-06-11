@@ -906,7 +906,7 @@ Push
  If *TRUE,* data must be transmitted promptly, and the PUSH bit in the last TCP segment created will be set. If *FALSE,* data transmission may be delay to combine with data from subsequent *Transmit()* s for efficiency.
 
 Urgent
- The data in the fragment table are urgent and urgent point is in effect if **TRUE**. Otherwise those data are NOT considered urgent.
+ The data in the fragment table are urgent and urgent point is in effect if **TRUE**. Otherwise, those data are NOT considered urgent.
 
 DataLength
  Length of the data in the fragments.
@@ -2009,7 +2009,7 @@ Push
  If **TRUE,** data must be transmitted promptly, and the PUSH bit in the last TCP segment created will be set. If **FALSE,** data transmission may be delayed to combine with data from subsequent *Transmit()* s for efficiency.
 
 Urgent
- The data in the fragment table are urgent and urgent point is in effect if **TRUE**. Otherwise those data are NOT considered urgent.
+ The data in the fragment table are urgent and urgent point is in effect if **TRUE**. Otherwise, those data are NOT considered urgent.
 
 DataLength
  Length of the data in the fragments.
@@ -2263,7 +2263,7 @@ Token
 
 **Description**
 
-The *Cancel()* function aborts a pending connection, listen, transmit or receive request. If *Token* is not **NULL** and the token is in the connection, listen, transmission or receive queue when it is being cancelled, its T *oken->Status* will be set to *EFI_ABORTED* and then *Token->Event* will be signaled. If the token is not in one of the queues, which usually means that the asynchronous operation has completed, *EFI_NOT_FOUND* is returned. If *Token* is **NULL** all asynchronous token issued by *Connect(),* *Accept(),* *Transmit()* and *Receive()* will be aborted.
+The *Cancel()* function aborts a pending connection, listen, transmit or receive request. If *Token* is not **NULL** and the token is in the connection, listen, transmission or receive queue when it is being cancelled, its *Token->Status* will be set to *EFI_ABORTED* and then *Token->Event* will be signaled. If the token is not in one of the queues, which usually means that the asynchronous operation has completed, *EFI_NOT_FOUND* is returned. If *Token* is **NULL** all asynchronous token issued by *Connect(),* *Accept(),* *Transmit()* and *Receive()* will be aborted.
 
 
 **Status Codes Returned**
@@ -3398,310 +3398,6 @@ In some systems the periodic timer event may not poll the underlying communicati
      - No incoming or outgoing data is processed.
    * - EFI_TIMEOUT
      - Data was dropped out of the transmit and/or receive queue.  Consider increasing the polling rate.
-
-
-.. _efi-ipv4-configuration-protocol:
-
-EFI IPv4 Configuration Protocol
--------------------------------
-
-This section provides a detailed description of the EFI IPv4 Configuration Protocol.
-
-**IMPORTANT NOTICE:** The *EFI_IP4_CONFIG_PROTOCOL* has been replaced with the new *EFI_IP4_CONFIG2_PROTOCOL*.
-
--  All new designs based on this specification should exclusively use  `EFI_IP4_CONFIG2_PROTOCOL`_ .
--  The *EFI_IP4_CONFIG_PROTOCOL* will be removed in the next revision of this specification.
-
-
-.. _efi-ip4-config-protocol:
-
-
-EFI_IP4_CONFIG_PROTOCOL
-#######################
-
-
-**IMPORTANT NOTICE**: The *EFI_IP4_CONFIG_PROTOCOL* has been replaced with the new *EFI_IP4_CONFIG2_PROTOCOL*.
-
--  All new designs based on this specification should exclusively use `EFI_IP4_CONFIG2_PROTOCOL`_ .
-
--  The *EFI_IP4_CONFIG_PROTOCOL* will be removed in the next revision of this specification.
-  
-
-**Summary**
-
-The *EFI_IP4_CONFIG_PROTOCOL* driver performs platform- and policy-dependent configuration for the EFI IPv4 Protocol driver.
-
-
-**GUID**
-
-.. code-block::
-
-   #define EFI_IP4_CONFIG_PROTOCOL_GUID \
-     {0x3b95aa31,0x3793,0x434b,\
-       {0x86,0x67,0xc8,0x07,0x08,0x92,0xe0,0x5e}}
-
-
-**Protocol Interface Structure**
-
-.. code-block::
-
-   typedef struct _EFI_IP4_CONFIG_PROTOCOL {
-     EFI_IP4_CONFIG_START        Start;
-     EFI_IP4_CONFIG_STOP         Stop;
-     EFI_IP4_CONFIG_GET_DATA     GetData;
-   }   EFI_IP4_CONFIG_PROTOCOL;
-
-
-**Parameters**
-
-Start
- Starts running the configuration policy for the EFI IPv4 Protocol driver. See the *Start()* function description.
-
-Stop
- Stops running the configuration policy for the EFI IPv4 Protocol driver. See the *Stop()* function description.
-
-GetData
- Returns the default configuration data (if any) for the EFI IPv4 Protocol driver. See the *GetData()* function description.
-
-
-**Description**
-
-In an effort to keep platform policy code out of the EFI IPv4 Protocol driver, the *EFI_IP4_CONFIG_PROTOCOL* driver will be used as the central repository of any platform- and policy-specific configuration for the EFI IPv4 Protocol driver. 
-
-An EFI IPv4 Configuration Protocol interface will be installed on each communications device handle that is managed by the platform setup policy. The driver that is responsible for creating EFI IPv4 variable must open the EFI IPv4 Configuration Protocol driver interface *BY_DRIVER|EXCLUSIVE*. 
-
-An example of a configuration policy decision for the EFI IPv4 Protocol driver would be to use a static IP address/subnet mask pair on the platform management network interface and then use dynamic IP addresses that are configured by DHCP on the remaining network interfaces. 
-
-
-.. _efi-ip4-config-protocol-start:
-
-EFI_IP4_CONFIG_PROTOCOL.Start()
-###############################
-
-
-**IMPORTANT NOTICE**: The *EFI_IP4_CONFIG_PROTOCOL* has been replaced with the new *EFI_IP4_CONFIG2_PROTOCOL*. 
-
--  All new designs based on this specification should exclusively use  `EFI_IP4_CONFIG2_PROTOCOL`_ . 
-
--  The *EFI_IP4_CONFIG_PROTOCOL* will be removed in the next revision of this specification. 
-  
-
-**Summary**
-
-Starts running the configuration policy for the EFI IPv4 Protocol driver.
-
-
-**Prototype**
-
-.. code-block:: 
-  
-   typedef
-   EFI_STATUS
-   (EFIAPI *EFI_IP4_CONFIG_START) (
-     IN EFI_IP4_CONFIG_PROTOCOL     *This,
-     IN EFI_EVENT                   DoneEvent,
-     IN EFI_EVENT                   ReconfigEvent
-     );
-
-
-**Parameters**
-
-This
- Pointer to the *EFI_IP4_CONFIG_PROTOCOL* instance.
-
-DoneEvent
- Event that will be signaled when the EFI IPv4 Protocol driver configuration policy completes execution. This event must be of type *EVT_NOTIFY_SIGNAL*.
-
-ReconfigEvent
- Event that will be signaled when the EFI IPv4 Protocol driver configuration needs to be updated. This event must be of type *EVT_NOTIFY_SIGNAL*.
-
-
-**Description**
-
-The *Start* () function is called to determine and to begin the platform configuration policy by the EFI IPv4 Protocol driver. This determination may be as simple as returning *EFI_UNSUPPORTED* if there is no EFI IPv4 Protocol driver configuration policy. It may be as involved as loading some defaults from nonvolatile storage, downloading dynamic data from a DHCP server, and checking permissions with a site policy server. 
-
-Starting the configuration policy is just the beginning. It may finish almost instantly or it may take several minutes before it fails to retrieve configuration information from one or more servers. Once the policy is started, drivers should use the *DoneEvent* parameter to determine when the configuration policy has completed. *EFI_IP4_CONFIG_PROTOCOL* *.GetData()* must then be called to determine if the configuration succeeded or failed. 
-
-Until the configuration completes successfully, EFI IPv4 Protocol driver instances that are attempting to use default configurations must return *EFI_NO_MAPPING*. 
-
-Once the configuration is complete, the EFI IPv4 Configuration Protocol driver signals *DoneEvent*. The configuration may need to be updated in the future, however; in this case, the EFI IPv4 Configuration Protocol driver must signal *ReconfigEvent,* and all EFI IPv4 Protocol driver instances that are using default configurations must return *EFI_NO_MAPPING* until the configuration policy has been rerun.
-
-
-**Status Codes Returned**
-
-.. list-table::
-   :widths: 35 70
-   :class: longtable
-
-   * - EFI_SUCCESS
-     - The configuration policy for the EFI IPv4 Protocol driver is now running.
-   * - EFI_INVALID_PARAMETER
-     - | One or more of the following parameters is **NULL:**  
-       | • *This*
-       | • *DoneEvent*
-       | • *ReconfigEvent*
-   * - EFI_OUT_OF_RESOURCES
-     - Required system resources could not be allocated.
-   * - EFI_ALREADY_STARTED
-     - The configuration policy for the EFI IPv4 Protocol driver was already started.
-   * - EFI_DEVICE_ERROR
-     - An unexpected system error or network error occurred.
-   * - EFI_UNSUPPORTED
-     - This interface does not support the EFI IPv4 Protocol driver configuration.
-
-
-.. _efi-ip4-config-protocol-stop:
-
-EFI_IP4_CONFIG_PROTOCOL.Stop()
-##############################
-
-
-**IMPORTANT NOTICE**: The *EFI_IP4_CONFIG_PROTOCOL* has been replaced with the new *EFI_IP4_CONFIG2_PROTOCOL*.
-
--  All new designs based on this specification should exclusively use  `EFI_IP4_CONFIG2_PROTOCOL`_ .
-
--  The *EFI_IP4_CONFIG_PROTOCOL* will be removed in the next revision of this specification.
-  
-
-**Summary**
-
-Stops running the configuration policy for the EFI IPv4 Protocol driver.
-
-
-**Prototype**
-
-.. code-block:: 
-  
-   typedef  
-   EFI_STATUS  
-   (EFIAPI *EFI_IP4_CONFIG_STOP) (  
-     IN EFI_IP4_CONFIG_PROTOCOL     *This  
-     );
- 
-
-**Parameters**
-
-This
- Pointer to the *EFI_IP4_CONFIG_PROTOCOL* instance.
-
-
-**Description**
-
-The *Stop* () function stops the configuration policy for the EFI IPv4 Protocol driver. All configuration data will be lost after calling *Stop()*.
-
-
-**Status Codes Returned**
-
-.. list-table::
-   :widths: 35 70
-   :class: longtable
-
-   * - EFI_SUCCESS
-     - The configuration policy for the EFI IPv4 Protocol driver has been stopped.
-   * - EFI_INVALID_PARAMETER
-     - *This* is **NULL**.
-   * - EFI_NOT_STARTED
-     - The configuration policy for the EFI IPv4 Protocol driver was not started.
-
-
-.. _efi-ip4-config-protocol-getdata:
-
-EFI_IP4_CONFIG_PROTOCOL.GetData()
-#################################
-
-
-**IMPORTANT NOTICE**: The *EFI_IP4_CONFIG_PROTOCOL* has been replaced with the new *EFI_IP4_CONFIG2_PROTOCOL*.
-
--  All new designs based on this specification should exclusively use `EFI_IP4_CONFIG2_PROTOCOL`_ .
-
--  The *EFI_IP4_CONFIG_PROTOCOL* will be removed in the next revision of this specification.
-  
-
-**Summary**
-
-Returns the default configuration data (if any) for the EFI IPv4 Protocol driver.
-
-
-**Prototype**
-
-.. code-block:: 
-  
-   typedef
-   EFI_STATUS
-   (EFIAPI *EFI_IP4_CONFIG_GET_DATA) (
-     IN EFI_IP4_CONFIG_PROTOCOL     *This,
-     IN OUT UINTN                   *IpConfigDataSize,
-     OUT EFI_IP4_IPCONFIG_DATA      *IpConfigData OPTIONAL
-     );
-
-
-**Parameters**
-
-This 
- Pointer to the *EFI_IP4_CONFIG_PROTOCOL* instance.
-
-IpConfigDataSize
- On input, the size of the *IpConfigData* buffer. On output, the count of bytes that were written into the *IpConfigData* buffer.
-
-IpConfigData
- Pointer to the EFI IPv4 Configuration Protocol driver configuration data structure. Type *EFI_IP4_IPCONFIG_DATA* is defined in "Related Definitions" below.
-
-
-**Description**
-
-The *GetData* () function returns the current configuration data for the EFI IPv4 Protocol driver after the configuration policy has completed.
-
-
-**Related Definition**
-
-.. code-block::
-
-   //**********************************************
-   // EFI_IP4_IPCONFIG_DATA
-   //**********************************************
-   typedef struct {
-     EFI_IPv4_ADDRESS      StationAddress;
-     EFI_IPv4_ADDRESS      SubnetMask;
-     UINT32                RouteTableSize;
-     EFI_IP4_ROUTE_TABLE   *RouteTable OPTIONAL;
-   }   EFI_IP4_IPCONFIG_DATA;
-
-
-StationAddress
- Default station IP address, stored in network byte order.
-
-SubnetMask
- Default subnet mask, stored in network byte order.
-
-RouteTableSize
- Number of entries in the following *RouteTable*. May be zero.
-
-RouteTable
- Default routing table data (stored in network byte order). Ignored if *RouteTableSize* is zero. Type *EFI_IP4_ROUTE_TABLE* is defined in *EFI_IP4_PROTOCOL* *.GetModeData()*.  
-
-*EFI_IP4_IPCONFIG_DATA* contains the minimum IPv4 configuration data that is needed to start basic network communication. The *StationAddress* and *SubnetMask* must be a valid unicast IP address and subnet mask.
-
-If *RouteTableSize* is not zero, then *RouteTable* contains a properly formatted routing table for the *StationAddress* / *SubnetMask,* with the last entry in the table being the default route. 
-
-
-**Status Codes Returned**
-
-.. list-table::
-   :widths: 35 70
-   :class: longtable
-
-   * - EFI_SUCCESS
-     - The EFI IPv4 Protocol driver configuration has been returned.
-   * - EFI_INVALID_PARAMETER
-     - *This* is **NULL**.
-   * - EFI_NOT_STARTED
-     - The configuration policy for the EFI IPv4 Protocol driver is not running.
-   * - EFI_NOT_READY
-     - EFI IPv4 Protocol driver configuration is still running.
-   * - EFI_ABORTED
-     - EFI IPv4 Protocol driver configuration could not complete. 
-   * - EFI_BUFFER_TOO_SMALL
-     - | * *IpConfigDataSize* is smaller than the configuration data buffer or *IpConfigData* is **NULL**.
 
 
 .. _efi-ipv4-configuration-ii-protocol:
@@ -5549,7 +5245,7 @@ Ip6ConfigDataTypeInterfaceInfo
  The interface information of the communication device this EFI IPv6 Configuration Protocol instance manages. This type of data is read only. The corresponding *Data* is of type *EFI_IP6_CONFIG_INTERFACE_INFO*.
 
 Ip6ConfigDataTypeAltInterfaceId
- The alternative interface ID for the communication device this EFI IPv6 Configuration Protocol instance manages if the link local IPv6 address generated from the interfaced ID based on the default source the EFI IPv6 Protocol uses is a duplicate address. The length of the interface ID is 64 bit. The corresponding *Data* is of type *EFI_IP6_CONFIG_INTERFACE_ID*.
+ The alternative interface ID for the communication device this EFI IPv6 Configuration Protocol instance manages if the link local IPv6 address generated from the interfaced ID based on the default source the EFI IPv6 Protocol uses is a duplicate address. The length of the interface ID is 64-bit. The corresponding *Data* is of type *EFI_IP6_CONFIG_INTERFACE_ID*.
 
 Ip6ConfigDataTypePolicy
  The general configuration policy for the EFI IPv6 network stack running on the communication device this EFI IPv6 Configuration Protocol instance manages. The policy will affect other configuration settings. The corresponding *Data* is of type *EFI_IP6_CONFIG_POLICY*.
@@ -6239,7 +5935,7 @@ EfiIPsecActionProtect
 If required action of an SPD entry is *EfiIPsecActionProtect,* the *EFI_IPSEC_PROCESS_POLICY* structure describes a policy list for traffic processing. 
 
 ExtSeqNum
- Extended Sequence Number. Is this SA using extended sequence numbers. 64 bit counter is used if **TRUE**.
+ Extended Sequence Number. Is this SA using extended sequence numbers. 64-bit counter is used if **TRUE**.
 
 SeqOverflow
  A flag indicating whether overflow of the sequence number counter should generate an auditable event and prevent transmission of additional packets on the SA, or whether rollover is permitted.

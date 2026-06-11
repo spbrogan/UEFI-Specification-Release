@@ -11,7 +11,7 @@ This section explores console support protocols, including SimpleText Input, Sim
 Console I/O Protocol
 --------------------
 
-This section defines the Console I/O protocol. This protocol isused to handle input and output of text-based information intended for the system user during the operation of code in the boot services environment. Also included here are the definitions of three console devices: one for input and one each for normal output and errors.
+This section defines the Console I/O protocol. This protocol is used to handle input and output of text-based information intended for the system user during the operation of code in the boot services environment. Also included here are the definitions of three console devices: one for input and one each for normal output and errors.
 
 These interfaces are specified by function call definitions to allow maximum flexibility in implementation. For example, there is no requirement for compliant systems to have a keyboard or screen directly connected to the system. Implementations may choose to direct information passed using these interfaces in arbitrary ways provided that the semantics of the functions are preserved (in other words, provided that the information is passed to and from the system user).
 
@@ -61,10 +61,8 @@ The *EFI_SIMPLE_TEXT_INPUT_PROTOCOL* defines an input stream that contains Unico
 
 The input stream supports Scan Codes in addition to Unicode characters. If the Scan Code is set to 0x00 then the Unicode character is valid and should be used. If the Scan Code is set to a non-0x00 value it represents a special key as defined by the Table :ref:`efi-scan-codes-for-efi-simple-text-input-protocol`.
 
-
-.. note: duplicate table removed for EFI Scan Codes for EFI_SIMPLE_TEXT_INPUT_PROTOCOL. See more detailed version of this table in appendix B (references now direct to that one).
-
-.. note: duplicate table removed for EFI Scan Codes for EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL. See more detailed version of this table in appendix B (references now direct to that one).
+.. note:: 
+   duplicate table removed for EFI Scan Codes for EFI_SIMPLE_TEXT_INPUT_PROTOCOL. See more detailed version of this table in appendix B (references now direct to that one).
 
 
 .. _simple-text-input-ex-protocol:
@@ -1969,7 +1967,7 @@ The *EFI_ABSOLUTE_POINTER_PROTOCOL* allows information about a pointer device to
 
 Supported devices may return 1, 2, or 3 axis of information. The Z axis may optionally be used to return pressure data measurements derived from user pen force. 
 
-All supported devices must support a touch-active status. Supported devices may optionally support a second input button, for example a pen side-button.
+All supported devices must support a touch-active status. Supported devices may optionally support a second input button, for example, a pen side-button.
 
 
 .. _efi-absolute-pointer-protocol:
@@ -3482,7 +3480,7 @@ Edid
      - Only use returned override EDID if the display device has no EDID or the EDID is incorrect. Otherwise, use the EDID from the display device.
    * - EFI_EDID_OVERRIDE_ENABLE_HOT_PLUG=0
      - 0
-     - No hot plug support for the display device. AGraphics Output protocol will not be installed if no display device is not present.
+     - No hot plug support for the display device. A Graphics Output protocol will not be installed if no display device is not present.
    * - EFI_EDID_OVERRIDE_ENABLE_HOT_PLUG=0
      - != 0
      - No hot plug support for the display device. The returned override EDID should be used according to the EFI_EDID_O VERRIDE_DONT_OVERRIDE attribute bit if the display device is present.
@@ -3567,4 +3565,4 @@ Plug in graphics device
 
 -  800 x 600 with 32-bit color depth or 640 x 480 with 32-bit color depth and a pixel format described by PixelRedGreenBlueReserved8BitPerColor or PixelBlueGreenRedReserved8BitPerColor. 
 
-If graphics output device supports both landscape and portrait mode displays it must return a different mode via QueryMode(). For example landscape mode could be 800 horizontal and 600 vertical while the equivalent portrait mode would be 600 horizontal and 800 vertical.
+If graphics output device supports both landscape and portrait mode displays it must return a different mode via QueryMode(). For example, landscape mode could be 800 horizontal and 600 vertical while the equivalent portrait mode would be 600 horizontal and 800 vertical.

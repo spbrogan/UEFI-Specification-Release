@@ -11,7 +11,7 @@ User Identification Overview
 
 This section describes services which describe the current user of the platform. A user is the entity which is controlling the behavior of the machine. The user may be an individual, a class or group of individuals or another machine. 
 
-Each user has a user profile. There is always at least one user profile for a machine. This profile governs the behavior of the user identification process until a another user has been selected. The nature and definition of these privileges are beyond the scope of this section. One user profile is always active and describes the platform’s *current user*. 
+Each user has a user profile. There is always at least one user profile for a machine. This profile governs the behavior of the user identification process until another user has been selected. The nature and definition of these privileges are beyond the scope of this section. One user profile is always active and describes the platform’s *current user*. 
 
 New user profiles are introduced into the system through enrollment. During enrollment, information about a new user is gathered. Some of this information identifies the user for specific purposes, such as a user’s name or a user’s network domain. Other information is gathered in the form of credentials, which is information which can be used at a later time to verify the identity of a user. Credentials are generally divided into three categories: something you know (password), something you have (smart card, smart token, RFID), something you are (fingerprint). The means by which a platform determines the user’s identity based on credentials is user *identification*. 
 
@@ -636,7 +636,7 @@ Identify the user and, if authenticated, returns the user handle and changes the
 
 All user information marked as private in a previously selected profile is no longer available for inspection.
 
-Whenever the current user profile is changed then the an event with the GUID *EFI_EVENT_GROUP_USER_PROFILE_CHANGED* is signaled.
+Whenever the current user profile is changed then the event with the GUID *EFI_EVENT_GROUP_USER_PROFILE_CHANGED* is signaled.
 
 The function can only be called at *TPL_APPLICATION*.
 
@@ -1263,7 +1263,7 @@ Enroll a user on a credential provider.
 **Parameters**
 
 This
-  Points to this instance of the *EFI_USER_CREDENTIAL2_PROTOCOL* .
+  Points to this instance of the *EFI_USER_CREDENTIAL2_PROTOCOL*.
 
 User
   The user profile to enroll.
@@ -1795,7 +1795,7 @@ UserInfo
 
 **Description**
 
-This function returns the next user information record. To retrieve the first user information record handle, point UserInfo at a **NULL**. Each subsequent call will retrieve another user information record handle until there are no more, at which point *UserInfo* will point to **NULL**.
+This function returns the next user information record. To retrieve the first user information record handle, point *UserInfo* at a **NULL**. Each subsequent call will retrieve another user information record handle until there are no more, at which point *UserInfo* will point to **NULL**.
 
 
 **Status Codes Returned**

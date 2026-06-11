@@ -9,7 +9,7 @@ The platform firmware may also implement value added features in the boot manage
 
 The boot sequence for UEFI consists of the following:
 
-*   The boot order list is read from a globally defined NVRAM variable. Modifications to this variable are only guaranteed to take effect after the next platform reset. The boot order list  defines a list of NVRAM variables that contain information about what is to be booted. Each NVRAM variable defines a name for the boot option that can be displayed to a user.
+*   The boot order list is read from a globally defined NVRAM variable. Modifications to this variable are only guaranteed to take effect after the next platform reset. The boot order list defines a list of NVRAM variables that contain information about what is to be booted. Each NVRAM variable defines a name for the boot option that can be displayed to a user.
 
 *   The variable also contains a pointer to the hardware device and to a file on that hardware device that contains the UEFI image to be loaded.
 
@@ -430,6 +430,8 @@ If *Class* is *EFI_BOOT_MANAGER_POLICY_CONSOLE_GUID* then the Boot Manager will 
 
 If *Class* is *EFI_BOOT_MANAGER_POLICY_NETWORK_GUID* then the Boot Manager will connect the protocols the platform supports for UEFI general purpose network applications on one or more handles. The protocols associated with UEFI general purpose network applications are defined in  :ref:`platform-specific-elements` , list item number 7. If more than one network controller is available a platform will connect, one, many, or all of the networks based on platform policy. Connecting UEFI networking protocols, like *EFI_DHCP4_PROTOCOL* , does not establish connections on the network. The UEFI general purpose network application that called *ConnectDeviceClass()* may need to use the published protocols to establish the network connection. The Boot Manager can optionally have a policy to establish a network connection.
 
+If *Class* is *EFI_BOOT_MANAGER_POLICY_STORAGE_GUID* then the Boot Manager will connect the protocols associated with the discoverable storage devices. These protocols may include EFI_BLOCK_IO_PROTOCOL, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL, or other storage protocols relevant to the device. The platform may choose to restrict the connected devices based on its policy. For example, the platform may exclude external peripherals or only include specific, well-known devices.
+
 If *Class* is *EFI_BOOT_MANAGER_POLICY_CONNECT_ALL_GUID* then the Boot Manager will connect all UEFI drivers using the UEFI Boot Service  :ref:`efi-boot-services-connectcontroller`. If the Boot Manager has policy associated with connect all UEFI drivers this policy will be used.
 
 A platform can also define platform specific *Class* values as a properly generated *EFI_GUID* would never conflict with this specification.
@@ -444,6 +446,9 @@ A platform can also define platform specific *Class* values as a properly genera
    #define EFI_BOOT_MANAGER_POLICY_NETWORK_GUID \
       { 0xD04159DC, 0xE15F, 0x11E3,\
       { 0xB2, 0x61, 0xB8, 0xE8, 0x56, 0x2C, 0xBA, 0xFA } }
+   #define EFI_BOOT_MANAGER_POLICY_STORAGE_GUID \
+      { 0xCD68FE79, 0xD3CB, 0x436E,\
+      { 0xA8, 0x50, 0xF4, 0x43, 0xC8, 0x8C, 0xFB, 0x49 } }
    #define EFI_BOOT_MANAGER_POLICY_CONNECT_ALL_GUID \
       { 0x113B2126, 0xFC8A, 0x11E3,\
         { 0xBD, 0x6C, 0xB8, 0xE8, 0x56, 0x2C, 0xBA, 0xFA } } 
@@ -517,15 +522,6 @@ To prevent name collisions with possible future globally defined variables, othe
    * - ConOutDev
      - BS, RT
      - The device path of all possible console output devices.
-   * - CryptoIndications
-     - NV, BS, RT
-     - Allows the OS to request the crypto algorithm to BIOS. 
-   * - CryptoIndicationsSupported
-     - BS, RT
-     - Allows the firmware to indicate supported crypto algorithm to OS.
-   * - CryptoIndicationsActivated
-     - BS, RT
-     - Allows the firmware to indicate activated crypto algorithm to OS. 
    * - dbDefault
      - BS, RT
      - The OEM's default secure boot signature store. Should be treated as read-only.
@@ -571,12 +567,6 @@ To prevent name collisions with possible future globally defined variables, othe
    * - Key####
      - NV, BS, RT
      - Describes hot key relationship with a Boot#### load option.
-   * - Lang
-     - NV, BS, RT
-     - The language code that the system is configured for. This value is deprecated.
-   * - LangCodes
-     - BS, RT
-     - The language codes that the firmware supports. This value is deprecated.
    * - OsIndications
      - NV, BS, RT
      - Allows the OS to request the firmware to enable certain features and to take certain actions.
@@ -623,13 +613,9 @@ To prevent name collisions with possible future globally defined variables, othe
      - BS, RT
      - Whether the system is configured to use only vendor-provided keys or not. Should be treated as read-only.
 
-The *PlatformLangCodes* variable contains a null- terminated ASCII string representing the language codes that the firmware can support. At initialization time the firmware computes the supported languages and creates this data variable. Since the firmware creates this value on each initialization, its contents are not stored in nonvolatile memory. This value is considered read-only. *PlatformLangCodes* is specified in Native RFC 4646 format. :ref:`Appendix-M-formats-language-codes-and-language-code-arrays-APX-M-formats-language-codes-and-language-code-arrays`. *LangCodes* is deprecated and may be provided for backwards compatibility.
+The *PlatformLangCodes* variable contains a null- terminated ASCII string representing the language codes that the firmware can support. At initialization time the firmware computes the supported languages and creates this data variable. Since the firmware creates this value on each initialization, its contents are not stored in nonvolatile memory. This value is considered read-only. *PlatformLangCodes* is specified in Native RFC 4646 format. See :ref:`Appendix-M-formats-language-codes-and-language-code-arrays-APX-M-formats-language-codes-and-language-code-arrays`.
 
-The *PlatformLang* variable contains a null- terminated ASCII string language code that the machine has been configured for. This value may be changed to any value supported by *PlatformLangCodes*. If this change is made in the preboot environment, then the change will take effect immediately. If this change is made at OS runtime, then the change does not take effect until the next boot. If the language code is set to an unsupported value, the firmware will choose a supported default at initialization and set *PlatformLang* to a supported value. *PlatformLang* is specified in Native RFC 4646 array format.  :ref:`Appendix-M-formats-language-codes-and-language-code-arrays-APX-M-formats-language-codes-and-language-code-arrays` . *Lang* is deprecated and may be provided for backwards compatibility.
-
-*Lang* has been deprecated. If the platform supports this variable, it must map any changes in the *Lang* variable into *PlatformLang* in the appropriate format.
-
-*Langcodes* has been deprecated. If the platform supports this variable, it must map any changes in the *Langcodes* variable into *PlatformLang* in the appropriate format.
+The *PlatformLang* variable contains a null- terminated ASCII string language code that the machine has been configured for. This value may be changed to any value supported by *PlatformLangCodes*. If this change is made in the preboot environment, then the change will take effect immediately. If this change is made at OS runtime, then the change does not take effect until the next boot. If the language code is set to an unsupported value, the firmware will choose a supported default at initialization and set *PlatformLang* to a supported value. *PlatformLang* is specified in Native RFC 4646 array format. See :ref:`Appendix-M-formats-language-codes-and-language-code-arrays-APX-M-formats-language-codes-and-language-code-arrays`.
 
 The *Timeout* variable contains a binary *UINT16* that supplies the number of seconds that the firmware will wait before initiating the original default boot selection. A value of 0 indicates that the default boot selection is to be initiated immediately on boot. If the value is not present, or contains the value of 0xFFFF then firmware will wait for user input before booting. This means the default boot selection is not automatically started by the firmware.
 
@@ -650,12 +636,6 @@ The *BootNext* variable is a single *UINT16* that defines the *Boot####* option 
 The *BootCurrent* variable is a single *UINT16* that defines the *Boot####* option that was selected on the current boot. The platform sets this variable before signaling EFI_EVENT_GROUP_READY_TO_BOOT. This variable is not set when attempting to launch OsRecovery### or PlatformRecovery### options.
 
 The *BootOptionSupport* variable is a *UINT32* that defines the types of boot options supported by the boot manager.
-
-The CryptoIndicationsSupported variable indicates which crypto algorithms the firmware supports. This variable is recreated by firmware every boot, and cannot be modified by the OS (see SetVariable()Attributes usage rules once ExitBootServices() is performed).
-
-The CryptoIndicationsActivated variable indicates which crypto algorithms the firmware activates. This variable is recreated by firmware every boot, and cannot be modified by the OS (see SetVariable()Attributes usage rules once ExitBootServices() is performed). It must be a subset of CryptoIndicationsSupported.
-
-The CryptoIndications variable is used to indicate which crypto algorithms the OS wants firmware to activate in the next boot. It must be a subset of CryptoIndicationsSupported. The OS will supply this data with a SetVariable() call. See Section 8.5.4 for the variable definition. Once the data is consulted by the firmware and synced to CryptoIndicationsActivated, the firmware must delete this variable.
 
 Each *Driver####* variable contains an *EFI_LOAD_OPTION*. Each load option variable is appended with a unique number, for example Driver0001, Driver0002, etc.
 
@@ -781,7 +761,7 @@ The format of the file system specified is contained in  :ref:`file-system-forma
 Removable Media Boot Behavior
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-To generate a file name when none is present in the *FilePath* , the firmware must append a default file name in the form *\\EFI\BOOT\BOOT{machine type short-name}.EFI* where machine type short-name defines a PE32+ image format architecture. Each file only contains one UEFI image type, and a system may support booting from one or more images types.  :ref:`uefi-image-types` lists the UEFI image types.
+To generate a file name when none is present in the FilePath, the firmware must append a default file name in the form ``\EFI\BOOT\BOOT{machine type short-name}.EFI`` where machine type short-name defines a PE32+ image format architecture. Each file only contains one UEFI image type, and a system may support booting from one or more images types.  See :numref:`uefi-image-types` for a list of the UEFI image types.
 
 .. list-table:: UEFI Image Types
    :widths: 30 30 30
@@ -823,9 +803,10 @@ To generate a file name when none is present in the *FilePath* , the firmware mu
      - 0x6264
 
 
-**Note**: *The PE Executable machine type is contained in the machine field of the COFF file header as defined in the Microsoft Portable Executable and Common Object File Format Specification, Revision 6.0*
+.. Note:: 
+   The PE Executable machine type is contained in the machine field of the COFF file header as defined in the Microsoft Portable Executable and Common Object File Format Specification, Revision 6.0*
 
-Media may support multiple architectures by simply having a \\EFI\BOOT\BOOT{machine type short-name}.EFI file of each possible machine type.
+Media may support multiple architectures by simply having a file ``\EFI\BOOT\BOOT{machine type short-name}.EFI`` for each possible machine type.
 
 
 .. _boot-via-the-load-file-protocol:

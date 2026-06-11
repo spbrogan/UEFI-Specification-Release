@@ -32,14 +32,9 @@ The preferred representation of a language code is done via an RFC 4646 language
    * - zh-Hant
      - zh-cht
 
-
-
 An RFC 4646 language code is represented as a null-terminated ASCII string.
 
 An RFC 4646 language string must be constructed according to the tag creation rules in section 2.3 of RFC 4646. For example, when constructing the primary language tag for a locale identifier, if a 2 character ISO 639-1 language code exists along with a 3 character ISO 639-2 language code, then the ISO 639-1 language code must be used. Further, if an ISO 639-1 tag does not exist, then the ISO 639-2/T (Terminology) tag must be for the primary locale before an ISO 639-2/B (Bibliographic) tag may be used. See RFC 4646 for a complete discussion of this topic. 
-
-To provide backwards compatibility with preexisting EFI 1.10 drivers, a UEFI platforms may support deprecated protocols which represent languages in the ISO 639-2 format. This includes the following protocols: *UNICODE_COLLATION_INTERFACE* , *EFI_DRIVER_CONFIGURATION_PROTOCOL* , *EFI_DRIVER_DIAGNOSTICS_PROTOCOL* , and *EFI_COMPONENT_NAME_PROTOCOL* . The deprecated *LangCodes* and *Lang* global variables may also be supported by a platform for backwards compatibility.
-
 
 
 .. _specifying-language-code-arrays_formats_language_codes_and_language_code_arrays:

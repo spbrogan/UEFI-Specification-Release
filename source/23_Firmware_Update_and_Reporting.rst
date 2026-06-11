@@ -12,7 +12,7 @@ The UEFI Firmware Management Protocol provides an abstraction for device to prov
 
 When UEFI Firmware Management Protocol (FMP) instance is intended to perform the update of an option ROM loaded from a PCI or PCI Express device, it is recommended that the FMP instance be attached to the handle with *EFI_LOADED_IMAGE_PROTOCOL* for said Option ROM.
 
-When the FMP instance is intended to update internal device firmware, or a combination of device firmware and Option ROM, the FMP instance may instead be attached to the Controller handle of the device. However in the case where multiple devices represented by multiple controller handles are served by the same firmware store, only a single Controller handle should expose FMP. In all cases a specific updatable hardware firmware store must be represented by exactly one FMP instance.
+When the FMP instance is intended to update internal device firmware, or a combination of device firmware and Option ROM, the FMP instance may instead be attached to the Controller handle of the device. However, in the case where multiple devices represented by multiple controller handles are served by the same firmware store, only a single Controller handle should expose FMP. In all cases a specific updatable hardware firmware store must be represented by exactly one FMP instance.
 
 Care should be taken to ensure that the FMP instance reports current version data that accurately represents the actual contents of the firmware store of the device exposing FMP, because in some cases the device driver currently operating the device may have been loaded from another device or media.
 
@@ -205,7 +205,7 @@ LastAttemptStatus
   Describes the status that was last attempted to update. If no update has been attempted the value will be *LAST_ATTEMPT_STATUS_SUCCESS*. See "Related Definitions" in  `EFI_SYSTEM_RESOURCE_TABLE`_ for Last Attempt Status values. Only present in version 3 or higher.
 
 HardwareInstance
-  An optional number to identify the unique hardware instance within the system for devices that may have multiple instances (Example: a plug in pci network card). This number must be unique within the namespace of the *ImageTypeId* GUID and *ImageIndex*. For FMP instances that have multiple descriptors for a single hardware instance, all descriptors must have the same *HardwareInstance* value. This number must be consistent between boots and should be based on some sort of hardware identified unique id (serial number, etc) whenever possible. If a hardware based number is not available the FMP provider may use some other characteristic such as device path, bus/dev/function, slot num, etc for generating the *HardwareInstance*. For implementations that will never have more than one instance a zero can be used. A zero means the FMP provider is not able to determine a unique hardware instance number or a hardware instance number is not needed. Only present in version 3 or higher. 
+  An optional number to identify the unique hardware instance within the system for devices that may have multiple instances (Example: a plug in PCI network card). This number must be unique within the namespace of the *ImageTypeId* GUID and *ImageIndex*. For FMP instances that have multiple descriptors for a single hardware instance, all descriptors must have the same *HardwareInstance* value. This number must be consistent between boots and should be based on some sort of hardware identified unique id (serial number, etc) whenever possible. If a hardware based number is not available the FMP provider may use some other characteristic such as device path, bus/dev/function, slot num, etc for generating the *HardwareInstance*. For implementations that will never have more than one instance a zero can be used. A zero means the FMP provider is not able to determine a unique hardware instance number or a hardware instance number is not needed. Only present in version 3 or higher. 
 
 Dependencies
   A pointer to an array of FMP depex expression op-codes that are terminated by an *EFI_FMP_DEP_END* op-code. 
@@ -345,19 +345,21 @@ If *IMAGE_ATTRIBUTE_DEPENDENCY* is supported and set, then there are dependencie
    * - EFI_SUCCESS
      - The image information was successfully returned.
    * - EFI_BUFFER_TOO_SMALL
-     - The *ImageInfo* buffer was too small. The current buffer size needed to hold the image(s) information is returned in *ImageInfoSize.*
+     - The *ImageInfo* buffer was too small. The current buffer size needed to hold the image(s) information is returned in *\*ImageInfoSize.*
    * - EFI_INVALID_PARAMETER
-     - *ImageInfoSize* is not too small and *ImageInfo* is NULL.
+     - *\*ImageInfoSize* is not too small and *ImageInfo* is NULL.
    * - EFI_INVALID_PARAMETER
-     - *ImageInfoSize* is non-zero and *DescriptorVersion* is *NULL*.
+     - *\*ImageInfoSize* is non-zero and *DescriptorVersion* is *NULL*.
    * - EFI_INVALID_PARAMETER
-     - *ImageInfoSize* is non-zero and *DescriptorCount* is *NULL*.
+     - *\*ImageInfoSize* is non-zero and *DescriptorCount* is *NULL*.
    * - EFI_INVALID_PARAMETER
-     - *ImageInfoSize* is non-zero and *DescriptorSize* is *NULL*.
+     - *\*ImageInfoSize* is non-zero and *DescriptorSize* is *NULL*.
    * - EFI_INVALID_PARAMETER
-     - *ImageInfoSize* is non-zero and *PackageVersion* is *NULL*.
+     - *\*ImageInfoSize* is non-zero and *PackageVersion* is *NULL*.
    * - EFI_INVALID_PARAMETER
-     - *ImageInfoSize* is non-zero and *PackageVersionName* is *NULL*.
+     - *\*ImageInfoSize* is non-zero and *PackageVersionName* is *NULL*.
+   * - EFI_INVALID_PARAMETER
+     - *\*ImageInfoSize* is NULL.
    * - EFI_DEVICE_ERROR
      - Valid information could not be returned. Possible corrupted image.
 
@@ -1491,8 +1493,8 @@ This opcode must be the first one in a dependency expression.
 
 .. _delivering-capsules-containing-updates-to-firmware-management-protocol:
 
-Delivering Capsules Containing Updates toFirmware Management Protocol
----------------------------------------------------------------------
+Delivering Capsules Containing Updates to Firmware Management Protocol
+----------------------------------------------------------------------
 
 
 **Summary**
@@ -1524,7 +1526,7 @@ When delivered to platform firmware *QueryCapsuleCapabilities()* the capsule wil
 
 When delivered to platform firmware *UpdateCapsule()* the capsule will be examined according to the structure defined in `DEFINED FIRMWARE MANAGEMENT PROTOCOL DATA CAPSULE STRUCTURE`_ . and if it is possible for the platform to process the update will be processed. 
 
-By definition Firmware Management protocol services are not available in EFI runtime and depending upon platform capabilities, EFI runtime delivery of this capsule may not be supported and may return an error when delivered in EFI runtime with *CAPSULE_FLAGS_PERSIST_ACROSS_RESET* bit defined. However any platform supporting this capability is required to accept this form of capsule in Boot Services, including optional use of *CAPSULE_FLAGS_PERSIST_ACROSS_RESET* bit.
+By definition Firmware Management protocol services are not available in EFI runtime and depending upon platform capabilities, EFI runtime delivery of this capsule may not be supported and may return an error when delivered in EFI runtime with *CAPSULE_FLAGS_PERSIST_ACROSS_RESET* bit defined. However, any platform supporting this capability is required to accept this form of capsule in Boot Services, including optional use of *CAPSULE_FLAGS_PERSIST_ACROSS_RESET* bit.
 
 
 .. _defined-firmware-management-protocol-data-capsule-structure:
@@ -1641,7 +1643,7 @@ Each payload item contained within the capsule body is preceded by a *EFI_FIRMWA
 Firmware Processing of the Capsule Identified by EFI_FIRMWARE_MANAGEMENT_CAPSULE_ID_GUID
 #########################################################################################
 
-#. Capsule is presented to system firmware via call to *UpdateCapsule()* or using mass storage delivery procedure of  :ref:`delivery-of-capsules-via-file-on-mass-storage-device`. The capsule must be constructed to consist of a single *EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER* structure with the 0 or more drivers and 0 or more binary payload items. However a capsule in which driver count and payload count are both zero is not processed. 
+#. Capsule is presented to system firmware via call to *UpdateCapsule()* or using mass storage delivery procedure of  :ref:`delivery-of-capsules-via-file-on-mass-storage-device`. The capsule must be constructed to consist of a single *EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER* structure with the 0 or more drivers and 0 or more binary payload items. However, a capsule in which driver count and payload count are both zero is not processed. 
 
 #. Capsule is recognized by *EFI_CAPSULE_HEADER* member *CapsuleGuid* equal to *EFI_FIRMWARE_MANAGEMENT_CAPSULE_ID_GUID*. *CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE* flag must be 0. 
 

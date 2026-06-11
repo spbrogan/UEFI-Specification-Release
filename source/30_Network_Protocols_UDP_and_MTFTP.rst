@@ -1463,7 +1463,7 @@ FragmentBuffer
    }  EFI_UDP6_TRANSMIT_DATA;
 
 
-*UdpSessionData* If not **NULL**, the data that is used to override the transmitting settings.Only the two filed *UdpSessionData.DestinationAddress* and *UdpSessionData.DestionPort* can be used as the transmitting setting filed. Type *EFI_UDP6_SESSION_DATA* is defined above.  
+*UdpSessionData* If not **NULL**, the data that is used to override the transmitting settings. Only the two filed *UdpSessionData.DestinationAddress* and *UdpSessionData.DestionPort* can be used as the transmitting setting filed. Type *EFI_UDP6_SESSION_DATA* is defined above.  
 
 DataLength   
   Sum of the fragment data length. Must not exceed the maximum UDP packet size.

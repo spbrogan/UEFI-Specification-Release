@@ -177,10 +177,10 @@ This function provides protocol capability information and state information.
   // 1~0xFF: CC vendor specific. Please refer to 38.4
 
 
-.. _efi_cc_protocol-geteventlog:
+.. _efi_cc_measurement_protocol-geteventlog:
 
-EFI_CC_PROTOCOL.GetEventLog
-############################
+EFI_CC_MEASUREMENT_PROTOCOL.GetEventLog
+########################################
 
 **Summary**
 
@@ -511,4 +511,30 @@ The following table shows the TPM PCR index mapping and CC event log measurement
 
 ::
 
-  #define EFI_CC_TYPE_INTEL_TDX  2
+  #define EFI_CC_TYPE_INTEL_TDX    2
+
+
+.. _risc-v-ap-tee:
+
+RISC-V AP-TEE
+##############
+
+The following table shows the TPM PCR index mapping and CC event log measurement register index interpretation for RISC-V AP-TEE.
+
+.. list-table:: Mapping for RISC-V AP-TEE
+   :name: mapping-for-risc-v-ap-tee
+   :widths: 15 30 30
+   :class: longtable
+   
+   * - **TPM PCR**
+     - **CC Event Log Measurement Register Index**
+     - **RISC-V AP-TEE Measurement Register**
+   * - [0~16,23]
+     - [0~16,23]
+     - Runtime Measurement [0~16,23]
+	 
+**Related Definitions**
+
+::
+
+  #define EFI_CC_TYPE_RISCV_APTEE    3

@@ -13,7 +13,7 @@ Device Path Overview
 
 A *Device Path* is used to define the programmatic path to a device. The primary purpose of a Device Path is to allow an application, such as an OS loader, to determine the physical device that the interfaces are abstracting.
 
-A collection of device paths is usually referred to as a name space. ACPI, for example, is rooted around a name space that is written in ASL (ACPI Source Language). Given that EFI does not replace ACPI and defers to ACPI when ever possible, it would seem logical to utilize the ACPI name space in EFI. However, the ACPI name space was designed for usage at operating system runtime and does not fit well in platform firmware or OS loaders. Given this, EFI defines its own name space, called a *Device Path*.
+A collection of device paths is usually referred to as a name space. ACPI, for example, is rooted around a name space that is written in ASL (ACPI Source Language). Given that EFI does not replace ACPI and defers to ACPI whenever possible, it would seem logical to utilize the ACPI name space in EFI. However, the ACPI name space was designed for usage at operating system runtime and does not fit well in platform firmware or OS loaders. Given this, EFI defines its own name space, called a *Device Path*.
 
 A Device Path is designed to make maximum leverage of the ACPI name space. One of the key structures in the Device Path defines the linkage back to the ACPI name space. The Device Path also is used to fill in the gaps where ACPI defers to buses with standard enumeration algorithms. The Device Path is able to relate information about which device is being used on buses with standard enumeration mechanisms. The Device Path is also used to define the location on a medium where a file should be, or where it was loaded from. A special case of the Device Path can also be used to support the optional booting of legacy operating systems from legacy media.
 
@@ -434,7 +434,7 @@ The _HID and _CID fields in the ACPI Device Path node and Expanded ACPI Device P
    * - _UID
      - 8
      - 4
-     - Unique ID that is required by ACPI if two devices have the same _HID. This value must also match the corresponding _UID/_HID pair in the ACPI name space. Only the 32-bit numeric value type of _UID is supported; thus strings must not be used for the _UID in the ACPI name space.
+     - Unique ID that is required by ACPI if two devices have the same _HID. This value must also match the corresponding _UID/_HID pair in the ACPI name space. Only the 32-bit numeric value type of _UID is supported; thus, strings must not be used for the _UID in the ACPI name space.
 
 
 
@@ -3953,7 +3953,7 @@ Hardware Device Paths are used to define paths on buses that have a standard enu
 
 Messaging Device Paths are used to define paths on buses that have a standard enumeration algorithm, but are not part of the global coherency domain of the system. SCSI and Fibre Channel are examples of this kind of bus. The Messaging Device Path can also be used to describe virtual connections over network-style devices. An example would be the TCP/IP address of an internet connection. 
 
-Thus Hardware Device Path is used if the bus produces resources that show up in the coherency resource domain of the system. A Message Device Path is used if the bus consumes resources from the coherency domain and produces resources out side the coherency domain of the system.
+Thus, Hardware Device Path is used if the bus produces resources that show up in the coherency resource domain of the system. A Message Device Path is used if the bus consumes resources from the coherency domain and produces resources outside the coherency domain of the system.
 
 
 .. _media-device-path-rules:
@@ -4691,6 +4691,10 @@ This section describes the various types of option parameter values.
      - | AcpiAdr(DisplayDevice[, DisplayDevice...])    
        | 
        | The *DisplayDevice* parameter is an Integer. There may be one or more, separated by a comma.
+   * - | Type: 2 (ACPI Device Path) 
+       | SubType: 4 (ACPI NVDIMM Device Path)
+     - | NvdimmAcpiAdr(NFIT Device Handle)
+       | The NFIT Device Handle is an integer, the _ADR of the NVDIMM device
    * - | Type: 3 MessagingPath    (when subtype is not recognized)
      - | Msg(*subtype, data*) 
        |   
@@ -5046,7 +5050,8 @@ This section describes the various types of option parameter values.
        | DnsServerIp is optional. It is the IP address of DNS server.
    * - | Type: 3 (Messaging Device Path)
        | SubType: 32 (NVDIMM Service)
-     - | RestService(RestExServiceType, AccessMode)
+     - | NVDIMM(UUID)
+       | Namespace Unique Identifier UUID
    * - | Type: 3 (Messaging Device Path)
        | SubType: 33 (REST Service)
      - | RestService(RestExServiceType, AccessMode)

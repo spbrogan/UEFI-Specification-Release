@@ -547,40 +547,41 @@ These certificates can be validated using the contents of the signature database
 **NOTE**: *In the case of a* WIN_CERT_TYPE_PKCS_SIGNED_DATA (*or* WIN_CERT_TYPE_EFI_GUID *where* CertType = EFI_CERT_TYPE_PKCS7_GUID) *certificate, a match can occur against an entry in the authorized signature database (or the forbidden signature database;*  `UEFI Image Variable GUID & Variable Name`_ ) *at any level of the chain of X.509 certificates present in the certificate, and matches can occur against any of the applicable signature types defined in* ( :ref:`firmware-os-key-exchange-passing-public-keys` .  
 
 
-
 .. list-table:: PE/COFF Certificates Types and UEFI Signature Database Certificate Types
    :name: pe-coff-certificates-types-and-uefi-signature-database-certificate-types
-   :widths: 45 45
+   :widths: 60 40
    :class: longtable
 
-
-   * - Image Certificate Type
-     - Verified Using Signature Database Type
-   * - | *WIN_CERT_TYPE_EFI_PKCS115* 
-       | (*Signature* Size = 256 bytes)
-     - *EFI_CERT_RSA2048_GUID* (public key)
-   * - | *WIN_CERT_TYPE_EFI_GUID* 
-       | (*CertType* = E FI_CERT_TYPE_RSA2048_SHA256_GUID*)
-     - *EFI_CERT_RSA2048_GUID* (public key).
-   * - | *WIN_CERT_TYPE_EFI_GUID* 
-       | (CertType = EFI_CERT_TYPE_PKCS7_GUID)*
-     - | *EFI_CERT_X509_GUID*  
-       | *EFI_CERT_RSA2048_GUID* (when applicable)  
-       | *EFI_CERT_X509_SHA256_GUID*  (when applicable)  
-       | *EFI_CERT_X509_SHA384_GUID*  (when applicable)  
-       | *EFI_CERT_X509_SHA512_GUID*  (when applicable)
-   * - *WIN_CERT_TYPE_PKCS_SIGNED_DATA*
-     - | *EFI_CERT_X509_GUID*  
-       | *EFI_CERT_RSA2048_GUID* (when applicable)  
-       | *EFI_CERT_X509_SHA256_GUID*  (when applicable)  
-       | *EFI_CERT_X509_SHA384_GUID*  (when applicable)  
-       | *EFI_CERT_X509_SHA512_GUID*  (when applicable)
+   * - **Image Certificate Type**
+     - **Verified Using Signature Database Type**
+   * - | WIN_CERT_TYPE_EFI_PKCS115
+       | (Signature Size = 256 bytes)
+     - EFI_CERT_RSA2048_GUID          (public key)
+   * - | WIN_CERT_TYPE_EFI_GUID 
+       | (CertType = EFI_CERT_TYPE_RSA2048_SHA256_GUID)
+     - EFI_CERT_RSA2048_GUID          (public key)
+   * - | WIN_CERT_TYPE_EFI_GUID 
+       | (CertType = EFI_CERT_TYPE_PKCS7_GUID)
+     - | EFI_CERT_X509_GUID  
+       | EFI_CERT_RSA2048_GUID        (when applicable)  
+       | EFI_CERT_X509_SHA256_GUID    (when applicable)  
+       | EFI_CERT_X509_SHA384_GUID    (when applicable)  
+       | EFI_CERT_X509_SHA512_GUID    (when applicable)
+	   | EFI_CERT_X509_SM3_GUID       (when applicable)
+   * - WIN_CERT_TYPE_PKCS_SIGNED_DATA
+     - | EFI_CERT_X509_GUID
+       | EFI_CERT_RSA2048_GUID        (when applicable)  
+       | EFI_CERT_X509_SHA256_GUID    (when applicable)  
+       | EFI_CERT_X509_SHA384_GUID    (when applicable)  
+       | EFI_CERT_X509_SHA512_GUID    (when applicable)
+	   | EFI_CERT_X509_SM3_GUID       (when applicable)
    * - (Always applicable regardless of whether a certificate is present or not)
-     - | *EFI_CERT_SHA1_GUID*, 
-       | *EFI_CERT_SHA224_GUID*, 
-       | *EFI_CERT_SHA256_GUID*, 
-       | *EFI_CERT_SHA384_GUID*, 
-       | *EFI_CERT_SHA512_GUID*  
+     - | EFI_CERT_SHA1_GUID, 
+       | EFI_CERT_SHA224_GUID, 
+       | EFI_CERT_SHA256_GUID, 
+       | EFI_CERT_SHA384_GUID, 
+       | EFI_CERT_SHA512_GUID,
+	   | EFI_CERT_SM3_GUID
        | In this case, the database contains the hash of the image.
 
 
@@ -753,7 +754,7 @@ The platform vendor may provide a default PKpub in the PKDefault variable descri
 Clearing The Platform Key
 #########################
 
-The platform owner clears the public half of the Platform Key (PKpub) by deleting the Platform Key variable using UEFI Runtime Service *SetVariable()*. The data buffer submitted to the *SetVariable()* must be signed with the current PKpriv;   :ref:`exception-for-machine-check-init-and-nmi` for details. The name and GUID of the Platform Key variable are specified in  :ref:`globally-defined-variables`, "Globally Defined Variables" The platform key may also be cleared using a secure platform-specific method. When platform key is cleared, the global variable SetupMode must also be updated to 1.
+The platform owner clears the public half of the Platform Key (PKpub) by deleting the Platform Key variable using UEFI Runtime Service *SetVariable()*. The data buffer submitted to the *SetVariable()* must be signed with the current PKpriv - see :ref:`variable-services` for details. The name and GUID of the Platform Key variable are specified in :ref:`globally-defined-variables`. The platform key may also be cleared using a secure platform-specific method. When the platform key is cleared, the global variable *SetupMode* must also be updated to 1.
 
 
 .. _transitioning-to-audit-mode:
@@ -785,9 +786,9 @@ The platform owner enrolls the key exchange keys by either calling *SetVariable(
 
 The authenticated UEFI variable that stores the key exchange keys (KEKs) can always be read but only be written if:
 
--   The platform is in user mode and the provided variable data is signed with the current PK\ :sub:`priv`\ ; *or* if
+-   The platform is in user mode, and the provided variable data is signed with the current PK\ :sub:`priv`\ ; *or* if
 
--   The platform is in setup mode (in this case the variable can be written without a signature validation, but the *SetVariable()* call needs to be formatted in accordance with the procedure for authenticated variables in :ref:`using-the-efi-variable-authentication-3-descriptor`)
+-   The platform is in setup mode, in which case the variable can be written without a signature validation, but the *SetVariable()* call needs to be formatted in accordance with the procedure for authenticated variables in :ref:`using-the-efi-variable-authentication-3-descriptor`.
 
 
 The name and GUID of the Key Exchange Key variable are specified in :ref:`globally-defined-variables`, "Globally Defined Variables." The platform vendor may provide a default set of Key Exchange Keys in the KEKDefault variable described in :ref:`globally-defined-variables`. If present, these keys (or a subset) may optionally be used when performing the initial enrollment of Key Exchange Keys. If any are to be used, they may be parsed from the variable and enrolled as described above.
@@ -835,7 +836,7 @@ unable to trust the OS. By enrolling these public keys,
 authorized by the platform owner, the platform firmware
 can now check the signature of data passed by the
 operating system.
-Of course if the malicious software agent is running as
+Of course, if the malicious software agent is running as
 part of the OS, such as a rootkit, then any communication
 between the firmware and operating system still remains
 the subject of spoofing as the malicious code has access
@@ -1103,6 +1104,44 @@ This identifies a signature containing the SHA512 hash of an X.509 certificate�
 
 .. code-block::
 
+   #define EFI_CERT_SM3_GUID \
+     { 0x57347f87, 0x7a9b, 0x403a, \
+     { 0xb9, 0x3c, 0xdc, 0x4a, 0xfb, 0x7a, 0xe, 0xbc } }
+
+This identifies a signature containing a SM3 hash. The SignatureHeader size shall always be 0. 
+The SignatureSize shall always be 16 (size of SignatureOwner component) + 32 bytes.
+
+.. code-block::
+
+   #define EFI_CERT_X509_SM3_GUID \
+     { 0x60d807e5, 0x10b4, 0x49a9,  \
+     {0x93, 0x31, 0xe4, 0x4, 0x37, 0x88, 0x8d, 0x37 } }
+
+**Prototype**
+
+.. code-block::
+
+   typedef UINT8 EFI_SM3_HASH[32];
+   #pragma pack(1)
+   typedef struct _EFI_CERT_X509_SM3 {
+     EFI_SM3_HASH ToBeSignedHash;
+     EFI_TIME TimeOfRevocation;
+   } EFI_CERT_X509_SM3;
+   #pragma pack()
+
+**Members**
+
+ToBeSignedHash
+   The SM3 hash of an X.509 certificate’s To-Be-Signed contents.
+
+TimeOfRevocation
+   The time that the certificate shall be considered to be revoked.
+
+This identifies a signature containing the SM3 hash of an X.509 certificate's To-Be-Signed contents, and a time of revocation. The SignatureHeader size shall always be 0. The SignatureSize shall always be 16 (size of the SignatureOwner component) + 32 bytes for an EFI_CERT_X509_SM3 structure. If the TimeOfRevocation is non-zero, the certificate should be considered to be revoked from that time and onwards, and otherwise the certificate shall be considered to always be revoked.
+
+
+.. code-block::
+
    #define EFI_CERT_EXTERNAL_MANAGEMENT_GUID \
      { 0x452e8ced, 0xdfff, 0x4b8c, \
      { 0xae, 0x01, 0x51, 0x18, 0x86, 0x2e, 0x68, 0x2c } };
@@ -1123,7 +1162,7 @@ Image Execution Information Table
 
 **Summary**
 
-When *AuditMode==0,* if the image’s signature is not found in the authorized database, or is found in the forbidden database, the image will not be started and instead, information about it will be placed in the EFI_IMAGE_EXECUTION_INFO_TABLE (see section 32.5.3.1).  {cross-reference needed} 
+When *AuditMode==0,* if the image’s signature is not found in the authorized database, or is found in the forbidden database, the image will not be started and instead, information about it will be placed in the EFI_IMAGE_EXECUTION_INFO_TABLE (see :ref:`image-execution-information-table`).
 
 When *AuditMode==1,* *an* *EFI_IMAGE_EXECUTION_INFO* *element is created in the* *EFI_IMAGE_EXECUTION_INFO_TABLE* *for every certificate found in the certificate table of every image that is validated.* 
 
@@ -1160,7 +1199,7 @@ DevicePath
   Image device path. The image device path typically comes from the Loaded Image Device Path Protocol installed on the image handle. If image device path cannot be determined, a simple end-of-path device node should be put in this position.
 
 Signature
-  Zero or more image signatures. If the image contained no signatures, then this field is empty.The type *WIN_CERTIFICATE* is defined in chapter 26.
+  Zero or more image signatures. If the image contained no signatures, then this field is empty. The type *WIN_CERTIFICATE* is defined in chapter 26.
 
 
 **Prototype**
@@ -1220,14 +1259,14 @@ First, this field describes the results of the firmware’s attempt to authentic
    * - *EFI_IMAGE_EXECUTION_AUTH_SIG_FAILED*
      - The image has at least one certificate, and either:
         - An image certificate is in the forbidden database, **or**
-        - A digest of an image certifcate is in the forbidden database, **or**
+        - A digest of an image certificate is in the forbidden database, **or**
         - The image signature check failed.
    * - *EFI_IMAGE_EXECUTION_AUTH_SIG_PASSED*
      - The image has at least one certificate, and either:
-        - An image certifcate is in authroized database.
+        - An image certificate is in authroized database.
         - The image digest is in the authorized database.
    * - *EFI_IMAGE_EXECUTION_AUTH_SIG_NOT_FOUND*
-     - The image has at least one certifcate, and:
+     - The image has at least one certificate, and:
         - the image certificate is not found in the authorized database, **and**
         - the image digest is not in the authorized database.
    * - *EFI_IMAGE_EXECUTION_AUTH_SIG_FOUND*
@@ -1243,53 +1282,7 @@ This table can be used by an agent which executes later to audit which images we
 If an attempt to boot a legacy non-UEFI OS takes place when the system is in User Mode, the OS load shall fail and a corresponding *EFI_IMAGE_EXECUTION_INFO* entry shall be created with Action set to *EFI_IMAGE_EXECUTION_AUTH_UNTESTED,* Name set to the NULL-terminated "Description String" from the BIOS Boot Specification Device Path and DevicePath set to the BIOS Boot Specification Device Path ( :ref:`bios-boot-specification-device-path` ). 
 
 
-.. _firmware-os-crypto-algorithm-exchange:
-
-Firmware/OS Crypto Algorithm Exchange
---------------------------------------
-
-The firmware and an Operating System may exchange information through the CryptoIndicationsSupported, CryptoIndicationsActivated and the CryptoIndications variables as follows:
-
-- The CryptoIndications variable returns an EFI_CRYPTO_INDICATION structure owned by the OS and is used to indicate which crypto algorithms the OS wants firmware to activate. The algorithm bitmap in CryptoIndications must be a subset of the algorithm bitmap in the CryptoIndicationsSupported variable. The OS will supply this data with a SetVariable()call. The OS should set one bit. If the OS sets more than one bit, then the firmware shall support all those algorithms. Because this variable can be written by any entity, the firmware shall validate the data before use it. For example, any bits beyond the supported bitmask shall be treated as illegal. The firmware may also combine other validation before accepting the new configuration, such as physical present user action, etc. If error is detected, the firmware may choose to notify end user, ignore this request, or reset to manufacture state, etc. The detailed validation process or error remediation is out of scope of this specification.
-
-- The CryptoIndicationsSupported variable returns an EFI_CRYPTO_INDICATION structure owned by the firmware and indicates which crypto algorithms are supported by the firmware supports. This variable is recreated by firmware every boot and cannot be modified by the OS.
-
-- The CryptoIndicationsActivated variable returns an EFI_CRYPTO_INDICATION structure owned by the firmware and indicates which crypto algorithms are supported by the firmware activates. The algorithm bitmap in CryptoIndicationsActivated must be a subset of the algorithm bitmap in the CryptoIndicationsSupported variable. This variable is recreated by firmware every boot and cannot be modified by the OS.
-
-**Related Definitions**
-
-.. code-block::
-
-   typedef struct {
-     UINT32     Version;
-     UINT32     Length;
-     UINT64     HashAlgorithmBitmap;
-     UINT64     AsymAlgorithmBitmap;
-   } EFI_CRYPTO_INDICATION;
-   
-   #define EFI_CRYPTO_INDICATION_VERSION_1   0x00000001
-   
-   #define EFI_CRYPTO_INDICATION_HASH_SHA_256 0x1
-   #define EFI_CRYPTO_INDICATION_HASH_SHA_384 0x2
-   
-   #define EFI_CRYPTO_INDICATION_ASYM_RSASSA_2048 0x1
-   #define EFI_CRYPTO_INDICATION_ASYM_RSASSA_3072 0x2
-   #define EFI_CRYPTO_INDICATION_ASYM_RSAPSS_3072 0x10
-   #define EFI_CRYPTO_INDICATION_ASYM_ECDSA_ECC_NIST_P256 0x40
-   #define EFI_CRYPTO_INDICATION_ASYM_ECDSA_ECC_NIST_P384 0x80
-   #define EFI_CRYPTO_INDICATION_ASYM_RSASSA_4096 0x4
-   #define EFI_CRYPTO_INDICATION_ASYM_RSAPSS_4096 0x20
-
-
-   The EFI_CRYPTO_INDICATION_HASH_SHA_256 bit means SHA-256 hash algorithm.
-   The EFI_CRYPTO_INDICATION_HASH_SHA_384 bit means SHA-384 hash algorithm.
-   The EFI_CRYPTO_INDICATION_ASYM_RSASSA_2048 bit means a signature algorithm defined in section 8.2 (RSASSAPKCS1-v1_5) in RFC8017. The key size is 2048 bits.
-   The EFI_CRYPTO_INDICATION_ASYM_RSASSA_3072 bit means a signature algorithm defined in section 8.2 (RSASSAPKCS1-v1_5) in RFC8017. The key size is 3072 bits.
-   The EFI_CRYPTO_INDICATION_ASYM_RSAPSS_3072 bit means a signature algorithm defined in section 8.1 (RSASSAPSS) in RFC8017. The key size is 3072 bits.
-   The EFI_CRYPTO_INDICATION_ASYM_ECDSA_ECC_NIST_P256 bit means a signature algorithm defined in section 6 (ECDSA) in FIPS 186-4. The key size is 256 bits.
-   The EFI_CRYPTO_INDICATION_ASYM_ECDSA_ECC_NIST_P384 bit means a signature algorithm defined in section 6 (ECDSA) in FIPS 186-4. The key size is 384 bits.
-
-.. note:: The platform firmware shall balance the security and compatibility. Supporting old algorithm such as EFI_CRYPTO_INDICATION_HASH_SHA_256 and/or EFI_CRYPTO_INDICATION_ASYM_RSASSA_2048 in CryptoIndicationsSupported variable may cause insecure configuration or potential downgrade attack. These algorithms should only be used for compatibility consideration. A secure configuration should not use any deprecated algorithms.  
+.. [editing note] removed section 32.5 Firmware/OS Crypto Algorithm Exchange, per Mantis 2480.
 
 
 .. _uefi-image-validation:
@@ -1328,7 +1321,7 @@ An *authorized user* (for the purposes of UEFI image security) is one who posses
 Signature Database Update
 #########################
 
-The Authorized, Forbidden, Timestamp, and Recovery signature databases are stored as UEFI authenticated variables (see Variable Services in :ref:`exception-for-machine-check-init-and-nmi`) with the GUID  
+The Authorized, Forbidden, Timestamp, and Recovery signature databases are stored as UEFI authenticated variables (see :ref:`variable-services`) for the GUID.
 
 | *EFI_IMAGE_SECURITY_DATABASE_GUID* and the names 
 | *EFI_IMAGE_SECURITY_DATABASE,*
@@ -1440,7 +1433,7 @@ The security database *db* must either contain an entry with a hash value of the
 
 – C. Any entry with *SignatureListType* of *EFI_CERT_X509_GUID,* with *SignatureData* which contains a certificate with the same Issuer, Serial Number, and To-Be-Signed hash included in any certificate in the signing chain of the signature being verified.
 
-Multiple signatures are allowed to exist in the binary’s certificate table (as per PE/COFF Section "Attribute Certificate Table"). Only one hash or signature is required to be present in *db* in order to pass validation, so long as neither the hash of the binary nor any present signature is reflected in dbx.
+Multiple signatures are allowed to exist in the binary’s certificate table (as per the "Attribute Certificate Table" section of the Microsoft PE/COFF Specification). Only one hash or signature is required to be present in *db* in order to pass validation, so long as neither the hash of the binary nor any present signature is reflected in dbx.
 
 Then, based on this match or its own policy, the firmware can decide whether or not to launch the UEFI image.
 
@@ -1456,7 +1449,7 @@ Then, based on this match or its own policy, the firmware can decide whether or 
 
 #. OS Application Validates UEFI Image. An OS application determines whether the image is valid.
 
-#. UEFI Image Signature Added To Signature Database. For more information, see Signature Database Update.
+#. UEFI Image Signature Added To Signature Database. For more information, see :ref:`Signature-Database-Update`.
 
 #. End.
 
@@ -1493,27 +1486,28 @@ The device authentication flow only verifies the identity of the device and ensu
   - A device may include an old version firmware. It is not related to the device signature database. This is also be detected by the attestation. For example, the platform firmware may extend the device firmware measurement to TPM PCR. A verifier can get the device firmware information and compare it with the known good device integrity measurement.
   - In both above cases, a platform may define its own policy to perform more verification. For example, a platform may enroll a small set of known revoked certificate. Or a platform may enroll the minimal secure version number for some specific devices.
 
-.. _evice-authentication-authorized-user:
+.. _device-authentication-authorized-user:
 
 Authorized User
 ################
 
 An authorized user (for the purposes of UEFI device authentication) is one who possesses a platform key (PKpriv). This key is used to sign updates to the device signature databases.
 
-.. _device-signature-database-updated:
+.. _device-signature-database-update:
 
 Device Signature Database Update
 #################################
 
-The Authorized device signature databases are stored as UEFI authenticated variables (see Variable Services in Section 8.1.1) with the GUID EFI_DEVICE_SECURITY_DATABASE_GUID.
+The Authorized device signature databases are stored as UEFI authenticated variables (see :ref:`variable-services`) for the GUID EFI_DEVICE_SECURITY_DATABASE_GUID.
 
 These authenticated UEFI variables that store the device signature databases (devdb) can always be read but can only be written if:
 
   - The platform is in user mode and the provided variable data is signed with the private half of the platform private key (PKpriv); or if
-  - The platform is in setup mode (in this case the variables can be written without a signature validation, but the SetVariable() call needs to be formatted in accordance with the procedure for authenticated variables in Section 8.2.1) 
+  - The platform is in setup mode (in this case the variables can be written without a signature validation, but the SetVariable() call needs to be formatted in accordance with the procedure for authenticated variables in the  :ref:`using-the-efi-variable-authentication-3-descriptor` section.
 
-The platform vendor may provide a default set of entries for the Signature Database in the devdbDefault variable described in Section 3.3.
-The flow to update the device signature database (devdb) is exactly same as the flow to update the image signature databases, which is described in Section 32.5.3.
+The platform vendor may provide a default set of entries for the Signature Database in the devdbDefault variable described in the :ref:`globally-defined-variables` section.
+
+The flow to update the device signature database (devdb) is exactly same as the flow to update the image signature databases, which is described in the :ref:`signature-database-update` section.
 
 
 .. _secure-boot-and-driver-signing-code-definitions:
@@ -1558,7 +1552,7 @@ Constants used for UEFI signature database variable access.
 
 -  The *EFI_IMAGE_SECURITY_DATABASE_GUID* and *EFI_IMAGE_SECURITY_DATABASE3* are used to retrieve and change the authorized recovery signature database.
 
--  Firmware shall support the *EFI_VARIABLE_APPEND_WRITE* flag () :ref:`exception-for-machine-check-init-and-nmi` ) for the UEFI signature database variables.
+-  Firmware shall support the *EFI_VARIABLE_APPEND_WRITE* flag (:ref:`variable-services`) for the UEFI signature database variables.
 
 -  The signature database variables db, dbt, dbx, and dbr must be stored in tamper-resistant non-volatile storage.
 
@@ -1587,7 +1581,7 @@ Constants used for UEFI device signature database variable access.
 
 - The EFI_DEVICE_SECURITY_DATABASE_GUID and EFI_DEVICE_SECURITY_DATABASE are used to retrieve and change the authorized device signature database.
 
-- Firmware shall support the EFI_VARIABLE_APPEND_WRITE flag (see Section 8.1.1) for the UEFI device signature database variables.
+- Firmware shall support the EFI_VARIABLE_APPEND_WRITE flag (see :ref:`variable-services`) for the UEFI device signature database variables.
 
 - The device signature database variable dbdev must be stored in tamper-resistant nonvolatile storage.
 

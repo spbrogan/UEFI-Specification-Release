@@ -213,6 +213,8 @@
 
 :numref:`http-boot-network-topology-concept-corporate-environment` :ref:`http-boot-network-topology-concept-corporate-environment`
 
+:numref:`http-boot-network-topology-proxy-concept-corporate-environment` :ref:`http-boot-network-topology-proxy-concept-corporate-environment`
+
 :numref:`HTTP-Boot-Network-Topology-Concept2-Homeenvironments` :ref:`HTTP-Boot-Network-Topology-Concept2-Homeenvironments`
 
 :numref:`uefi-http-boot-protocol-layout` :ref:`uefi-http-boot-protocol-layout`

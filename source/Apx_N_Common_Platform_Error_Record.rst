@@ -3,15 +3,10 @@
 Common Platform Error Record (CPER)
 =================================================
 
-.. _cper-introduction:
-
 Introduction
 ------------
 
 This appendix describes the common platform error record (CPER) format for representing platform hardware errors.
-
-
-.. _cper-format:
 
 Format
 ------
@@ -227,13 +222,13 @@ Listed below are the standard notification types. Each standard notification typ
 
 -  Compute Express Link (CXL) Component: {0x69293BC9, 0x41DF, 0x49A3 {0xB4, 0xBD, 0x4F, 0xB0, 0xDB, 0x30, 0x41, 0xF6}} This Notification Type identifies errors that were reported to the system by CXL components that support error reporting via the CXL RAS Mailbox interface. See the CXL Specification, Rev 2.0 or later, for details regarding CXL Error Reporting.
 
+
 .. _error-status:
 
 Error Status
 $$$$$$$$$$$$
 
 The error status definition provides the capability to abstract information from implementation-specific error registers into generic error codes.
-
 
 .. list-table:: Error Status Fields
    :name: error-status-fields
@@ -270,71 +265,49 @@ The error status definition provides the capability to abstract information from
    :class: longtable
    :header-rows: 1
 
-   * 
-     - **Encoding**
+   * - **Encoding**
      - **Description**
-   * 
-     - 1
+   * - 1
      - ERR_INTERNAL Error detected internal to the component.
-   * 
-     - 16
+   * - 16
      - ERR_BUS Error detected in the bus.
-   * 
-     - **Detailed Internal Errors**
+   * - **Detailed Internal Errors**
      - 
-   * 
-     - 4
+   * - 4
      - ERR_MEM Storage error in memory (DRAM).
-   * 
-     - 5
+   * - 5
      - ERR_TLB Storage error in TLB.
-   * 
-     - 6
+   * - 6
      - ERR_CACHE Storage error in cache.
-   * 
-     - 7
+   * - 7
      - ERR_FUNCTION Error in one or more functional units.
-   * 
-     - 8
+   * - 8
      - ERR_SELFTEST component failed self test.
-   * 
-     - 9
+   * - 9
      - ERR_FLOW Overflow or undervalue of internal queue.
-   * 
-     - **Detailed Bus Errors**
+   * - **Detailed Bus Errors**
      - 
-   * 
-     - 17
+   * - 17
      - ERR_MAP Virtual address not found on IO-TLB or IO-PDIR.
-   * 
-     - 18
+   * - 18
      - ERR_IMPROPER Improper access error.
-   * 
-     - 19
+   * - 19
      - ERR_UNIMPL Access to a memory address which is not mapped to any component.
-   * 
-     - 20
+   * - 20
      - ERR_LOL Loss of Lockstep
-   * 
-     - 21
+   * - 21
      - ERR_RESPONSE Response not associated with a request
-   * 
-     - 22
+   * - 22
      - ERR_PARITY Bus parity error (must also set the A, C, or D Bits).
-   * 
-     - 23
+   * - 23
      - ERR_PROTOCOL Detection of a protocol error.
-   * 
-     - 24
+   * - 24
      - ERR_ERROR Detection of a PATH_ERROR
-   * 
-     - 25
+   * - 25
      - ERR_TIMEOUT Bus operation timeout.
-   * 
-     - 26
+   * - 26
      - ERR_POISONED A read was issued to data that has been poisoned.
-   * 
-     - All Others
+   * - All Others
      - *Reserved*
 
 
@@ -421,8 +394,7 @@ Section Descriptor
        | **IOMMU specific DMAr section** 
        | • {0x036F84E1, 0x7F37, 0x428c, {0xA7, 0x9E, 0x57, 
        | • 0x5F, 0xDF, 0xAA, 0x84, 0xEC}}  
-       |
-       | *Note 1* CXL Component Events :ref:`cxl-component-event-log-record-cxl-component-events-section` in the CXL Component Events Section
+       | CXL Component Events: see the :ref:`cxl-component-event-log-record`. 
    * - FRU Id
      - 32
      - 16
@@ -430,13 +402,19 @@ Section Descriptor
    * - Section Severity
      - 48
      - 4
-     - This field indicates the severity associated with the error section.  0 - Recoverable (also called non-fatal uncorrected)  1 - Fatal  2 - Corrected  3 - Informational  All other values are reserved.  Note that severity of "Informational" indicates that the section contains extra information that can be safely ignored by error handling software.
+     - | This field indicates the severity associated with the error section.  
+	   | 0 - Recoverable (also called non-fatal uncorrected)  
+	   | 1 - Fatal  
+	   | 2 - Corrected  
+	   | 3 - Informational  
+	   | All other values are reserved. 
+	   | Note that severity of "Informational" indicates that the section contains extra information that can be safely ignored by error handling software.
    * - FRU Text
      - 52
      - 20
      - ASCII string identifying the FRU hardware.
 
-.. note:: 1. For an IPF processor-specific error section, the GUID listed is the value from the SAL specification. The format of the data for this section is same as the Processor Device Error Info in the SAL specification.
+**Note:** For an IPF processor-specific error section, the GUID listed is the value from the SAL specification. The format of the data for this section is same as the Processor Device Error Info in the SAL specification.
 
 
 .. _non-standard-section-body:
@@ -1136,7 +1114,7 @@ See the Table below for the register context type 3, 64-bit mode execution conte
 
 .. list-table:: X64 Register State
    :name: x64-register-state
-   :widths: 15 5 15
+   :widths: 10 10 10
    :class: longtable
 
    * - **Offset**
@@ -1342,7 +1320,6 @@ It is optional for vendors to capture processor context information. The specifi
      - vendor specific
      - This is an optional variable field provided by vendors that prefer to provide additional details.
 
-.. TODO see row head above: Processor Error Information Structure and make sure compositor maintained the meaning of the sentende in the right data cell
 
 .. _arm-processor-error-information:
 
@@ -1382,10 +1359,10 @@ As described above, the processor error section contains a collection of *Proces
    * - Type
      - 4
      - 1
-     - | Bit 1 - Cache Error
-       | Bit 2 - TLB Error
-       | Bit 3 - Bus Error
-       | Bit 4 - Micro-architectural Error
+     - | Bit 0 - Cache Error
+       | Bit 1 - TLB Error
+       | Bit 2 - Bus Error
+       | Bit 3 - Micro-architectural Error
        | All other values are reserved
    * - Multiple Error (Error Count)
      - 5
@@ -1418,7 +1395,7 @@ As described above, the processor error section contains a collection of *Proces
      - If known, this field indicates a physical fault address associated with the error
 
 
-See the 4 Tables directly below for more error information: *Arm Cache Error Structure*, *ARM TLB Error Structure*, *ARM Bus Error Structure*, and *ARM Processor Error Context Information Header Structure* .
+See the following four tables for more error information: *Arm Cache Error Structure*, *ARM TLB Error Structure*, *ARM Bus Error Structure*, and *ARM Processor Error Context Information Header Structure*.
 
 
 .. list-table:: ARM Cache Error Structure
@@ -1650,20 +1627,19 @@ This is a vendor specific structure. Please refer to your hardware vendor docume
 ARM Processor Context Information
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-As described above, the processor error section contains a collection of structures called Processor Context Information. These provide processor context state specific to the ARM processor architecture. This section details the layout of the Processor Error Context Information Header Structure ( See Table N-21, :ref:`arm-processor-error-context-information-headerstructure` ) and the detailed processor context type information structures ( See Table N-21 through Table N-30). 
-
-.. TODD: please note reference to numbered tables above, but tables may not be numbered. What to do??
+As described above, the processor error section contains a collection of structures called Processor Context Information. These provide processor context state specific to the ARM processor architecture. This section details the layout of the Processor Error Context Information Header Structure ( See :numref:`arm-processor-error-context-information-headerstructure`) and the detailed processor context type information structures. 
 
 
 Care must be taken when reporting context information structures. The amount of context reported depends on the agent that is going to observe the data. The following are recommended guidelines:
 
-#. If the error happens whilst the processor is in the secure world, EL3, Secure EL1 or secure EL0, context information can contain sensitive data, and should not be exposed to unauthorized parties.
+  #. If the error happens whilst the processor is in the secure world, EL3, Secure EL1 or secure EL0, context information can contain sensitive data, and should not be exposed to unauthorized parties.
 
-#. If the error information is being provided to a software agent running at EL2, then the context information should only include any registers visible in EL2, e.g. GPR, EL1 and EL2 registers.
+  #. If the error information is being provided to a software agent running at EL2, then the context information should only include any registers visible in EL2, e.g. GPR, EL1 and EL2 registers.
 
-#. If the error information is being provided to a software agent running at EL1, then the context information should only include any registers visible in EL1, e.g. GPR, EL1 and registers.
+  #. If the error information is being provided to a software agent running at EL1, then the context information should only include any registers visible in EL1, e.g. GPR, EL1 and registers.
 
-For context information on processor running in AArch64 mode, even though some registers are defined as 4 bytes in length, following tables provide 8 bytes space to account for possible future expansion.
+
+For context information on processor running in AArch64 mode, even though some registers are defined as 4 bytes in length, the following tables provide 8 bytes space to account for possible future expansion.
 
 
 .. list-table:: ARM Processor Error Context Information HeaderStructure
@@ -1870,14 +1846,8 @@ For context information on processor running in AArch64 mode, even though some r
    =========== =========== ===========
 
 
-
-
-
-.. _arm-aarch64-el2-context-system-registers-type-6:
-
-
-
 .. table:: ARM AArch64 EL2 Context System Registers (Type 6)
+   :name: arm-aarch64-el2-context-system-registers-type-6
    :widths: auto
 
    =========== =========== =========
@@ -1901,14 +1871,8 @@ For context information on processor running in AArch64 mode, even though some r
    =========== =========== =========
 
 
-
-
-
-.. _arm-aarch64-el3-context-system-registers-type-7:
-
-
-
 .. table:: ARM AArch64 EL3 Context System Registers (Type 7)
+   :name: arm-aarch64-el3-context-system-registers-type-7
    :widths: auto
 
    =========== =========== =========
@@ -1927,24 +1891,12 @@ For context information on processor running in AArch64 mode, even though some r
    =========== =========== =========
 
 
-The following structure (Table 275) describes additional
-AArch64/AArch32 miscellaneous system registers captured from
-the perspective of the processor that took the hardware error
-exception. Each register array entry will be per the following
-table. The number of register entries present in the register
-array is based on the register array size (i.e. N/10).
-
-
-
-.. _arm-misc.-context-system-register-type-8---single-register-entry:
-
-
+The following structure describes additional AArch64/AArch32 miscellaneous system registers captured from the perspective of the processor that took the hardware error exception. Each register array entry will be per the following table. The number of register entries present in the register array is based on the register array size (i.e. N/10).
 
 .. list-table:: ARM Misc. Context System Register (Type 8) - SingleRegister Entry
    :name: arm-misc.-context-system-register-(type-8)---singleregister-entry
    :widths: 15 10 10 65
    :class: longtable
-
 
    * - **Name**
      - **Byte Offset**
@@ -1963,6 +1915,37 @@ array is based on the register array size (i.e. N/10).
      - 2
      - 8
      - Value read from system register
+
+
+.. list-table:: ARM 128 bit translation table base registers (Type 9)
+   :name: arm-128-bit-translation-table-base-registers-type9
+   :widths: 15 15 30
+   :class: longtable
+
+   * - **Byte Offset**
+     - **Byte Length**
+     - **Field**
+   * - 0
+     - 16
+     - TTBR0_EL1
+   * - 16
+     - 16
+     - TTBR0_EL2
+   * - 32
+     - 16
+     - TTBR0_EL3
+   * - 48
+     - 16
+     - TTBR1_EL1
+   * - 64
+     - 16
+     - TTBR1_EL2
+   * - 80
+     - 16
+     - VTTBR_EL2
+
+When the above table is present, some of its registers may be invalid.
+An invalid register in this table must have all 128 bits set.
 
 
 .. _memory-error-section:
@@ -2269,9 +2252,6 @@ Memory Error Section 2
      - This field contains the SMBIOS handle for the Type 17 Memory Device Structure that represents the Memory Module.
 
 
-
-
-
 .. _pci-express-error-section:
 
 PCI Express Error Section
@@ -2295,20 +2275,23 @@ Type: {0xD995E954, 0xBBC1, 0x430F, {0xAD, 0x91, 0xB4, 0x4D,
      - | Indicates which of the following fields is valid:  
        | Bit 0 -Port Type Valid  
        | Bit 1 - Version Valid  
-       | Bit 2 - Command Status Valid  
-       | Bit 3 - Device ID Valid  
+       | Bit 2 - Command Status Valid
+       | Bit 3 - Device ID Valid (PCI Config-Space)
        | Bit 4 - Device Serial Number Valid  
        | Bit 5 - Bridge Control Status Valid  
        | Bit 6 - Capability Structure Status Valid  
        | Bit 7 - AER Info Valid  
-       | Bit 8-63 - Reserved
+       | Bit 8 - Device ID Valid (RCRB). Note: If this bit is set, then Bit 3 must be 0.
+       | Bit 9 - RCRB High Address Valid. Note: If this bit is 0, the RCRB High Address is assumed to be 0. 
+       | Bit 10-63 - Reserved
    * - Port Type
      - 8
      - 4
      - | PCIe Device/Port Type as defined in the PCI Express capabilities register:  
        | 0: PCI Express End Point  
        | 1: Legacy PCI End Point Device  
-       | 4: Root Port  5: Upstream Switch Port  
+       | 4: Root Port  
+       | 5: Upstream Switch Port  
        | 6: Downstream Switch Port  
        | 7: PCI Express to PCI/PCI-X Bridge  
        | 8: PCI/PCI-X to PCI Express Bridge  
@@ -2325,26 +2308,34 @@ Type: {0xD995E954, 0xBBC1, 0x430F, {0xAD, 0x91, 0xB4, 0x4D,
    * - Command Status
      - 16
      - 4
-     - | Byte0-1: PCI Command Register  
+     - | Byte0-1: PCI Command Register
        | Byte2-3: PCI Status Register
-   * - Reserved
+   * - RCRB High Address
      - 20
      - 4
-     - Must be zero
+     - Upper DWord of the MMIO base address for the RCRB
    * - Device ID
      - 24
      - 16
      - | PCIe Root Port PCI/bridge PCI compatible device number and bus number information to uniquely identify the root port or bridge. 
-       | Default values for both the bus numbers is zero.  
-       | Byte 0-1: Vendor ID  
-       | Byte 2-3: Device ID  
-       | Byte 4-6: Class Code  
-       | Byte 7: Function Number  
-       | Byte 8: Device Number  
-       | Byte 9-10: Segment Number  
+       | Default values for both the bus numbers is zero.
+       | Byte 0-1: Vendor ID
+       | Byte 2-3: Device ID
+       | Byte 4-6: Class Code
+       | 
+       | If Bit 3 is set in Validation Bits:
+       | Byte 7: Function Number
+       | Byte 8: Device Number
+       | Byte 9-10: Segment Number
+       | 
+       | Else if Bit 8 is set in Validation Bits:
+       | Byte 7-10: Lower DWord of the MMIO base address for the RCRB
+       | 
        | Byte 11: Root Port/Bridge Primary Bus Number or device bus number
        | Byte 12: Root Port/Bridge Secondary Bus Number  
-       | Byte 13-14: Bit0:2: Reserved Bit3:15 Slot Number  
+       | Byte 13-14: 
+       |   Bit 0:2: Reserved 
+       |   Bit 3:15 Slot Number  
        | Byte 15 Reserved
    * - Device Serial Number
      - 40
@@ -2372,9 +2363,6 @@ Type: {0xD995E954, 0xBBC1, 0x430F, {0xAD, 0x91, 0xB4, 0x4D,
      - PCIe Advanced Error Reporting Extended Capability Structure.
 
 
-
-
-
 .. _pcipci-x-bus-error-section:
 
 PCI/PCI-X Bus Error Section
@@ -2384,7 +2372,6 @@ Type: {0xC5753963, 0x3B84, 0x4095, {0xBF, 0x78, 0xED, 0xDA,
 0xD3, 0xF9, 0xC9, 0xDD}}
 
 .. _pcipci-x-bus-error-section-1:
-
 
 
 .. list-table:: PCI/PCI-X Bus Error Section
@@ -2468,10 +2455,7 @@ Type: {0xC5753963, 0x3B84, 0x4095, {0xBF, 0x78, 0xED, 0xDA,
      - PCI Bus intended target identifier.
 
 
-
-
-
-.. _pcipci-x-component-error-section:
+.. _pci-pcix-component-error-section:
 
 PCI/PCI-X Component Error Section
 #################################
@@ -2479,15 +2463,10 @@ PCI/PCI-X Component Error Section
 Type: {0xEB5E4685, 0xCA66, 0x4769, {0xB6, 0xA2, 0x26, 0x06,
 0x8B, 0x00, 0x13, 0x26}}
 
-.. _pcipci-x-component-error-section-1:
-
-
-
-.. list-table:: PCI/PCI-X Component Error Section
-   :name: pci/pci-x-component-error-section
+.. list-table:: PCI/PCI-X Component Error Table
+   :name: pci-pcix-component-error-table
    :widths: 15 10 10 65
    :class: longtable
-
 
    * - **Mnemonic**
      - **Byte Offset**
@@ -2531,9 +2510,6 @@ Type: {0xEB5E4685, 0xCA66, 0x4769, {0xB6, 0xA2, 0x26, 0x06,
      - 40
      - 2x8xN
      - An array of address/data pair values. The address and data information may be from 2 to 8 bytes of actual data represented in the 8 byte array locations.
-
-
-
 
 
 .. _firmware-error-record-reference:
@@ -2581,9 +2557,6 @@ Type: {0x81212A96, 0x09ED, 0x4996, {0x94, 0x71, 0x8D, 0x72, 0x9C, 0x8E, 0x69, 0x
        | For Error Record Type 0 and Type 1 this field is ignored.
 
 
-
-
-
 .. _dmar-error-sections:
 
 DMAr Error Sections
@@ -2594,10 +2567,8 @@ The DMAr error sections are divided into two different components as described b
 DMAr Generic Error Section:
   This section holds information about DMAr errors in a generic form and will be common across all DMAr unit architectures.
 
-
-
 Architecture specific DMAr Error Section:
-  This section consists of DMA remapping errors specific to the    architecture. In addition, certain state information of the    DMAr unit is captured at the time of error. This section is    unique for each DMAr architecture (VT-d, IOMMU).
+  This section consists of DMA remapping errors specific to the architecture. In addition, certain state information of the DMAr unit is captured at the time of error. This section is unique for each DMAr architecture (VT-d, IOMMU).
 
 
 .. _dmar-generic-error-section:
@@ -2665,9 +2636,6 @@ Type: {0x5B51FEF7, 0xC79D, 0x4434, {0x8F, 0x1B, 0xAA, 0x62, 0xDE, 0x3E, 0x2C, 0x
      - Must be 0
 
 
-
-
-
 .. _intel-vt-for-directed-io-specific-dmar-error-section:
 
 Intel® VT for Directed I/O specific DMAr Error Section
@@ -2678,15 +2646,11 @@ Type: {0x71761D37, 0x32B2, 0x45cd, {0xA7, 0xD0, 0xB0, 0xFE 0xDD,
 All fields in this error section are specific to Intel’s VT-d
 architecture. This error section has a fixed size.
 
-.. _intel-vt-for-directed-io-specific-dmar-errors:
-
-
 
 .. list-table:: Intel® VT for Directed I/O specific DMAr Errors
-   :name: intel®-vt-for-directed-i/o-specific-dmar-errors
+   :name: intel-vt-for-directed-io-specific-dmar-errors
    :widths: 10 10 10 65
    :class: longtable
-
 
    * - **Mnemonic**
      - **Byte Offset**
@@ -2764,9 +2728,6 @@ architecture. This error section has a fixed size.
      - 136
      - 8
      - PTE entry for device virtual address in page level 1
-
-
-
 
 
 .. _iommu-specific-dmar-error-section:
@@ -2893,9 +2854,6 @@ Type:{0x91335EF6, 0xEBFB, 0x4478, {0xA6, 0xA6, 0x88, 0xB7, 0x28, 0xCF, 0x75, 0xD
        | **NOTE**: The Per Log Structure contains a header describing the number of DWORDs in the error record.
 
 
-
-
-
 .. _compute-express-link-cxl-protocol-error-section:
 
 Compute Express Link (CXL) Protocol Error Section
@@ -2927,17 +2885,17 @@ Type: { 0x80B9EFB4, 0x52B5, 0x4DE3, { 0xA7, 0x77, 0x68, 0x78, 0x4B, 0x77, 0x10, 
    * - CXL Agent Type
      - 8
      - 1
-     - | 0 - This error was detected by a CXL 1.1 device
-       | 1 - This error was detected by a CXL 1.1 host downstream port
-       | 2 - This error was detected by CXL 2.0 device
-       | 3 - This error was detected by CXL 2.0 Logical Device
-       | 4 - This error was detected by CXL 2.0 Fabric Manager managed Logical device
-       | 5 - This error was detected by CXL 2.0 Root Port
-       | 6 - This error was detected by CXL 2.0 Downstream Switch Port
-       | 7 - This error was detected by CXL 2.0 Upstream Switch Port
+     - | 0 - This error was detected by a CXL RCD RCiEP
+       | 1 - This error was detected by a CXL RCH Downstream Port RCRB
+       | 2 - This error was detected by an Endpoint Device
+       | 3 - This error was detected by a Logical Device
+       | 4 - This error was detected by a Fabric Manager managed Logical Device
+       | 5 - This error was detected by a Root Port
+       | 6 - This error was detected by a Downstream Switch Port
+       | 7 - This error was detected by an Upstream Switch Port
        | 8-255 - Reserved
-       | In this table, the term "CXL Device" is used to refer to CXL 1.1 Device, CXL 2.0 Device, CXL 2.0 Logical Device or a CXL 2.0 Fabric Manager Managed Logical Device.
-       | In this table, the term "CXL Port" is used to refer to CXL 1.1 host downstream port, CXL Root Port, CXL Downstream Switch Port and Upstream Switch Port.
+       | In this table, the term "CXL Device" is used to refer to an RCD RCiEP Endpoint Device, CXL Logical Device, or a CXL Fabric Manager managed Logical Device. 
+       | In this table, the term "CXL Port" is used to refer to an RCH Downstream Port RCRB, CXL Root Port, CXL Downstream Switch Port, and Upstream Switch Port.
    * - Reserved
      - 9
      - 7
@@ -2945,14 +2903,14 @@ Type: { 0x80B9EFB4, 0x52B5, 0x4DE3, { 0xA7, 0x77, 0x68, 0x78, 0x4B, 0x77, 0x10, 
    * - CXL Agent Address
      - 16
      - 8
-     - | If this CXL agent is a CXL device, CXL Root Port, CXL Downstream Switch Port or CXL Upstream Switch Port, then the PCIe compatible device/function number, bus number, and segment number information are used to uniquely identify the Component:
+     - | If this CXL agent is a CXL RCD RCiEP Endpoint Device, CXL Root Port, CXL Downstream Switch Port or CXL Upstream Switch Port, then the PCIe compatible device/function number, bus number, and segment number information are used to uniquely identify the Component:
        | Byte 0 - Function number  
        | Byte 1 - Device number  
        | Byte 2 - Bus number  
        | Bytes 3-4 - Segment number  
        | Bytes 5-7 - Reserved    
        | 
-       | If CXL agent is a CXL 1.1 host downstream port:
+       | If the CXL agent is an RCH Downstream Port RCRB:
        | Byte 0-7 - CXL Port RCRB Base address
    * - Device ID
      - 24
@@ -3018,13 +2976,10 @@ Refer to the Events Record Format for CXL components in the CXL Specification, R
 -  For the CXL Component Event Log: Refer to the Common Event Record field (Offset 16) of the Events Record Format for each CXL component.
 
 
-.. _cxl-component-event-log-record-cxl-component-events-section:
-
 .. list-table:: CXL Component Event Log Record
    :name: cxl-component-event-log-record
    :widths: 15 10 10 45
    :class: longtable
-
 
    * - **Mnemonic**
      - **Byte Offset**
@@ -3064,3 +3019,103 @@ Refer to the Events Record Format for CXL components in the CXL Specification, R
      - 32
      - -
      - CXL Component Event Log, starting with the Common Event Record field corresponding to the Component specified by the Section Type GUID. The Length of this field may vary.
+
+
+.. _fru-memory-poison-section:
+
+FRU Memory Poison Section
+#########################
+
+This section describes a list of physical memory locations that are poisoned (should not be used by software), within a given Field Replaceable Unit (FRU). The FRU is defined by an Architecture and an Identifier.
+
+There shall be a single record for each FRU, where each record contains an array of entries, and each entry identifies a unique physical memory location using a Hardware Identifier and an Address.
+
+The Hardware Identifier refers to a specific hardware block (e.g., Memory Controller, etc.) within the FRU, and the Address can be a system physical address, a DRAM (Row/Bank/Column) address, or some other system-specific (Normalized) address.
+
+**Type: {0x5E4706C1, 0x5356, 0x48C6 {0x93, 0x0B, 0x52, 0xF2, 0x12, 0x0A, 0x44, 0x58}}**
+
+.. list-table:: FRU Memory Poison Section Table
+   :name: fru-memory-poison-section-table
+   :widths: 30 10 10 50
+   :class: longtable
+   :header-rows: 1
+
+   * - **Mnemonic**
+     - **Byte Offset**
+     - **Byte Length**
+     - **Descriptor**
+   * - Checksum
+     - 0
+     - 4
+     - This entire section body, including the Checksum field, must sum to zero.
+   * - Validation Bits
+     - 4
+     - 8
+     - | Indicates which of the following fields is valid:
+       | Bit 0 – FRU Architecture Type valid
+       | Bit 1 – FRU Architecture Value valid
+       | Bit 2 – FRU Identifier Type valid
+       | Bit 3 – FRU Identifier Value valid
+       | Bit 4 – Poison List Entries valid
+       | Bit 5 – Poison List valid
+       | Bits 6-63 – Reserved
+   * - FRU Architecture Type
+     - 12
+     - 4
+     - | 0 – x86 CPUID_Fn00000001_EAX [Family, Model, Stepping]
+       | All other values are reserved.
+   * - FRU Architecture Value
+     - 16
+     - 8
+     - Raw value of the FRU Architecture as defined by the FRU Architecture Type field.
+   * - FRU Identifier Type
+     - 24
+     - 4
+     - | 0 – x86 Protected Processor Inventory Number (PPIN)
+       | All other values are reserved.
+   * - FRU Identifier Value
+     - 28
+     - 8
+     - Raw value of the FRU Identifier as defined by the FRU Identifier Type field.
+   * - Poison List Entries
+     - 36
+     - 4
+     - Number of Memory Poison Descriptors (N)
+   * - Poison List
+     - 40
+     - N * 32
+     - Variable length array of Memory Poison Descriptors. See :numref:`fru-memory-poison-descriptor` below.
+
+
+.. list-table:: FRU Memory Poison Descriptor
+   :name: fru-memory-poison-descriptor
+   :widths: 30 10 10 50
+   :class: longtable
+   :header-rows: 1
+
+   * - **Mnemonic**
+     - **Byte Offset**
+     - **Byte Length**
+     - **Descriptor**
+   * - Poison Timestamp
+     - 0
+     - 8
+     - Timestamp of the poison event.
+   * - Hardware Identifier Type
+     - 8
+     - 4
+     - | 0 – MCA_IPID register. 
+       | All other values are reserved.
+   * - Hardware Identifier Value
+     - 12
+     - 8
+     - Raw value of the Hardware Identifier as defined by the Hardware Identifier Type field.
+   * - Address Type
+     - 20
+     - 4
+     - | 0 – MCA_ADDR register
+       | All other values are reserved.
+   * - Address Value
+     - 24
+     - 8
+     - Raw value of the Address as defined by the Address Type field.

@@ -1,3 +1,4 @@
+
 .. only:: html
 
 	List of Tables
@@ -26,9 +27,6 @@
 - :numref:`modifiers-for-common-uefi-data-types` :ref:`modifiers-for-common-uefi-data-types`
 - :numref:`map-efi-cacheability-attributes-to-aarch64-memory-types` :ref:`map-efi-cacheability-attributes-to-aarch64-memory-types`
 - :numref:`map-uefi-permission-attributes-to-arm-paging-attributes` :ref:`map-uefi-permission-attributes-to-arm-paging-attributes`
-- :numref:`RV32-datatype-alignment` :ref:`RV32-datatype-alignment`
-- :numref:`RV64-datatype-alignment` :ref:`RV64-datatype-alignment`
-- :numref:`register-name-and-abi-name` :ref:`register-name-and-abi-name`
 - :numref:`uefi-protocols` :ref:`uefi-protocols`
 - :numref:`required-uefi-implementation-elements` :ref:`required-uefi-implementation-elements`
 
@@ -468,10 +466,10 @@
 - :numref:`memory-error-record-2` :ref:`memory-error-record-2`
 - :numref:`pci-express-error-record` :ref:`pci-express-error-record`
 - :numref:`pci/pci-x-bus-error-section` :ref:`pci/pci-x-bus-error-section`
-- :numref:`pci/pci-x-component-error-section` :ref:`pci/pci-x-component-error-section`
+- :numref:`pci-pcix-component-error-table` :ref:`pci-pcix-component-error-table`
 - :numref:`firmware-error-record-reference-format` :ref:`firmware-error-record-reference-format`
 - :numref:`dmar-generic-errors` :ref:`dmar-generic-errors`
-- :numref:`intel®-vt-for-directed-i/o-specific-dmar-errors` :ref:`intel®-vt-for-directed-i/o-specific-dmar-errors`
+- :numref:`intel-vt-for-directed-io-specific-dmar-errors` :ref:`intel-vt-for-directed-io-specific-dmar-errors`
 - :numref:`iommu-specific-dmar-errors` :ref:`iommu-specific-dmar-errors`
 - :numref:`ccix-per-log-error-record` :ref:`ccix-per-log-error-record`
 - :numref:`cxl-protocol-error-section` :ref:`cxl-protocol-error-section`
@@ -480,7 +478,6 @@
 **Appendix O**
 
 - :numref:`uefi-table-structure-apx-o-uefi-acpi-table` :ref:`uefi-table-structure-apx-o-uefi-acpi-table`
-- :numref:`smm-communication-acpi-table-apx-o-uefi-acpi-table` :ref:`smm-communication-acpi-table-apx-o-uefi-acpi-table`
 
 **Appendix P**
 

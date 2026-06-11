@@ -102,16 +102,24 @@ Signature
   A 64-bit signature that identifies the type of table that follows. Unique signatures have been generated for the EFI System Table, the EFI Boot Services Table, and the EFI Runtime Services Table.
 
 Revision
-  The revision of the EFI Specification to which this table           conforms. The upper 16 bits of this field contain the major       revision value, and the lower 16 bits contain the minor           revision value. The minor revision values are binary coded          decimals and are limited to the range of 00..99. 
+  The revision of the EFI Specification to which this table conforms. The upper 16 bits of this field contain the major revision value, and the lower 16 bits contain the minor revision value. The minor revision value is a decimal value split into two parts, the "upper decimal" and the "lower decimal". The upper decimal is calculated dividing the minor revision value by 10 using integer division. The lower decimal is calculated by taking the minor revision value modulo 10.
 
-  When printed or displayed UEFI spec revision is referred as (Major revision).(Minor revision upper decimal).(Minor revision lower decimal) or (Major revision).(Minor revision upper decimal) in case Minor revision lower decimal is set to 0. For example: 
+  When printed or displayed UEFI spec revision is referred as (Major revision).(Minor revision upper digits).(Minor revision lowest digit) or (Major revision).(Minor revision upper digits) in case Minor revision lowest digit is set to 0. For example:
 
-  Specification with the revision value ((2<<16) | (30)) would be referred as 2.3; 
+    - Specification revision value ((2<<16) | (10)) would be referred to as 2.1;
 
-  A specification with the revision value ((2<<16) | (31)) would be referred as 2.3.1 
+    - Specification revision value ((2<<16) | (30)) would be referred to as 2.3;
+
+    - Specification revision value ((2<<16) | (31)) would be referred to as 2.3.1;
+
+    - Specification revision value ((2<<16) | (100)) would be referred to as 2.10;
+
+    - Specification revision value ((2<<16) | (101)) would be referred to as 2.10.1;
+
+  Note that EFI 1.10 did not follow this convention and was referred to as 1.10, not 1.1.
 
 HeaderSize
-  The size, in bytes, of the entire table including the FI_TABLE_HEADER. 
+  The size, in bytes, of the entire table including the EFI_TABLE_HEADER.
 
 CRC32
   The 32-bit CRC for the entire table. This value is computed by setting this field to 0, and computing the 32-bit CRC for HeaderSize bytes. 
@@ -147,21 +155,21 @@ Contains pointers to the runtime and boot services tables.
 
    #define EFI_SYSTEM_TABLE_SIGNATURE 0x5453595320494249  
    #define EFI_2_100_SYSTEM_TABLE_REVISION ((2<<16) | (100))
-   #define EFI_2_90_SYSTEM_TABLE_REVISION ((2<<16) | (90))  
-   #define EFI_2_80_SYSTEM_TABLE_REVISION ((2<<16) | (80))  
-   #define EFI_2_70_SYSTEM_TABLE_REVISION ((2<<16) | (70))  
-   #define EFI_2_60_SYSTEM_TABLE_REVISION ((2<<16) | (60))  
-   #define EFI_2_50_SYSTEM_TABLE_REVISION ((2<<16) | (50))  
-   #define EFI_2_40_SYSTEM_TABLE_REVISION ((2<<16) | (40))  
-   #define EFI_2_31_SYSTEM_TABLE_REVISION ((2<<16) | (31))  
-   #define EFI_2_30_SYSTEM_TABLE_REVISION ((2<<16) | (30))  
-   #define EFI_2_20_SYSTEM_TABLE_REVISION ((2<<16) | (20))  
-   #define EFI_2_10_SYSTEM_TABLE_REVISION ((2<<16) | (10))  
-   #define EFI_2_00_SYSTEM_TABLE_REVISION ((2<<16) | (00))  
-   #define EFI_1_10_SYSTEM_TABLE_REVISION ((1<<16) | (10))  
-   #define EFI_1_02_SYSTEM_TABLE_REVISION ((1<<16) | (02))  
-   #define EFI_SPECIFICATION_VERSION    EFI_SYSTEM_TABLE_REVISION
-   #define EFI_SYSTEM_TABLE_REVISION    EFI_2_100_SYSTEM_TABLE_REVISION
+   #define EFI_2_90_SYSTEM_TABLE_REVISION  ((2<<16) | (90))
+   #define EFI_2_80_SYSTEM_TABLE_REVISION  ((2<<16) | (80))
+   #define EFI_2_70_SYSTEM_TABLE_REVISION  ((2<<16) | (70))
+   #define EFI_2_60_SYSTEM_TABLE_REVISION  ((2<<16) | (60))
+   #define EFI_2_50_SYSTEM_TABLE_REVISION  ((2<<16) | (50))
+   #define EFI_2_40_SYSTEM_TABLE_REVISION  ((2<<16) | (40))
+   #define EFI_2_31_SYSTEM_TABLE_REVISION  ((2<<16) | (31))
+   #define EFI_2_30_SYSTEM_TABLE_REVISION  ((2<<16) | (30))
+   #define EFI_2_20_SYSTEM_TABLE_REVISION  ((2<<16) | (20))
+   #define EFI_2_10_SYSTEM_TABLE_REVISION  ((2<<16) | (10))
+   #define EFI_2_00_SYSTEM_TABLE_REVISION  ((2<<16) | (00))
+   #define EFI_1_10_SYSTEM_TABLE_REVISION  ((1<<16) | (10))
+   #define EFI_1_02_SYSTEM_TABLE_REVISION  ((1<<16) | (02))
+   #define EFI_SPECIFICATION_VERSION       EFI_SYSTEM_TABLE_REVISION
+   #define EFI_SYSTEM_TABLE_REVISION       EFI_2_100_SYSTEM_TABLE_REVISION
   
    typedef struct {  
      EFI_TABLE_HEADER                 Hdr;  
@@ -629,8 +637,6 @@ VendorGuid
 
 VendorTable
   A pointer to the table associated with VendorGuid. Type of the memory that is used to store the table as well as whether this pointer is a physical address or a virtual address during runtime (whether or not a particular address reported in the table gets fixed up when a call to SetVirtualAddressMap() is made) is determined by the VendorGuid. Unless otherwise specified, memory type of the table buffer is defined by the guidelines set forth in the Calling Conventions section in Chapter 2. It is the responsibility of the specification defining the VendorTable to specify additional memory type requirements (if any) and whether to convert the addresses reported in the table. Any required address conversion is a responsibility of the driver that publishes corresponding configuration table.
-  
-  A pointer to the table associated with VendorGuid. Whether this pointer is a physical address or a virtual address during runtime is determined by the VendorGuid. The VendorGuid associated with a given VendorTable pointer defines whether or not a particular address reported in the table gets fixed up when a call to   :ref:`setvirtualaddressmap` is made. It is the responsibility of the specification defining the VendorTable to specify whether to convert the addresses reported in the table.
 
 
 .. _industry-standard-configuraton-tables:
@@ -774,52 +780,6 @@ RuntimeServicesSupported
    #define EFI_RT_SUPPORTED_QUERY_VARIABLE_INFO             0x2000
 
 The address reported in the EFI configuration table entry of this type will be referenced as physical and will not be fixed up when   transitioning from preboot to runtime phase.
-
-
-.. _efi-properties-table-deprecated:
-
-EFI_PROPERTIES_TABLE (deprecated)
-#################################
-
-.. note:: This table is deprecated and should no longer be used! It will be removed from future versions of the specification.  EFI_MEMORY_ATTRIBUTES_TABLE described below provides alternative mechanism to implement runtime memory protection.
-
-This table is published if the platform meets some of the construction requirements listed in the *MemoryProtectionAttributes* .
-
-.. code-block:: 
-
-   typedef struct {
-     UINT32         Version;
-     UINT32         Length;
-     UINT64         MemoryProtectionAttribute;
-   }   EFI_PROPERTIES_TABLE;
-
-Version
-  This is revision of the table. Successive version may populate additional bits and growth the table length. In the case of the latter, the *Length* field will be adjusted appropriately
-
-.. code-block:: 
-
-   #define EFI_PROPERTIES_TABLE_VERSION 0x00010000
-
-Length
-  This is the size of the entire EFI_PROPERTIES_TABLE  structure, including the version. The initial version will be  of length 16.
-
-MemoryProtectionAttribute
-  This field is a bit mask. Any bits not defined shall be considered reserved. A set bit means that the underlying firmware has been constructed responsive to the given  property.
-
-
-.. code-block:: 
-
-   //
-   // Memory attribute (Not defined bits are reserved)
-   //
-   #define EFI_PROPERTIES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA     0x1 
-   \
-     // BIT 0 - description - implies the runtime data is separated     from the code
-
-
-This bit implies that the UEFI runtime code and data sections of the executable image are separate and must be aligned as specified in   :ref:`calling-conventions` . This bit also implies that the data pages do not have any executable code.
-
-It is recommended not to use this attribute, especially for implementations that broke the runtime code memory map descriptors into the underlying code and data sections within UEFI modules. This splitting causes interoperability issues with operating systems that invoke *SetVirtualAddress()* without realizing that there is a relationship between these runtime descriptors.
 
 
 .. _efi-memory-attributes-table:

@@ -123,7 +123,7 @@ The high-level organization of this specification is as follows:
        | • Decompression Source Code for an implementation of the EFI Decompression Algorithm.
        | • The EFI Byte Code Virtual Machine Opcode List provides a summary of the corresponding instruction set.
        | • Alphabetic Function Lists identify all UEFI interface functions alphabetically.
-       | • EFI 1.10 Protocol Changes and Depreciation List identifies the Protocol, GUID, and revision identifier name changes and the deprecated protocols compared to the EFI Specification 1.10.
+       | • EFI 1.10 Protocol Changes identifies the Protocol, GUID, and revision identifier name changes compared to the EFI Specification 1.10.
        | • Formats: Language Codes and Language Code Arrays list the formats for language codes and language code arrays.
        | • The Common Platform Error Record describes the common platform error record format for representing platform hardware errors.
        | • The UEFI ACPI Data Table defines the UEFI ACPI table format.
@@ -236,9 +236,9 @@ The UEFI *Driver Model* has the following goals:
 -   *Flexible* — The UEFI *Driver Model* must support the ability to enumerate all the devices, or to enumerate only those devices required to boot the required OS. The minimum device enumeration provides support for more rapid boot capability, and the full device enumeration provides the ability to perform OS installations, system maintenance, or system diagnostics on any boot device present in the system. 
 -   *Extensible* — The UEFI *Driver Model* must be able to extend to future bus types as they are defined.
 -   *Portable* — Drivers written to the UEFI *Driver Model* processor architectures.
--   *Interoperable* — Drivers must coexist with other drivers and system firmware and must do so without generating resource  conflicts.
+-   *Interoperable* — Drivers must coexist with other drivers and system firmware and must do so without generating resource conflicts.
 -   *Describe complex bus hierarchies* — The UEFI *Driver Model* must be able to describe a variety of bus topologies from very simple single bus platforms to very complex platforms containing many buses of various types.
--   *Small driver footprint* — The size of executables produced by the UEFI *Driver Model* must be minimized to reduce the  overall platform cost. While flexibility and extensibility are goals, the additional overhead required to support these must be kept to a minimum to prevent the size of firmware components from becoming unmanageable.
+-   *Small driver footprint* — The size of executables produced by the UEFI *Driver Model* must be minimized to reduce the overall platform cost. While flexibility and extensibility are goals, the additional overhead required to support these must be kept to a minimum to prevent the size of firmware components from becoming unmanageable.
 -   *Address legacy option rom issues* — The UEFI *Driver Model* must directly address and solve the constraints and limitations of legacy option ROMs. Specifically, it must be possible to build add-in cards that support both UEFI drivers and legacy option ROMs, where such cards can execute in both legacy BIOS systems and UEFI-conforming platforms, without modifications to the code carried on the card. The solution must provide an evolutionary path to migrate from legacy option ROMs driver to UEFI drivers.
 
 
@@ -503,7 +503,6 @@ This standard uses the binary prefixes defined in ISO/IEC 80000-13 Quantities an
      - gibi 
      - Gi   
 
-
 For example, 4 KB means 4,000 bytes and 4 KiB means 4,096 bytes.
 
 
@@ -514,6 +513,6 @@ Revision Numbers
 
 Updates to the UEFI specification are considered either new revisions or errata as described below:
 
-* A new revision is produced when there is substantive new    content or changes that may modify existing behavior. New   revisions are designated by a major.minor version number    (e.g. xx.yy). In cases where the changes are    exceptionally minor, we may have a major.minor.minor    naming convention (e.g. xx.yy.zz). 
+* A new revision is produced when there is substantive new content or changes that may modify existing behavior. New revisions are designated by a major.minor version number (e.g. xx.yy). In cases where the changes are exceptionally minor, we may have a major.minor.minor naming convention (e.g. xx.yy.z).
 
-* Errata versions are produced when approved updates to the   specification do not include any significant new material   or modify existing behavior. Errata are designated by   adding an upper-case letter at the end of the version   number, such as xx.yy errata A. 
+* Errata versions are produced when approved updates to the specification do not include any significant new material or modify existing behavior. Errata are designated by adding an upper-case letter at the end of the version number, such as xx.yy errata A. 

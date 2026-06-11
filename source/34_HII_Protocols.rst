@@ -349,7 +349,7 @@ StringInfo
   Points to the string font and color information or NULL if the string should use the default system font and color.
 
 Blt
-  Thus must point to a NULL on entry. A buffer will be allocated to hold the output and the pointer updated on exit. It is the caller’s responsibility to free this buffer.On return, only *Blt.Width,* *Blt.Height,* and *Blt.Image.Bitmap* are valid.
+  Thus must point to a NULL on entry. A buffer will be allocated to hold the output and the pointer updated on exit. It is the caller’s responsibility to free this buffer. On return, only *Blt.Width,* *Blt.Height,* and *Blt.Image.Bitmap* are valid.
 
 Baseline
   Number of pixels from the bottom of the bitmap to the baseline.
@@ -2240,7 +2240,7 @@ ImageInfo
 
 **Description**
 
-This function returns the image information of the given image raw data. This function first checks whether the image raw data is supported by this decoder or not. This function may go through the first few bytes in the image raw data for the specific data structure or the image signature. If the image is not supported by this image decoder, this function returns *EFI_UNSUPPORTED* to the caller. Otherwise, this function returns the proper image information to the caller. It is the caller’s responsibility to free then*ImageInfo*.
+This function returns the image information of the given image raw data. This function first checks whether the image raw data is supported by this decoder or not. This function may go through the first few bytes in the image raw data for the specific data structure or the image signature. If the image is not supported by this image decoder, this function returns *EFI_UNSUPPORTED* to the caller. Otherwise, this function returns the proper image information to the caller. It is the caller’s responsibility to free the *ImageInfo*.
 
 
 **Status Codes Returned**
@@ -2585,7 +2585,7 @@ BltY
   Together with BltX, specifies the offset from the left and top edge of the image of the first character cell in the * *Image.*
 
 Transparent
-  If **TRUE**, the Background color is ignored and all"off" pixels in the character's drawn will use the pixel value from * *Image.*
+  If **TRUE**, the Background color is ignored and all "off" pixels in the character's drawn will use the pixel value from * *Image.*
 
 
 **Description**

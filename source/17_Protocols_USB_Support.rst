@@ -2261,7 +2261,7 @@ DataLength
   Specifies the length, in bytes, of the data to be sent to or received from the USB device.
 
 Context
-  Data passed to the IsochronoisCallback() in Protocols_USB_Support.rst function. This is an optional parameter and may be **NULL**.
+  Data passed to the IsochronousCallback() in Protocols_USB_Support.rst function. This is an optional parameter and may be **NULL**.
 
 IsochronousCallback
   The *IsochronousCallback()* function. This function is called if the requested isochronous transfer is completed. See the **Related Definitions** section of the  `EFI_USB_IO_PROTOCOL.UsbAsyncInterruptTransfer()`_ function description.
@@ -2269,7 +2269,7 @@ IsochronousCallback
 
 **Description**
 
-This is an asynchronous type of USB isochronous transfer. If the caller submits a USB isochronous transfer request through this function, this function will return immediately. When the isochronous transfer completes, the IsochronoisCallback() function will be triggered, the caller can know the transfer results. If the transfer is successful, the caller can get the data received or sent in this callback function.
+This is an asynchronous type of USB isochronous transfer. If the caller submits a USB isochronous transfer request through this function, this function will return immediately. When the isochronous transfer completes, the IsochronousCallback() function will be triggered, the caller can know the transfer results. If the transfer is successful, the caller can get the data received or sent in this callback function.
 
 
 **Status Codes Returned**

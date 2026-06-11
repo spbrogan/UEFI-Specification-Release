@@ -117,7 +117,7 @@ There are two types of UEFI drivers: boot service drivers and runtime drivers. T
 
 UEFI boot service drivers are terminated when ExitBootServices() is called, and all the memory resources consumed by the UEFI boot service drivers are released for use in the operating system environment.
 
-A runtime driver of type EFI_IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER gets fixed up with virtual mappngs when the OS calls :ref:`setvirtualaddressmap` .
+A runtime driver of type EFI_IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER gets fixed up with virtual mappngs when the OS calls :ref:`setvirtualaddressmap`.
 
 
 .. _firmware-core:
@@ -139,16 +139,17 @@ Platform interfaces defined in this section allow the use of standard Plug and P
 
 The UEFI platform interfaces are intended to provide an abstraction between the platform and the OS that is to boot on the platform. The UEFI specification also provides abstraction between diagnostics or utility programs and the platform; however, it does not attempt to implement a full diagnostic OS environment. It is envisioned that a small diagnostic OS-like environment can be easily built on top of an UEFI system. Such a diagnostic environment is not described by this specification. Interfaces added by this specification are divided into the following categories and are detailed later in this document:
 
--  Runtime services
--  Boot services interfaces, with the following subcategories: 
+  \*  Runtime services
 
-   –  Global boot service interfaces
+  \*  Boot services interfaces, with the following subcategories: 
 
-   –  Device handle-based boot service interfaces
+     – Global boot service interfaces
 
-   –  Device protocols
+     – Device handle-based boot service interfaces
 
-   –  Protocol services
+     – Device protocols
+
+     – Protocol services
 
 
 .. _runtime-services:
@@ -206,7 +207,7 @@ In all cases memory used by the runtime services must be reserved and not used b
 Calling Conventions
 -------------------
 
-Unless otherwise stated, all functions defined in the UEFI specification are called through pointers in common, architecturally defined, calling  onventions found in C compilers. Pointers to the various global UEFI functions are found in the EFI_RUNTIME_SERVICES and EFI_BOOT_SERVICES tables that are located via the system table. Pointers to other functions defined in this specification are located dynamically through device handles. In all cases, all pointers to UEFI functions are cast with the word EFIAPI . This allows the compiler for each architecture to supply the proper compiler keywords to achieve the needed calling conventions. When passing pointer arguments to Boot Services, Runtime Services, and Protocol Interfaces, the caller has the following responsibilities:
+Unless otherwise stated, all functions defined in the UEFI specification are called through pointers in common, architecturally defined, calling conventions found in C compilers. Pointers to the various global UEFI functions are found in the EFI_RUNTIME_SERVICES and EFI_BOOT_SERVICES tables that are located via the system table. Pointers to other functions defined in this specification are located dynamically through device handles. In all cases, all pointers to UEFI functions are cast with the word EFIAPI . This allows the compiler for each architecture to supply the proper compiler keywords to achieve the needed calling conventions. When passing pointer arguments to Boot Services, Runtime Services, and Protocol Interfaces, the caller has the following responsibilities:
 
 -  It is the caller’s responsibility to pass pointer parameters that reference physical memory locations. If a pointer is passed that does not point to a physical memory location (i.e., a memory mapped I/O region), the results are unpredictable and the system may halt.
 
@@ -331,72 +332,85 @@ All functions are called with the C language calling convention. The general-pur
 
 Firmware boot ‘services and runtime services run in the following processor execution mode prior to the OS calling ExitBootServices():
 
--  Uniprocessor, as described in chapter 8.4 of:
+  \*  Uniprocessor, as described in chapter 8.4 of:
 
-   — Intel 64 and IA-32 Architectures Software Developer's Manual
+     \- Intel 64 and IA-32 Architectures Software Developer's Manual
 
-   —  Volume 3, System Programming Guide, Part 1
+     \- Volume 3, System Programming Guide, Part 1
 
-   —  Order Number: 253668-033US, December 2009
+     \- Order Number: 253668-033US, December 2009
 
-   —  See "Links to UEFI-Related Documents" ( http://uefi.org/uefi) under the heading "Intel Processor Manuals.""
+     \- See "Links to UEFI-Related Documents" ( http://uefi.org/uefi) under the heading "Intel Processor Manuals.""
 
--  Protected mode
--  Paging mode may be enabled. If paging mode is enabled, PAE (Physical Address Extensions) mode is recommended. If paging mode is enabled, any memory space defined by the UEFI memory map is identity mapped (virtual address equals physical  address). The mappings to other regions are undefined and may vary from implementation to implementation.
--  Selectors are set to be flat and are otherwise not used 
--  Interrupts are enabled-though no interrupt services are supported other than the UEFI boot services timer functions (All loaded device drivers are serviced synchronously by "polling.")
--  Direction flag in EFLAGs is clear
--  Other general purpose flag registers are undefined
--  128 KiB, or more, of available stack space
--  The stack must be 16-byte aligned. Stack may be marked as non-executable in identity mapped page tables.
--  Floating-point control word must be initialized to 0x027F (all exceptions masked, double-precision, round-to-nearest)
--   Multimedia-extensions control word (if supported) must be initialized to 0x1F80 (all exceptions masked, round-to-nearest, flush to zero for masked  underflow).
--  CR0.EM must be zero
--  CR0.TS must be zero
+  \*  Protected mode
+
+  \*  Paging mode may be enabled. If paging mode is enabled, PAE (Physical Address Extensions) mode is recommended. If paging mode is enabled, any memory space defined by the UEFI memory map is identity mapped (virtual address equals physical  address). The mappings to other regions are undefined and may vary from implementation to implementation.
+
+  \*  Selectors are set to be flat and are otherwise not used.
+
+  \*  Interrupts are enabled-though no interrupt services are supported other than the UEFI boot services timer functions (All loaded device drivers are serviced synchronously by "polling.")
+
+  \*  Direction flag in EFLAGs is clear.
+
+  \*  Other general purpose flag registers are undefined.
+
+  \*  128 KiB, or more, of available stack space.
+
+  \*  The stack must be 16-byte aligned. Stack may be marked as non-executable in identity mapped page tables.
+
+  \*  Floating-point control word must be initialized to 0x027F (all exceptions masked, double-precision, round-to-nearest).
+
+  \*  Multimedia-extensions control word (if supported) must be initialized to 0x1F80 (all exceptions masked, round-to-nearest, flush to zero for masked  underflow).
+
+  \*  CR0.EM must be zero.
+
+  \*  CR0.TS must be zero.
+
 
 An application written to this specification may alter the processor execution mode, but the UEFI image must ensure firmware boot services and runtime services are executed with the prescribed execution environment.
 
 After an Operating System calls ExitBootServices() , firmware boot services are no longer available and it is illegal to call any boot service. After ExitBootServices, firmware runtime services are still available and may be called with paging enabled and virtual address pointers if SetVirtualAddressMap() has been called describing all virtual address ranges used by the firmware runtime service. For an operating system to use any UEFI runtime services, it must:
 
--  Preserve all memory in the memory map marked as runtime code and runtime data
+  \*  Preserve all memory in the memory map marked as runtime code and runtime data
 
--  Call the runtime service functions, with the following conditions:
+  \*  Call the runtime service functions, with the following conditions:
 
-   —  In protected mode
+    \- In protected mode
 
-   —  Paging may or may not be enabled, however if paging is enabled and SetVirtualAddressMap() has not been called, any memory space defined by the UEFI memory map is identity mapped (virtual address equals physical address), although the attributes of certain regions may not have all read, write, and execute attributes or be unmarked for purposes of platform protection. The mappings to other regions are undefined and may vary from implementation to implementation. See description of  :ref:`setvirtualaddressmap`  for details of memory map after this function has been called.
+    \- Paging may or may not be enabled, however if paging is enabled and SetVirtualAddressMap() has not been called, any memory space defined by the UEFI memory map is identity mapped (virtual address equals physical address), although the attributes of certain regions may not have all read, write, and execute attributes or be unmarked for purposes of platform protection. The mappings to other regions are undefined and may vary from implementation to implementation. See description of  :ref:`setvirtualaddressmap`  for details of memory map after this function has been called.
    
-   —  Direction flag in EFLAGs clear
+    \- Direction flag in EFLAGs clear
    
-   —  4 KiB, or more, of available stack space
+    \- 4 KiB, or more, of available stack space
    
-   —  The stack must be 16-byte aligned
+    \- The stack must be 16-byte aligned
    
-   —  Floating-point control word must be initialized to 0x027F (all exceptions masked, double-precision, round-to-nearest)
+    \- Floating-point control word must be initialized to 0x027F (all exceptions masked, double-precision, round-to-nearest)
    
-   —  Multimedia-extensions control word (if supported) must be initialized to 0x1F80 (all exceptions masked, round-to-nearest, flush to zero for masked underflow)
+    \- Multimedia-extensions control word (if supported) must be initialized to 0x1F80 (all exceptions masked, round-to-nearest, flush to zero for masked underflow)
 
-   —  CR0.EM must be zero
+    \- CR0.EM must be zero
    
-   —  CR0.TS must be zero
+    \- CR0.TS must be zero
    
-   —  Interrupts disabled or enabled at the discretion of the caller
+    \- Interrupts disabled or enabled at the discretion of the caller
 
--  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS . ACPI FACS must be contained in memory of type EfiACPIMemoryNVS. 
+  \*  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS . ACPI FACS must be contained in memory of type EfiACPIMemoryNVS. 
 
--  The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS .
+  \*  The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS .
 
--  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
+  \*  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
 
--  Any UEFI memory descriptor that requests a virtual mapping via the  EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
+  \*  Any UEFI memory descriptor that requests a virtual mapping via the  EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
 
--  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
+  \*  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
 
--  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS . The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
+  \*  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS . The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
 
--  In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesData , EfiACPIReclaimMemory or EfiACPIMemoryNVS . Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS .
+  \*  In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesData , EfiACPIReclaimMemory or EfiACPIMemoryNVS . Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS .
 
-**Note**: *Previous EFI specifications allowed ACPI tables loaded at runtime to be in the EfiReservedMemoryType and there was no guidance provided for other EFI Configuration Tables. EfiReservedMemoryType is not intended to be used for the storage of any EFI Configuration Tables. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type EfiBootServicesData.*
+.. Note:: 
+   Previous EFI specifications allowed ACPI tables loaded at runtime to be in the EfiReservedMemoryType and there was no guidance provided for other EFI Configuration Tables. EfiReservedMemoryType is not intended to be used for the storage of any EFI Configuration Tables. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type EfiBootServicesData.
 
 
 .. _handoff-state:
@@ -439,86 +453,86 @@ UEFI executes as an extension to the SAL execution environment with the same rul
 
 During boot services time the processor is in the following execution mode:
 
-*  Uniprocessor, as detailed in chapter 13.1.2 of:
+  \*  Uniprocessor, as detailed in chapter 13.1.2 of:
 
-   —   Intel Itanium Architecture Software Developer's Manual
+     \- Intel Itanium Architecture Software Developer's Manual
 
-   —  Volume 2: System Architecture
+     \- Volume 2: System Architecture
 
-   —  Revision 2.2
+     \- Revision 2.2
 
-   —  January 2006
+     \- January 2006
 
-   —  See "Links to UEFI-Related Documents" ( http://uefi.org/uefi) under the heading "Intel Itanium Documentation".
+     \- See "Links to UEFI-Related Documents" ( http://uefi.org/uefi) under the heading "Intel Itanium Documentation".
 
-   —  Document Number: 245318-005
+     \- Document Number: 245318-005
 
-*  Physical mode
+  \*  Physical mode
 
-*  128 KiB, or more, of available stack space
+  \*  128 KiB, or more, of available stack space
 
-*  16 KiB, or more, of available backing store space
+  \*  16 KiB, or more, of available backing store space
 
-   —  FPSR.traps: Set to all 1's (all exceptions disabled)
+     \- FPSR.traps: Set to all 1's (all exceptions disabled)
 
-   —  FPSR.sf0:
+     \- FPSR.sf0:
 
-*  .pc: Precision Control - 11b (extended precision)
+  \*  .pc: Precision Control - 11b (extended precision)
 
-*  .rc: Rounding Control - 0 (round to nearest)
+  \*  .rc: Rounding Control - 0 (round to nearest)
 
-*  .wre: Widest Range Exponent - 0 (IEEE mode)
+  \*  .wre: Widest Range Exponent - 0 (IEEE mode)
 
-*  .ftz: Flush-To-Zero mode - 0 (off)
+  \*  .ftz: Flush-To-Zero mode - 0 (off)
 
-   —  FPSR.sf1:
+     \- FPSR.sf1:
    
-*  .td: Traps Disable = 1 (traps disabled)
+  \*  .td: Traps Disable = 1 (traps disabled)
 
-*  .pc: Precision Control - 11b (extended precision)
+  \*  .pc: Precision Control - 11b (extended precision)
 
-*  .rc: Rounding Control - 0 (round to nearest)
+  \*  .rc: Rounding Control - 0 (round to nearest)
 
-*  wreWidest Range Exponent - 1 (full register exponent range)
+  \*  wreWidest Range Exponent - 1 (full register exponent range)
 
-*  ftz Flush-To-Zero mode - 0 (off)
+  \*  ftz Flush-To-Zero mode - 0 (off)
 
-   —  FPSR.sf2,3:
+     \- FPSR.sf2,3:
 
-*  .td Traps Disable = 1 (traps disabled) 
+  \*  .td Traps Disable = 1 (traps disabled) 
 
-*  pc: Precision Control - 11b (extended precision)
+  \*  pc: Precision Control - 11b (extended precision)
 
-*  .rc: Rounding Control - 0 (round to nearest)
+  \*  .rc: Rounding Control - 0 (round to nearest)
 
-*  .wre: Widest Range Exponent - 0 (IEEE mode)
+  \*  .wre: Widest Range Exponent - 0 (IEEE mode)
 
-*  .ftz: Flush-To-Zero mode - 0 (off)
+  \*  .ftz: Flush-To-Zero mode - 0 (off)
 
 An application written to this specification may alter the processor execution mode, but the UEFI image must ensure firmware boot services and runtime services are executed with the prescribed execution environment.
 
 After an Operating System calls ExitBootServices(), firmware boot services are no longer available and it is illegal to call any boot service. After ExitBootServices, firmware runtime services are still available When calling runtime services, paging may or may not be enabled, however if paging is enabled and SetVirtualAddressMap() has not been called, any memory space defined by the UEFI memory map is identity mapped (virtual address equals physical address). The mappings to other regions are undefined and may vary from implementation to implementation. See description of  :ref:`setvirtualaddressmap`  for details of memory map after this function has been called. After ExitBootServices(), runtime service functions may be called with interrupts disabled or enabled at the discretion of the caller.
 
--  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS. CPI FACS must be contained in memory of type EfiACPIMemoryNVS.
+  \*  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS. CPI FACS must be contained in memory of type EfiACPIMemoryNVS.
 
--  The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS.
+  \*  The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS.
 
--  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS. must be aligned on an 8 KiB boundary and must be a multiple of 8 KiB in size.
+  \*  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS. must be aligned on an 8 KiB boundary and must be a multiple of 8 KiB in size.
 
--  Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on an 8 KiB boundary and must be a multiple of 8 KiB in size.
+  \*  Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on an 8 KiB boundary and must be a multiple of 8 KiB in size.
 
--  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
+  \*  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
 
--  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS . The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
+  \*  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS . The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
 
--  In general, Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesData, EfiACPIReclaimMemory or EfiACPIMemoryNVS. Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
+  \*  In general, Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesData, EfiACPIReclaimMemory or EfiACPIMemoryNVS. Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
 
-**Note**: *Previous EFI specifications allowed ACPI tables loaded at
-runtime to be in the* EfiReservedMemoryType *and there was no guidance provided for other EFI Configuration Tables*. EfiReservedMemoryType *is not intended to be used by firmware. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type* EfiBootServicesData.
+.. note::
+   Previous EFI specifications allowed ACPI tables loaded at runtime to be in the EfiReservedMemoryType and there was no guidance provided for other EFI Configuration Tables. EfiReservedMemoryType is not intended to be used by firmware. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type EfiBootServicesData.
 
-Refer to the IA-64 System Abstraction Layer Specification ( :ref:`appendix-q-references`) for details.
+Refer to the IA-64 System Abstraction Layer Specification (:ref:`appendix-q-references`) for details.
 
-UEFI procedures are invoked using the P64 C calling conventions defined for Intel ® Itanium ® -based applications. Refer to the document 64 Bit Runtime Architecture and Software Conventions for IA-64 ( :ref:`appendix-q-references` ) for more information.
+UEFI procedures are invoked using the P64 C calling conventions defined for Intel® Itanium®-based applications. Refer to the document 64 Bit Runtime Architecture and Software Conventions for IA-64 (:ref:`appendix-q-references`) for more information.
 
 
 .. _handoff-state-1:
@@ -565,79 +579,82 @@ All functions are called with the C language calling convention. :ref:`detailed-
 
 During boot services time the processor is in the following execution mode:
 
--  Uniprocessor, as described in chapter 8.4 of:
+  \*  Uniprocessor, as described in chapter 8.4 of:
 
-   —  Intel 64 and IA-32 Architectures Software Developer's Manual, Volume 3, System Programming Guide, Part 1, Order Number: 253668-033US, December 2009
+   \- Intel 64 and IA-32 Architectures Software Developer's Manual, Volume 3, System Programming Guide, Part 1, Order Number: 253668-033US, December 2009
 
-   —  See "Links to UEFI-Related Documents" ( http://uefi.org/uefi) under the heading "Intel Processor Manuals".
+   \ -See "Links to UEFI-Related Documents" ( http://uefi.org/uefi) under the heading "Intel Processor Manuals".
 
--  Long mode, in 64-bit mode
+  \*  Long mode, in 64-bit mode
 
--  Paging mode is enabled and any memory space defined by the UEFI memory map  is identity mapped (virtual address equals physical address), although the attributes of certain regions may not have all read, write, and execute attributes or be unmarked for purposes of platform protection. The mappings to other regions, such as those for unaccepted memory, are undefined and may vary from implementation to implementation.
+  \*  Paging mode is enabled and any memory space defined by the UEFI memory map  is identity mapped (virtual address equals physical address), although the attributes of certain regions may not have all read, write, and execute attributes or be unmarked for purposes of platform protection. The mappings to other regions, such as those for unaccepted memory, are undefined and may vary from implementation to implementation.
 
--  Selectors are set to be flat and are otherwise not used.
+  \*  Selectors are set to be flat and are otherwise not used.
 
--  Interrupts are enabled-though no interrupt services are supported other than the UEFI boot services timer functions (All loaded device drivers are serviced synchronously by "polling.")
+  \*  Interrupts are enabled-though no interrupt services are supported other than the UEFI boot services timer functions (All loaded device drivers are serviced synchronously by "polling.")
 
--  Direction flag in EFLAGs is clear 
+  \*  Direction flag in EFLAGs is clear 
 
--  Other general purpose flag registers are undefined
+  \*  Other general purpose flag registers are undefined
 
--  128 KiB, or more, of available stack space
+  \*  128 KiB, or more, of available stack space
 
--  The stack must be 16-byte aligned. Stack may be marked as non-executable in identity mapped page tables.
+  \*  The stack must be 16-byte aligned. Stack may be marked as non-executable in identity mapped page tables.
 
--  Floating-point control word must be initialized to 0x037F (all exceptions masked, double-extended-precision, round-to-nearest)
+  \*  Floating-point control word must be initialized to 0x037F (all exceptions masked, double-extended-precision, round-to-nearest)
 
--  Multimedia-extensions control word (if supported) must be initialized to 0x1F80 (all exceptions masked, round-to-nearest, flush to zero for masked underflow).
+  \*  Multimedia-extensions control word (if supported) must be initialized to 0x1F80 (all exceptions masked, round-to-nearest, flush to zero for masked underflow).
 
--  CR0.EM must be zero
+  \*  CR0.EM must be zero
 
--  CR0.TS must be zero
+  \*  CR0.TS must be zero
+
 
 For an operating system to use any UEFI runtime services, it must:
 
--  Preserve all memory in the memory map marked as runtime code and runtime data
+  \*  Preserve all memory in the memory map marked as runtime code and runtime data
 
--  Call the runtime service functions, with the following conditions:
+  \*  Call the runtime service functions, with the following conditions:
 
--  In long mode, in 64-bit mode
+  \*  In long mode, in 64-bit mode
 
--  Paging enabled
+  \*  Paging enabled
 
--  All selectors set to be flat with virtual = physical address. If the UEFI OS loader or OS used SetVirtualAddressMap() to relocate the runtime services in a virtual address space, then this condition does not have to be met. See description :ref:`setvirtualaddressmap`  for details of memory map after this function has been called.
+  \*  All selectors set to be flat with virtual = physical address. If the UEFI OS loader or OS used SetVirtualAddressMap() to relocate the runtime services in a virtual address space, then this condition does not have to be met. See description :ref:`setvirtualaddressmap`  for details of memory map after this function has been called.
 
--  Direction flag in EFLAGs clear
+  \*  Direction flag in EFLAGs clear
 
--  4 KiB, or more, of available stack space
+  \*  4 KiB, or more, of available stack space
 
--  The stack must be 16-byte aligned
+  \*  The stack must be 16-byte aligned
 
--  Floating-point control word must be initialized to 0x037F (all exceptions masked, double-extended-precision, round-to-nearest)
+  \*  Floating-point control word must be initialized to 0x037F (all exceptions masked, double-extended-precision, round-to-nearest)
 
--  Multimedia-extensions control word (if supported) must be initialized to 0x1F80 (all exceptions masked, round-to-nearest, flush to zero for masked underflow)
+  \*  Multimedia-extensions control word (if supported) must be initialized to 0x1F80 (all exceptions masked, round-to-nearest, flush to zero for masked underflow)
 
--  CR0.EM must be zero
+  \*  CR0.EM must be zero
 
--  CR0.TS must be zero
+  \*  CR0.TS must be zero
 
--  Interrupts may be disabled or enabled at the discretion of the caller.
+  \*  Interrupts may be disabled or enabled at the discretion of the caller.
 
--  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS . ACPI FACS must be contained in memory of type EfiACPIMemoryNVS .
+  \*  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS . ACPI FACS must be contained in memory of type EfiACPIMemoryNVS .
 
--  The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS .
+  \*  The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS .
 
--  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
+  \*  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
 
--  Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
+  \*  Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
 
--  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
+  \*  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
 
--  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS . The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table  location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
+  \*  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS . The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table  location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
 
--  In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesData , EfiACPIReclaimMemory or EfiACPIMemoryNVS . Tables loaded at runtime must be contained in memory of type  EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
+  \*  In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesData , EfiACPIReclaimMemory or EfiACPIMemoryNVS . Tables loaded at runtime must be contained in memory of type  EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
 
-**Note**: *Previous EFI specifications allowed ACPI tables loaded at runtime to be in the* EfiReservedMemoryType *and there was no guidance provided for other EFI Configuration Tables*. EfiReservedMemoryType *is not intended to be used by firmware. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type* EfiBootServicesData.
+.. note::
+   Previous EFI specifications allowed ACPI tables loaded at runtime to be in the EfiReservedMemoryType and there was no guidance provided for other EFI Configuration Tables. EfiReservedMemoryType is not intended to be used by firmware. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type EfiBootServicesData.
+
 
 .. _handoff-state-2:
 
@@ -688,9 +705,9 @@ Boot Services define an execution environment where paging is not enabled (suppo
 
 If a UEFI application uses its own page tables, GDT or IDT, the application must ensure that the firmware executes with each supplanted data structure. There are two ways that firmware conforming to this specification can execute when the application has paging enabled.
 
-*  Explicit firmware call
+  \*  Explicit firmware call
 
-*  Firmware preemption of application via timer event
+  \*  Firmware preemption of application via timer event
 
 An application with translations enabled can restore firmware required mapping before each UEFI call. However the possibility of preemption may require the translation enabled application to disable interrupts while alternate translations are enabled. It’s legal for the translation enabled application to enable interrupts if the application catches the interrupt and restores the EFI firmware environment prior to calling the UEFI interrupt ISR. After the UEFI ISR context is executed it will return to the translation enabled application context and restore any mappings required by the application.
 
@@ -704,92 +721,88 @@ All functions are called with the C language calling convention specified in :re
 
 During boot services time the processor is in the following execution mode:
 
--  Unaligned access should be enabled if supported; Alignment faults are enabled otherwise.
+  \*  Unaligned access should be enabled if supported; Alignment faults are enabled otherwise.
 
--  Uniprocessor.
+  \*  Uniprocessor.
 
--  A privileged mode.
+  \*  A privileged mode.
 
--  The MMU is enabled (CP15 c1 System Control Register (SCTLR) SCTLR.M=1) and any RAM defined by the UEFI memory map is identity mapped (virtual address equals physical address). The mappings to other regions are undefined and may vary from implementation to implementation 
+  \*  The MMU is enabled (CP15 c1 System Control Register (SCTLR) SCTLR.M=1) and any RAM defined by the UEFI memory map is identity mapped (virtual address equals physical address). The mappings to other regions are undefined and may vary from implementation to implementation 
 
--  The core will be configured as follows (common across all processor architecture revisions):
+  \*  The core will be configured as follows (common across all processor architecture revisions):
 
-   -   MMU enabled
+      \- MMU enabled
 
-   -   Instruction and Data caches enabled
+      \- Instruction and Data caches enabled
 
-   -   Access flag disabled
+      \- Access flag disabled
 
-   -   Translation remap disabled
+      \- Translation remap disabled
 
-   -   Little endian mode
+      \- Little endian mode
 
-   -   Domain access control mechanism (if supported) will be configured to check access permission bits in the page descriptor
+      \- Domain access control mechanism (if supported) will be configured to check access permission bits in the page descriptor
 
-   -   Fast Context Switch Extension (FCSE) must be disabled
+      \- Fast Context Switch Extension (FCSE) must be disabled
 
-   This will be achieved by:
+      This will be achieved by:
 
-   -   Configuring the CP15 c1 System Control Register (SCTLR) as follows: I=1, C=1, B=0, TRE=0, AFE=0, M=1
+        \- Configuring the CP15 c1 System Control Register (SCTLR) as follows: I=1, C=1, B=0, TRE=0, AFE=0, M=1
 
-   -   Configuring the CP15 c3 Domain Access Control Register (DACR) to 0x33333333.
+        \- Configuring the CP15 c3 Domain Access Control Register (DACR) to 0x33333333.
 
-   -   Configuring the CP15 c1 System Control Register (SCTLR), A=1 on ARMv4 and ARMv5, A=0, U=1 on ARMv6 and ARMv7.
+        \- Configuring the CP15 c1 System Control Register (SCTLR), A=1 on ARMv4 and ARMv5, A=0, U=1 on ARMv6 and ARMv7.
 
-   The state of other system control register bits is not dictated by this specification.
+     The state of other system control register bits is not dictated by this specification.
 
--  Implementations of boot services will enable architecturally manageable caches and TLBs i.e., those that can be managed directly using CP15 operations using mechanisms and procedures defined in the ARM Architecture Reference Manual. They should not enable caches requiring platform information to manage or invoke non-architectural cache/TLB lockdown mechanisms 
+  \*  Implementations of boot services will enable architecturally manageable caches and TLBs i.e., those that can be managed directly using CP15 operations using mechanisms and procedures defined in the ARM Architecture Reference Manual. They should not enable caches requiring platform information to manage or invoke non-architectural cache/TLB lockdown mechanisms 
 
--  MMU configuration — Implementations must use only 4k pages and a single translation base register. On devices supporting multiple translation base registers, TTBR0 must be used solely. The binding does not mandate whether page tables are cached or un-cached.
+  \*  MMU configuration — Implementations must use only 4k pages and a single translation base register. On devices supporting multiple translation base registers, TTBR0 must be used solely. The binding does not mandate whether page tables are cached or un-cached.
 
-   -   On processors implementing the ARMv4 through ARMv6K architecture definitions, the core is additionally configured to disable extended page tables support, if present. 
+      \- On processors implementing the ARMv4 through ARMv6K architecture definitions, the core is additionally configured to disable extended page tables support, if present. This will be achieved by configuring the CP15 c1 System Control Register (SCTLR) as follows: XP=0
 
-       This will be achieved by configuring the CP15 c1 System Control Register (SCTLR) as follows: XP=0
+      \- On processors implementing the ARMv7 and later architecture definitions, the core will be configured to enable the extended page table format and disable the TEX remap mechanism. This will be achieved by configuring the CP15 c1 System Control Register (SCTLR) as follows: XP=1, TRE=0
 
-   -   On processors implementing the ARMv7 and later architecture definitions, the core will be configured to enable the extended page table format and disable the TEX remap mechanism. 
+  \*  Interrupts are enabled-though no interrupt services are supported other than the UEFI boot services timer functions (All loaded device drivers are serviced synchronously by "polling.")
 
-       This will be achieved by configuring the CP15 c1 System Control Register (SCTLR) as follows: XP=1, TRE=0
+  \*  128 KiB or more of available stack space
 
--  Interrupts are enabled-though no interrupt services are supported other than the UEFI boot services timer functions (All loaded device drivers are serviced synchronously by "polling.")
+For an operating system to use any runtime services, it must:
 
--  128 KiB or more of available stack space
+  \*  Preserve all memory in the memory map marked as runtime code and runtime data
 
-For an operating system to use any runtime services, it
-must:
+  \*  Call the runtime service functions, with the following conditions:
 
--  Preserve all memory in the memory map marked as runtime code and runtime data
+      \- In a privileged mode.
 
--  Call the runtime service functions, with the following conditions:
+      \- The system address regions described by all the entries in the EFI memory map that have the EFI_MEMORY_RUNTIME bit set must be identity mapped as they were for the EFI boot environment. If the OS Loader or OS used SetVirtualAddressMap() to relocate the runtime services in a virtual address space, then this condition does not have to be met. See description of SetVirtualAddressMap() for details of memory map after this function has been called.
 
-   -   In a privileged mode.
+      \- The processor must be in a mode in which it has access to the system address regions specified in the EFI memory map with the EFI_MEMORY_RUNTIME bit set.
 
-   -   The system address regions described by all the entries in the EFI memory map that have the EFI_MEMORY_RUNTIME bit set must be identity mapped as they were for the EFI boot environment. If the OS Loader or OS used SetVirtualAddressMap() to relocate the runtime services in a virtual address space, then this condition does not have to be met. See description of SetVirtualAddressMap() for details of memory map after this function has been called.
+      \- 4 KiB, or more, of available stack space
 
-   -   The processor must be in a mode in which it has access to the system address regions specified in the EFI memory map with the EFI_MEMORY_RUNTIME bit set.
-
-   -   4 KiB, or more, of available stack space
-
-   -   Interrupts may be disabled or enabled at the discretion of the caller
+      \- Interrupts may be disabled or enabled at the discretion of the caller
 
 An application written to this specification may alter the processor execution mode, but the invoking OS must ensure firmware boot services and runtime services are executed with the prescribed execution environment.
 
 If ACPI is supported:
 
--  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS. ACPI FACS must be contained in memory of type EfiACPIMemoryNVS
+  \*  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS. ACPI FACS must be contained in memory of type EfiACPIMemoryNVS
 
--  The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS.
+  \*  The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS.
 
--  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
+  \*  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
 
--  Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
+  \*  Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
 
--  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
+  \*  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
 
--  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS. The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
+  \*  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS. The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
 
--  In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesData , EfiACPIReclaimMemory or EfiACPIMemoryNVS. Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
+  \*  In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesData , EfiACPIReclaimMemory or EfiACPIMemoryNVS. Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
 
-**Note**: *Previous EFI specifications allowed ACPI tables loaded at runtime to be in the EfiReservedMemoryType and there was no guidance provided for other EFI Configuration Tables. EfiReservedMemoryType is not intended to be used by firmware. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type EfiBootServicesData*.
+.. note:: 
+   Previous EFI specifications allowed ACPI tables loaded at runtime to be in the EfiReservedMemoryType and there was no guidance provided for other EFI Configuration Tables. EfiReservedMemoryType is not intended to be used by firmware. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type EfiBootServicesData*.
 
 
 .. _handoff-state-3:
@@ -813,9 +826,9 @@ Boot Services define a specific execution environment. This section will describ
 
 If a UEFI application uses its own page tables, or other processor state, the application must ensure that the firmware executes with each supplanted functionality. There are two ways that firmware conforming to this specification can execute in this alternate execution environment:
 
--  Explicit firmware call
+  \*  Explicit firmware call
 
--  Firmware preemption of application via timer event
+  \*  Firmware preemption of application via timer event
 
 An application with an alternate execution environment can restore the firmware environment before each UEFI call. However the possibility of preemption may require the alternate execution-enabled application to disable interrupts while the alternate execution environment is active. It's legal for the alternate execution environment enabled application to enable interrupts if the application catches the interrupt and restores the EFI firmware environment prior to calling the UEFI interrupt ISR. After the UEFI ISR context is executed it will return to the alternate execution environment enabled application context.
 
@@ -837,19 +850,19 @@ See "Links to UEFI-Related Documents" (http://uefi.org/uefi) under the heading "
 
 This binding further constrains the calling convention in these ways:
 
--  Calls to UEFI defined interfaces must be done assuming that the target code requires the ARM instruction set state. Images are free to use other instruction set states except when invoking UEFI interfaces. 
+  \*  Calls to UEFI defined interfaces must be done assuming that the target code requires the ARM instruction set state. Images are free to use other instruction set states except when invoking UEFI interfaces. 
 
--  Floating point, SIMD, vector operations and other instruction set extensions must not be used.
+  \*  Floating point, SIMD, vector operations and other instruction set extensions must not be used.
 
--  Only little endian operation is supported. 
+  \*  Only little endian operation is supported. 
 
--  The stack will maintain 8 byte alignment as described in the AAPCS for public interfaces. 
+  \*  The stack will maintain 8 byte alignment as described in the AAPCS for public interfaces. 
 
--  Use of coprocessor registers for passing call arguments must not be used
+  \*  Use of coprocessor registers for passing call arguments must not be used
 
--  Structures (or other types larger than 64-bits) must be passed by reference and not by value 
+  \*  Structures (or other types larger than 64-bits) must be passed by reference and not by value 
 
--  The EFI ARM platform binding defines register r9 as an additional callee-saved variable register.
+  \*  The EFI ARM platform binding defines register r9 as an additional callee-saved variable register.
 
 
 .. _aarch64-platforms:
@@ -863,120 +876,151 @@ All functions are called with the C language calling convention specified in Det
 
 The primary processor is in the following execution mode:
 
--  Unaligned access must be enabled.
+  \*  Unaligned access must be enabled.
 
--  Use the highest 64 bit non secure privilege level available; Non-secure EL2 (Hyp) or Non-secure EL1(Kernel).
+  \*  Use the highest 64 bit non secure privilege level available; Non-secure EL2 (Hyp) or Non-secure EL1(Kernel).
 
--  The MMU is enabled and any RAM defined by the UEFI memory map is identity mapped (virtual address equals physical address). The mappings to other regions are undefined and may vary from implementation to implementation
+  \*  The MMU is enabled and any RAM defined by the UEFI memory map is identity mapped (virtual address equals physical address). The mappings to other regions are undefined and may vary from implementation to implementation
 
--  The core will be configured as follows:
+  \*  The core will be configured as follows:
 
-   -  MMU enabled
-
-   -  Instruction and Data caches enabled
-   -  Little endian mode
-   -  Stack Alignment Enforced
-   -  NOT Top Byte Ignored
-   -  Valid Physical Address Space
-   -  4K Translation Granule
+      \- MMU enabled
+      \-  Instruction and Data caches enabled
+      \-  Little endian mode
+      \-  Stack Alignment Enforced
+      \-  NOT Top Byte Ignored
+      \-  Valid Physical Address Space
+      \-  4K Translation Granule
 
 This will be achieved by: 
 
 1. Configuring the System Control Register SCTLR_EL2 or SCTLR_EL1:
 
--   EE=0, I=1, SA=1, C=1, A=0, M=1
+  \*  EE=0, I=1, SA=1, C=1, A=0, M=1
 
 2. Configuring the appropriate Translation Control Register:
 
--  TCR_EL2
+  \*  TCR_EL2
 
-   -  TBI=0
-   -  PS must contain the valid Physical Address Space Size.
-   -  TG0=00
+      \- TBI=0
+      \- PS must contain the valid Physical Address Space Size.
+      \- TG0=00
 
--  TCR_EL1
+  \*  TCR_EL1
 
-   -  TBI0=0
-   -  IPS must contain the valid Intermediate Physical Address Space Size.
-   -  TG0=00
+      \- TBI0=0
+      \- IPS must contain the valid Intermediate Physical Address Space Size.
+      \- TG0=00
 
-**Note**: *The state of other system control register bits is not dictated by this specification*.
+      **Note:** The state of other system control register bits is not dictated by this specification.
 
--  All floating point traps and exceptions will be disabled at the relevant exception levels (FPCR=0, CPACR_EL1.FPEN=11, CPTR_EL2.TFP=0). This implies that the FP unit will be enabled by default.
+  \*  All floating point traps and exceptions will be disabled at the relevant exception levels (FPCR=0, CPACR_EL1.FPEN=11, CPTR_EL2.TFP=0). This implies that the FP unit will be enabled by default.
 
--  Implementations of boot services will enable architecturally manageable caches and TLBs i.e., those that can be managed directly using implementation independent registers using mechanisms and procedures defined in the ARM Architecture Reference Manual. They should not enable caches requiring platform information to manage or invoke non-architectural cache/TLB lockdown mechanisms.
+  \*  Implementations of boot services will enable architecturally manageable caches and TLBs i.e., those that can be managed directly using implementation independent registers using mechanisms and procedures defined in the ARM Architecture Reference Manual. They should not enable caches requiring platform information to manage or invoke non-architectural cache/TLB lockdown mechanisms.
 
--  MMU configuration: Implementations must use only 4k pages and a single translation base register. On devices supporting multiple translation base registers, TTBR0 must be used solely. The binding does not mandate whether page tables are cached or un-cached.
+  \*  MMU configuration: Implementations must use only 4k pages and a single translation base register. On devices supporting multiple translation base registers, TTBR0 must be used solely. The binding does not mandate whether page tables are cached or un-cached.
 
--  Interrupts are enabled, though no interrupt services are supported other than the UEFI boot services timer functions (All loaded device drivers are serviced synchronously by "polling"). All UEFI interrupts must be routed to the IRQ vector only.
+  \*  Interrupts are enabled, though no interrupt services are supported other than the UEFI boot services timer functions (All loaded device drivers are serviced synchronously by "polling"). All UEFI interrupts must be routed to the IRQ vector only.
 
--  The architecture generic timer must be initialized and enabled. The Counter Frequency register (CNTFRQ) must be programmed with the timer frequency. Timer access must be provided to non-secure EL1 and EL0 by setting bits EL1PCTEN and EL1PCEN in register CNTHCTL_EL2.
+  \*  The architecture generic timer must be initialized and enabled. The Counter Frequency register (CNTFRQ) must be programmed with the timer frequency. Timer access must be provided to non-secure EL1 and EL0 by setting bits EL1PCTEN and EL1PCEN in register CNTHCTL_EL2.
 
--  The system firmware is not expected to initialize EL2  registers that do not have an architectural reset value, except in cases where firmware itself is running at EL2 and needs to do so.
+  \*  The system firmware is not expected to initialize EL2  registers that do not have an architectural reset value, except in cases where firmware itself is running at EL2 and needs to do so.
 
--  128 KiB or more of available stack space
+  \*  128 KiB or more of available stack space
 
--  The ARM architecture allows mapping pages at a variety of granularities, including 4KiB and 64KiB. If a 64KiB physical page contains any 4KiB page with any of the following types listed below, then all 4KiB pages in the 64KiB page must use identical ARM Memory Page Attributes (as described in :ref:`map-efi-cacheability-attributes-to-aarch64-memory-types` ):
+  \*  The ARM architecture allows mapping pages at a variety of granularities, including 4KiB and 64KiB. If a 64KiB physical page contains any 4KiB page with any of the following types listed below, then all 4KiB pages in the 64KiB page must use identical ARM Memory Page Attributes (as described in :numref:`map-efi-cacheability-attributes-to-aarch64-memory-types`):
 
-   –  EfiRuntimeServicesCode
+      \- EfiRuntimeServicesCode
 
-   –  EfiRuntimeServicesData
+      \- EfiRuntimeServicesData
 
-   –  EfiReserved
+      \- EfiReserved
 
-   –  EfiACPIMemoryNVS
+      \- EfiACPIMemoryNVS
 
-   Mixed attribute mappings within a larger page are not allowed.
+Mixed attribute mappings within a larger page are not allowed.
 
-**Note**: *This constraint allows a 64K paged based Operating System to safely map runtime services memory*.
+.. note::
+   This constraint allows a 64K paged based Operating System to safely map runtime services memory.
+
+
+Platform firmware must not return allocations outside of the 48-bit addressable range of memory unless:
+
+    1. that range is completely exhausted, or
+    2. that was explicitly requested via the AllocateAddress allocation type.
+
+If either of the above conditions occurs, an OS that lacks support for addresses wider than 48-bit may malfunction.
+
+.. note::
+   Platform firmware may need to allocate memory at a specific address in order to satisfy a platform-specific requirement. That behaviour is allowed by the constraints above.
+
+.. note::
+   The exception 1) above accommodates systems that have less memory, in the 48-bit addressable range, than what is required for proper system operation. The exception allows firmware to remain compliant when only memory above the 48-bit addressable range is available for allocation.
+
+.. note::
+   Systems that support FEAT_LPA/FEAT_LVA, but not FEAT_LPA2, are unable to map memory outside the 48-bit addressable range when using 4K pages. Thus, the platform firmware cannot map memory outside the 48-bit addressable range while remaining UEFI compliant. On those systems, any allocation outside the 48-bit addressable range is forbidden, even in the two scenarios listed above.
+
 
 For an operating system to use any runtime services, Runtime services must:
 
--  Support calls from either the EL1 or the EL2 exception levels.
+  \*  Support calls from either the EL1 or the EL2 exception levels.
 
--  Once called, simultaneous or nested calls from EL1 and EL2 are not permitted.
+  \*  Once called, simultaneous or nested calls from EL1 and EL2 are not permitted.
 
-**Note**: *Sequential, non-overlapping, calls from EL1 and EL2 are permitted*.
+.. note::
+   Sequential, non-overlapping calls from EL1 and EL2 are permitted.
 
 Runtime services are permitted to make synchronous SMC and HVC calls into higher exception levels.
 
-**Note**: *These rules allow Boot Services to start at EL2, and Runtime services to be assigned to an EL1 Operating System. In this case a call to SetVirtualAddressMap()is expected to provided an EL1 appropriate set of mappings.* 
+.. note::
+   These rules allow Boot Services to start at EL2, and Runtime services to be assigned to an EL1 Operating System. In this case a call to SetVirtualAddressMap()is expected to provided an EL1 appropriate set of mappings. 
 
 For an operating system to use any runtime services, it must:
 
-- Enable unaligned access support.
-- Preserve all memory in the memory map marked as runtime code and runtime data
-- Call the runtime service functions, with the following conditions:
+  \*  Enable unaligned access support.
+  
+  \*  Preserve all memory in the memory map marked as runtime code and runtime data
+  
+  \*  Call the runtime service functions, with the following conditions:
 
-   - From either EL1 or EL2 exception levels.
-   - Consistently call runtime services from the same exception level. Sharing of runtime services between different exception levels is not permitted.
-   - Runtime services must only be assigned to a single operating system or hypervisor. They must not be shared between multiple guest operating systems.
-   - The system address regions described by all the entries in the EFI memory map that have the EFI_MEMORY_RUNTIME bit set must be identity mapped as they were for the EFI boot environment. If the OS Loader or OS used SetVirtualAddressMap() to relocate the  runtime services in a virtual address space, then this condition does not have to be met. See description of SetVirtualAddressMap() for details of memory map after this function has been called.
-   - The processor must be in a mode in which it has access to the system address regions specified in the EFI memory map with the EFI_MEMORY_RUNTIME bit set.
-   - 8 KiB, or more, of available stack space.
-   - The stack must be 16-byte aligned (128-bit).
-   - Interrupts may be disabled or enabled at the discretion of the caller.
-   - If the core implements the Scalable Matrix Extension, the OS must ensure that the per-core Streaming SVE mode is disabled before the core calls a runtime service. 
+      \- From either EL1 or EL2 exception levels.
+	  
+      \- Consistently call runtime services from the same exception level. Sharing of runtime services between different exception levels is not permitted.
+	  
+      \- Runtime services must only be assigned to a single operating system or hypervisor. They must not be shared between multiple guest operating systems.
+	  
+      \- The system address regions described by all the entries in the EFI memory map that have the EFI_MEMORY_RUNTIME bit set must be identity mapped as they were for the EFI boot environment. If the OS Loader or OS used SetVirtualAddressMap() to relocate the  runtime services in a virtual address space, then this condition does not have to be met. See description of SetVirtualAddressMap() for details of memory map after this function has been called.
+	  
+      \- The processor must be in a mode in which it has access to the system address regions specified in the EFI memory map with the EFI_MEMORY_RUNTIME bit set.
+	  
+      \- 8 KiB, or more, of available stack space.
+	  
+      \- The stack must be 16-byte aligned (128-bit).
+	  
+      \- Interrupts may be disabled or enabled at the discretion of the caller.
+	  
+      \- If the core implements the Scalable Matrix Extension, the OS must ensure that the per-core Streaming SVE mode is disabled before the core calls a runtime service. 
 
 An application written to this specification may alter the processor execution mode, but the invoking OS must ensure firmware boot services and runtime services are executed with the prescribed execution environment.
 
-If ACPI is supported :
+If ACPI is supported:
 
--  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS.
+  \*  ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS.
 
--  ACPI FACS must be contained in memory of type EfiACPIMemoryNVS. The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS.
+  \*  ACPI FACS must be contained in memory of type EfiACPIMemoryNVS. The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS.
 
--  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
+  \*  EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
 
--  Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
+  \*  Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
 
--  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
+  \*  An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
 
--  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS. The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
+  \*  ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS. The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
 
--  In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesdata , EfiACPIReclaimMemory or EfiACPIMemoryNVS. Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
+  \*  In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesdata , EfiACPIReclaimMemory or EfiACPIMemoryNVS. Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
 
-**Note**: *Previous EFI specifications allowed ACPI tables loaded at runtime to be in the* EfiReservedMemoryType *and there was no guidance provided for other EFI Configuration Tables*. EfiReservedMemoryType *is not intended to be used by firmware. UEFI 2.0 clarified the situation moving forward. Also, only OSes conforming to UEFI Specification are guaranteed to handle SMBIOS table in memory of type* EfiBootServiceData.
+.. note::
+   Previous EFI specifications allowed ACPI tables loaded at runtime to be in the* EfiReservedMemoryType *and there was no guidance provided for other EFI Configuration Tables*. EfiReservedMemoryType *is not intended to be used by firmware. UEFI 2.0 clarified the situation moving forward. Also, only OSes conforming to UEFI Specification are guaranteed to handle SMBIOS table in memory of type* EfiBootServiceData.
 
 
 .. _memory-types:
@@ -986,29 +1030,36 @@ $$$$$$$$$$$$
 
 .. list-table:: Map EFI Cacheability Attributes to AArch64 Memory Types
    :name: map-efi-cacheability-attributes-to-aarch64-memory-types
-   :widths: 20 15 40 
+   :widths: 20 15 10 30
    :class: longtable
 
    * - **EFI Memory Type**
      - **ARM Memory Type:  MAIR attribute encoding  Attr<n> [7:4] [3:0]**
+     - **ARM Memory Shareability Attribute SH [1:0]**
      - **ARM Memory Type:  Meaning**
    * - EFI_MEMORY_UC (Not cacheable)
      - 0000 0000
+     - Not applicable
      - Device-nGnRnE  (Device non-Gathering, non-Reordering, no Early Write Acknowledgement)
    * - EFI_MEMORY_WC (Write combine)
      - 0100 0100
+     - Not applicable
      - Normal Memory  Outer non-cacheable  Inner non-cacheable
    * - EFI_MEMORY_WT (Write through)
      - 1011 1011
-     - Normal Memory  Outer Write-through non-transient  Inner Write-through non-transient
+     - 11
+     - Normal Memory  Outer Write-through non-transient  Inner Write-through non-transient, inner-shareable
    * - EFI_MEMORY_WB (Write back)
      - 1111 1111
-     - Normal Memory  Outer Write-back non-transient  Inner Write-back non-transient
+     - 11
+     - Normal Memory  Outer Write-back non-transient  Inner Write-back non-transient, inner-shareable
    * - EFI_MEMORY_UCE
-     - 
+     -
+     - Not applicable
      - Not used or defined
    * - EFI_MEMORY_ISA_MASK
      - Direct copy of the values of MAIR Attr<n> [7:4][3:0]
+     - Not used or defined
      - As defined in the ARM Architecture Reference Manual.
 
 
@@ -1054,9 +1105,9 @@ Boot Services define a specific execution environment. This section will describ
 
 If a UEFI application uses its own page tables, or other processor state, the application must ensure that the firmware executes with each supplanted functionality. There are two ways that firmware conforming to this specification can execute in this alternate execution environment:
 
--  Explicit firmware call
+  \* Explicit firmware call
 
--  Firmware preemption of application via timer event
+  \* Firmware preemption of application via timer event
 
 An application with an alternate execution environment can restore the firmware environment before each UEFI call. However the possibility of preemption may require the alternate execution-enabled application to disable interrupts while the alternate execution environment is active. It's legal for the alternate execution environment enabled application to enable interrupts if the application catches the interrupt and restores the EFI firmware  environment prior to calling the UEFI interrupt ISR. After the UEFI ISR context is executed it will return to the alternate execution environment enabled application context.
 
@@ -1073,29 +1124,32 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 The base calling convention for the AArch64 binding is defined in the document *Procedure Call Standard for the ARM 64-bit Architecture Version A-0.06 (or later)*:
 
-See "Links to UEFI-Related Documents" ( http://uefi.org/uefi) under the heading "ARM 64-bit Base Calling Convention"
+See "Links to UEFI-Related Documents" (http://uefi.org/uefi) under the heading "ARM 64-bit Base Calling Convention"
+
 
 This binding further constrains the calling convention in these ways:
 
--  The AArch64 execution state must not be modified by the callee.
+  \* The AArch64 execution state must not be modified by the callee.
 
--  All code exits, normal and exceptional, must be from the A64 instruction set.
+  \* All code exits, normal and exceptional, must be from the A64 instruction set.
 
--  Floating point and SIMD instructions may be used.
+  \* Floating point and SIMD instructions may be used.
 
--  Optional vector and matrix operations and other instruction set extensions may only be used:
+  \* Optional vector and matrix operations and other instruction set extensions may only be used:
 
-   -  After dynamically checking for their existence.
+     \-  After dynamically checking for their existence.
 
-   -  Saving and then later restoring any additional execution state context.
+     \-  Saving and then later restoring any additional execution state context.
 
-   -  Additional feature enablement or control, such as power, must be explicitly managed.
+     \-  Additional feature enablement or control, such as power, must be explicitly managed.
 
--  Only little endian operation is supported.
--  The stack will maintain 16 byte alignment.
--  Structures (or other types larger than 64-bits) must be passed by reference and not by value.
+  \* Only little endian operation is supported.
+  
+  \* The stack will maintain 16 byte alignment.
+  
+  \* Structures (or other types larger than 64-bits) must be passed by reference and not by value.
 
--  The EFI AArch64 platform binding defines the platform register (r18) as "do not use". Avoiding use of r18 in firmware makes the code compatible with both a fixed role for r18 defined by the OS platform ABI and the use of r18 by the OS and its applications as a temporary register.
+  \* The EFI AArch64 platform binding defines the platform register (r18) as "do not use." Avoiding use of r18 in firmware makes the code compatible with both a fixed role for r18 defined by the OS platform ABI and the use of r18 by the OS and its applications as a temporary register.
 
 
 .. _risc-v-platforms:
@@ -1103,177 +1157,82 @@ This binding further constrains the calling convention in these ways:
 RISC-V Platforms
 ################
 
-All functions are called with the C language calling convention. See  :ref:`detailed-calling-convention` for more detail. On RISC-V platform, three privileged levels are currently introduced in RISC-V architecture. Beyond the User privilege, Supervisor privilege and Machine privileges cover all aspects of RISC-V system. The privileged instructions are also defined in each privilege level.
+UEFI implementations may target RV32 (32-bit), RV64 (64-bit) and RV128 (128-bit) processors, supporting code execution in native bitness mode only (e.g. an RV64 UEFI implementation will not support RV32 UEFI images).
 
+All functions are called with the C language calling convention. See :ref:`detailed-calling-convention` for more detail. During boot services only a single processor is used for execution. All secondary processors are either powered off or held in a quiescent state.
 
-.. list-table:: RISC-V Platforms
-   :widths: 15 15 15 45 
-   :name: risc-v-platforms-1
-   :class: longtable
+The processor is in the following execution mode during boot service time:
 
-   * - **Level**
-     - **Encoding**
-     - **Name**
-     - **Abbreviation**
-   * - 0
-     - 0
-     - User/Application
-     - U
-   * - 1
-     - 1
-     - Supervisor
-     - S
-   * - 2
-     - 10
-     - Reserved
-     - 
-   * - 3
-     - 11
-     - Machine
-     - M
+  \* The processor must be in little-endian Supervisor mode and running with native (XLEN) bitness. If the processor implements the hypervisor extension and the UEFI implementation is not running in a virtual machine environment, the processor must be in HS mode.
+                                        
+  \* The processor must support the following extensions:
 
+     \-  Atomic extension (A)
 
-A RISC-V platform can contain one or more RISC-V cores and other components such as physical memory, fixed-function accelerators and I/O devices. The term RISC-V core refers to a component which contains an independent instruction fetch unit. A RISC-V core may have multiple RISC-V-compatible hardware threads, or hart. RISC-V UEFI firmware could be executed in either Machine mode or Supervisor mode during the entire POST, according to the hart capability and the platform design. However, RISC-V UEFI firmware has to switch the boot hart to Supervisor mode at either early or late POST if the platform is designed to boot a Supervisor mode OS or OS loader.
+     \-  Compressed extension (C)
 
-The machine mode has the highest privilege and this mode is the only mandatory privilege level for RISC-V platforms; all other privilege levels are optional depending on the platform requirements. Machine mode is the initial privelege mode entered at the power-on reset. This level is used in UEFI for low-level access to a hardware platform.
+     \-  Base (integer) ISA (I)
 
-UEFI firmware implementation may provide the Supervisor Binary Interface (SBI) to allow the Supervisor mode execution environment to invoke privileged functions or access privileged hardware.
+     \-  Integer multiplication and division extension (M)
 
-The processor is in the following execution mode during boot service:
+     \-  Standard privileged architecture (Zicsr, Zifencei)
 
--  Total 32 general-purpose registers x1-x31. Register x0 is hardwired to 0. Each register has its ABI (Application Binary Interface) name. See  :ref:`detailed-calling-convention`  for more detail.
+  \* Implementations of boot services will enable architecturally manageable caches and TLBs i.e., those that can be managed directly using implementation independent registers using mechanisms and procedures defined in the RISC-V Volume 2, Privileged Spec and ratified extension specifications. They should not enable caches requiring platform information to manage or invoke non-architectural cache/TLB lockdown mechanisms.
 
--  The width of the native base integer depends on the RISC-V privileged mode implementation. XLEN is a general term which used to refer the width of base integer in bits.
+  \* Address translation may be enabled. If enabled, any memory space defined by the UEFI memory map is identity mapped (virtual address equals physical address), although the attributes of certain regions may not have all read, write and execute attributes or be unmarked for purposes of platform protection. The mappings to other regions are undefined and may vary from implementation to implementation.
 
-   —  For the Base Integer ISA in 32-bit width, XLEN = 32
+  \* Interrupts are enabled, though no interrupt services are supported other than the UEFI boot services timer functions (All loaded device drivers are serviced synchronously by “polling”).
 
-   —  For the Base Integer ISA in 64-bit width, XLEN = 64
+  \* A timer is enabled and configured for Supervisor interrupt delivery, e.g. machine timer or supervisor timer if the Sstc extension is present.
 
-   —  For the Base Integer ISA in 128-bit width, XLEN = 128
+  \* 128 KiB or more of available stack space.
 
--  The width of processor registers could be determined by placing the immediate 4 in a register then shifting the register left by 31 bits at a time. If zero after one shift, then the machine is RV32. If zero after two shifts, then the machine is RV64, else RV128.
+Runtime services are permitted to make ECALLs into higher privilege modes.
 
--  Processor reset vector is platform specified. In UEFI, it is configured to the platform implementation-defined reset vector. The reset vector address is the first instruction which fetched by RISC-V processor when the power-on reset.
 
--  The mcause value after reset have implementation-speciﬁc interpretation, value 0 should be returned on implementations that do not distinguish diﬀerent reset conditions. Implementations that distinguish diﬀerent reset conditions should only use 0 to indicate the most complete reset (e.g., hard reset). The causes of reset could be power-on reset, external hard reset, brownout detected, watchdog timer elapse, sleep-mode wakeup, etc., which machine-mode UEFI system firmware has to distinguish.
+For an operating system to use any runtime services, it must:
 
--  The mstatus.xIE indicates the current processor interrupt activation in current privilege mode.
+  \* Preserve all memory in the memory map marked as runtime code and runtime data.
 
-   —  mstatus.MIE is set to one while mstatus.SIE and mstatus.UIE are set to zero during early UEFI POST stage.
+  \* Call the runtime service functions, with the following conditions:
 
--  The machine mode interrupt is enabled during boot service in UEFI. Two kinds of interrupts are enabled, one is for timer interrupt and another is software interrupt. 
+     \-  Call runtime services consistently from the same privilege mode (either HS/S or VS mode).
 
--  mie.MSIE = 1
+     \-  Runtime services must only be assigned to a single operating system or hypervisor. They must not be shared between multiple guest operating systems.
 
--  mie.MTIE = 1
+     \-  The system address regions described by all the entries in the EFI memory map that have the EFI_MEMORY_RUNTIME bit set must be identity mapped as they were for the EFI boot environment. If the OS Loader or OS used SetVirtualAddressMap() to relocate the runtime services in a virtual address space, then this condition does not have to be met. See description of SetVirtualAddressMap() for details of memory map after this function has been called.
 
--  The memory is in physical addressing mode. Page is disabled in RISC-V machine mode during UEFI boot service.
+     \-  The processor must be in a mode in which it has access to the system memory map with the EFI_MEMORY_RUNTIME bit set.
 
--  I/O access is through memory map I/O.
+     \-  8 KiB, or more, of available stack space.
 
--  Only support Machine level Control and Status Registers (CSRs) in UEFI.
+     \-  The stack must be 16-byte aligned (128-bit).
 
--  Machine ISA (misa) register contains the information regarding to the capabilities of CPU implementation. The misa.MXL field encodes the native base integer ISA width in machine mode. MXLEN (Machine XLEN) is given by setting of misa.MXL.
-
-   —  misa.MXL = 1, MXLEN is 32 bit
-
-   —  misa.MXL = 2, MXLEN is 64 bit
-
-   —  misa.MXL = 3, MXLEN is 128 bit
-
--  RISC-V processor supports extensive customization and specialization instruction sets. RISC-V variations provide various purposes of processor implementations and the processor capability is reported in the extension bits in misa register. UEFI drivers will need to know the capabilities of processor before executing the specified RISC-V extension instructions. The extensions fields encodes the presence of the standard extensions, with a single bit per letter of the alphabet. (Bit 0 encodes presence of extension "A", Bit 1 encodes presence of extension "B" and so on. Currently the single letter extension mnemonics are as below,
-
-
-   —  A - Atomic extension
-
-   —  B - Tentatively reserved for Bit operations extension
-
-   —  C - Compressed extension
-
-   —  D - Double-Precision Floating-Point extension
-
-   —  E - Reduced Register Set Indicator RV32E (16 registers)
-
-   —  F - Single-Precision Floating-Point extension
-
-   —  G - Additional standard extensions present
-
-   —  H - Hypervisor extension
-
-   —  I - RV32I/64I/128I base ISA
-
-   —  J - Tentatively reserved for Dynamically Translated Languages extension
-
-   —  K - Reserved
-
-   —  L - Tentatively reserved for Decimal Floating-Point extension
-
-   —  M - Integer Multiplication and Division extension
-
-   —  N - User-level interrupts supported
-
-   —  O - Reserved
-
-   —  P - Tentatively reserved for Packed-SIMD extension
-
-   —  Q - Quad-Precision Floating-Point extension
-
-   —  S - Supervisor mode implemented
-
-   —  T - Tentatively reserved for Transactional Memory extension
-
-   —  U - User mode implemented
-
-   —  V - Tentatively reserved for Vector extension
-
-   —  W - Reserved
-
-   —  X - Non-standard extension present
-
-   —  Y - Reserved
-
-   —  Z - Reserved
-
-   —  Zifenci - Instruction-Fetch Fence
-
-   —  Zicsr - Control and Status Register Access
-
-
--  Machine Vendor ID Register
-
-   —  The mvendorid is a 32-bit read-only register encoding the manufacture of the part. Value of 0 indicates this field is not implemented or this is a non-commercial implementation. 
-
--  Machine Architecture ID Register 
-
-   —  The marchid is an MXLEN-bit read-only register encoding the base microarchitecture of the hart. The combination of mvendorid and marchid should uniquely identify the type of hart  microarchitecture that is implemented.
-
--  Machine Implementation ID Register
-
-   —  This provides a unique encoding of the version of processor implementation.
+     \-  Interrupts may be disabled or enabled at the discretion of the caller.
 
 An application written to this specification may alter the processor execution mode, but the UEFI image must ensure firmware boot services and runtime services are executed with the prescribed execution environment.
 
-After an Operating System calls ExitBootServices (), firmware boot services are no longer available and it is illegal to call any boot service. After ExitBootServices, firmware runtime services are still available and may be called with paging enabled and virtual address pointers if SetVirtualAddressMap () has been called describing all virtual address ranges used by the firmware runtime service.
 
 If ACPI is supported:
 
-- ACPI Tables loaded at boot time can be contained in memory of type *EfiACPIReclaimMemory* (recommended) or *EfiACPIMemoryNVS*. ACPI FACS must be contained in memory of type *EfiACPIMemoryNVS*
+  \* ACPI Tables loaded at boot time can be contained in memory of type *EfiACPIReclaimMemory* (recommended) or *EfiACPIMemoryNVS*. ACPI FACS must be contained in memory of type *EfiACPIMemoryNVS*
 
-- The system firmware must not request a virtual mapping for any memory descriptor of type  *EfiACPIReclaimMemory* or *EfiACPIMemoryNVS*.
+  \* The system firmware must not request a virtual mapping for any memory descriptor of type  *EfiACPIReclaimMemory* or *EfiACPIMemoryNVS*.
 
-- EFI memory descriptors of type *EfiACPIReclaimMemory* and *EfiACPIMemoryNVS* must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size. 
+  \* EFI memory descriptors of type *EfiACPIReclaimMemory* and *EfiACPIMemoryNVS* must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size. 
 
-- Any UEFI memory descriptor that requests a virtual mapping via the *EFI_MEMORY_DESCRIPTOR* having the *EFI_MEMORY_RUNTIME* bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
+  \* Any UEFI memory descriptor that requests a virtual mapping via the *EFI_MEMORY_DESCRIPTOR* having the *EFI_MEMORY_RUNTIME* bit set must be aligned on a 4 KiB boundary and must be a multiple of 4 KiB in size.
 
-- An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
+  \* An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
 
-- ACPI tables loaded at runtime must be contained in memory of type *EfiACPIMemoryNVS*.
+  \* ACPI tables loaded at runtime must be contained in memory of type *EfiACPIMemoryNVS*.
 
 The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
 
--   In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type *EfiRuntimeServicesData* (recommended), *EfiBootServicesData*, *EfiACPIReclaimMemory* or *EfiACPIMemoryNVS*. Tables loaded at runtime must be contained in memory of type *EfiRuntimeServicesData* (recommended) or *EfiACPIMemoryNVS*.
+  -   In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type *EfiRuntimeServicesData* (recommended), *EfiBootServicesData*, *EfiACPIReclaimMemory* or *EfiACPIMemoryNVS*. Tables loaded at runtime must be contained in memory of type *EfiRuntimeServicesData* (recommended) or *EfiACPIMemoryNVS*.
 
-**Note**: *Previous EFI specifications allowed ACPI tables loaded at runtime to be in the* EfiReservedMemoryType *and there was no guidance provided for other EFI Configuration Tables*. EfiReservedMemoryType *is not intended to be used by firmware. The UEFI Specification intends to clarify the situation moving forward. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type* EfiBootServicesData.
+.. note:: 
+  Previous EFI specifications allowed ACPI tables loaded at runtime to be in the EfiReservedMemoryType and there was no guidance provided for other EFI Configuration Tables. EfiReservedMemoryType is not intended to be used by firmware. The UEFI Specification intends to clarify the situation moving forward. Also, only OSes conforming to the UEFI Specification are guaranteed to handle SMBIOS table in memory of type EfiBootServicesData.
 
 
 .. _handoff-state-5:
@@ -1281,134 +1240,33 @@ The cacheability attributes for ACPI tables loaded at runtime should be defined 
 Handoff State
 $$$$$$$$$$$$$
 
-When UEFI firmware hands off control to Supervisor mode OS, RISC-V boot hart must be operated in Supervisor mode, and the memory addressing must be operated in Bare mode which is no memory address translation or protection through the virtual page table entry.
-
-In order to describe the heterogeneous RISC-V cores and harts for the next boot stage after POST, UEFI firmware must build up the information of core and hart hardware capabilities in the firmware data structure if the target bootable image requires this information. (e.g. If the platform supports  SMBIOS structure, SMBIOS record type 44 record, see "Link to UEFI Specification-Related Document" on https://uefi.org/uefi under the heading "RISC-V Processor SMBIOS Specification").
-
-UEFI based RISC-V platform firmware must implement the RISCV_EFI_BOOT_PROTOCOL for the boot image that requires the boot information during the handoff from the firmware boot stage. Launched EFI binaries should use the RISCV_EFI_BOOT_PROTOCOL.GetBootHartId() to obtain the boot hart ID. The boot hart ID information provided by either SMBIOS or Device Tree (as described in the UEFI 2.9 specification) is ignored by the boot image. See "Links to UEFI Specification-Related Document" on https://uefi.org/uefi under the heading "RISC-V EFI Boot Protocol."
-
-If the platform supports Device Tree structure to describe the system configurations, the Flattened Device Blob (DTB) must be installed in the EFI Configuration Table (:ref:`efi-configuration-table-and-properties-table` for details).
-
 All UEFI images takes two parameters: the UEFI image handle and the pointer to EFI System Table. According to the RISC-V calling convention, EFI_HANDLE is passed through the a0 register and EFI_SYSTEM_TABLE is passed through the a1 register.
 
--  x10 - EFI_HANDLE (ABI name: a0)
+  \* x10 - EFI_HANDLE (ABI name: a0)
 
--  x11 - EFI_SYSTEM_TABLE \ (ABI name: a1)
+  \* x11 - EFI_SYSTEM_TABLE \ (ABI name: a1)
 
--  x1 - Return Address (ABI name: ra)
-
-
-.. _data-alignment:
-
-Data Alignment
-$$$$$$$$$$$$$$
-
-In the RV32I and RV64I, the datatypes must be aligned at its natural size when stored in memory. The following table describes the datatype and its alignment in RV32I and RV64I in UEFI.
+  \* x1 - Return Address (ABI name: ra)
 
 
+.. _enabling-paging-or-alternate-translations-in-an-application-3:
 
-..  list-table:: RV32 datatype alignment
-    :widths: 15 45 45 
-    :name: RV32-datatype-alignment
-    :class: longtable
+Enabling Paging or Alternate Translations in an Application
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-    *   - **Datatype**
-        - **Description**
-        - **Alignment**
-    *   - BOOLEAN
-        - Logical Boolean  
-        - 1  
-    *   - INTN
-        - Signed value in native width.  
-        - 4  
-    *   - UINTN  
-        - Unsigned value in native width.  
-        - 4
-    *   - INT8
-        - 1-byte signed value
-        - 1
-    *   - UINT8 
-        - 1-byte unsigned value
-        - 1
-    *   - INT16
-        - 2-byte signed value
-        - 2
-    *   - UINT16  
-        - 2-byte unsigned value
-        - 2
-    *   - INT32
-        - 4-byte signed value  
-        - 4
-    *   - UINT32
-        - 4-byte unsigned value
-        - 4  
-    *   - INT64
-        - 8-byte signed value
-        - 8
-    *   - UINT64  
-        - 8-byte unsigned value
-        - 8
-    *   - CHAR8
-        - 1-byte character  
-        - 1
-    *   - CHAR16
-        - 2-byte character  
-        - 2
-    *   - VOID
-        - Undeclared type
-        - 4
+Boot Services define a specific execution environment. This section will describe how to write an application that creates an alternative execution environment. Some Operating Systems require the OS Loader to be able to enable OS required translations at Boot Services time, and make other changes to the UEFI defined execution environment.
 
+If a UEFI application uses its own page tables, or other processor state, the application must ensure that the firmware executes with each supplanted functionality. There are two ways that firmware conforming to this specification can execute in this alternate execution environment:
 
-..  list-table:: RV64 datatype alignment 
-    :widths: 15 45 45
-    :name: RV64-datatype-alignment
-    :class: longtable 
+  \* Explicit firmware call.
 
-    *   - **Datatype**
-        - **Description**
-        - **Alignment**
-    *   - BOOLEAN
-        - Logical Boolean
-        - 1
-    *   - INTN
-        - Signed value in native width.
-        - 8
-    *   - UINTN
-        - Unsigned value in native width.
-        - 8
-    *   - INT8
-        - 1-byte signed value
-        - 1
-    *   - UINT8
-        - 1-byte unsigned value
-        - 1
-    *   - INT16
-        - 2-byte signed value
-        - 2
-    *   - UINT16
-        - 2-byte unsigned value
-        - 2
-    *   - INT32
-        - 4-byte signed value
-        - 4
-    *   - UINT32
-        - 4-byte unsigned value
-        - 4
-    *   - INT64
-        - 8-byte signed value
-        - 8
-    *   - UINT64
-        - 8-byte unsigned value
-        - 8
-    *   - CHAR8
-        - 1-byte character
-        - 1
-    *   - CHAR16
-        - 2-byte character
-        - 2
-    *   - VOID
-        - Undeclared type
-        - 8
+  \* Firmware preemption of application via timer event.
+
+An application with an alternate execution environment can restore the firmware environment before each UEFI call. However the possibility of preemption may require the alternate execution-enabled application to disable interrupts while the alternate execution environment is active. It's legal for the alternate execution environment enabled application to enable interrupts if the application catches the interrupt and restores the EFI firmware environment prior to calling the UEFI interrupt ISR. After the UEFI ISR context is executed it will return to the alternate execution environment enabled application context.
+
+An alternate execution environment created by a UEFI application must not change the semantics or behavior of the MMU configuration created by the UEFI firmware prior to invoking ExitBootServices(), including the bit layout of the page table entries.
+
+After an OS loader calls ExitBootServices() it should immediately configure the exception vector to point to appropriate code.
 
 
 .. _detailed-calling-convention-2:
@@ -1416,68 +1274,31 @@ In the RV32I and RV64I, the datatypes must be aligned at its natural size when s
 Detailed Calling Convention
 $$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-The RISC-V calling convention passes arguments in register when necessary. In RISC-V, total 32 general registers are declared, each register has its corresponding ABI name.
+The base calling convention is defined in the RISC-V ELF psABI Specification. See Links to UEFI Specification-Related Documents (https://uefi.org/uefi) under the heading “RISC-V ELF psABI Specification”, and the RISC-V assembly programmer’s handbook section in the RISC-V Unprivileged ISA specification.
 
+This binding further constrains the calling convention (EFIAPI) between UEFI-compliant images and firmware in the following manner:
 
+  \* Datatypes must be aligned at its natural size when stored in memory (code shall make no assumptions on support for unaligned memory accesses).
 
-..  list-table:: Register name and ABI name
-    :widths: 15 15 45
-    :name: Register-name-and-ABI-name
-    :class: longtable 
+  \* Calls will conform to LP64 ABI (make no use of floating point registers).
+  
+  \* Code may use RVC (compressed instructions).
 
-    *   - **Register**
-        - **ABI Name**
-        - **Description**
-    *   - x0
-        - zero   
-        - Hardwired to zero
-    *   - x1  
-        - ra   
-        - Return address
-    *   - x2
-        - sp   
-        - Stack pointer
-    *   - x3
-        - gp
-        - Global pointer
-    *   - x4  
-        - tp
-        - Thread pointer
-    *   - x5-7  
-        - t0-2
-        - Temporaries
-    *   - x8  
-        - s0/fp
-        - Saved register/frame pointer
-    *   - x9  
-        - s1
-        - Saved register
-    *   - x10-11  
-        - a0-1
-        - Function arguments/Return values
-    *   - x12-17  
-        - a2-7
-        - Function arguments
-    *   - x18-27  
-        - s2-11
-        - Saved registers
-    *   - x28-31
-        - t3-6
-        - Temporaries
+  \* Optional floating point, vector and other extensions may be only used:
+  
+     \- After dynamically checking for their existence.
 
+     \- Saving and then later restoring any additional execution state, hiding use of the additional functionality from other components (incl. OS for EFI Runtime Service calls).
 
-In the RISC-V calling convention, up to eight integer registers are used for passing argument, a0-a7. a0-a7 are the ABI names and the corresponding registers are x10-x17. Values are returned from functions in integer registers a0 and a1, those are register x10 and x11. In the standard RISC-V calling convention, the stack grows downward and the stack point is always kept 16-byte aligned. Five integer register t0-t6 are temporary registers that are volatile across calls and must be saved by the caller if later used. Twelve integer registers s0-s11 are preserved across calls and must be saved by the callee if used.
+  \* Only little-endian operation is supported.
 
-In view of the following statement:
+  \* The stack will maintain 16 byte alignment.
 
-*"In the standard ABI, procedures should not modify the integer registers tp and gp, because signal handlers may rely upon their values"*
+  \* UEFI firmware must neither trust the values of x3 (ABI name: gp) and x4 (ABI name: tp) nor make an assumption of owning the write access to these registers in any circumstances.
 
+    \- This includes UEFI boot services, UEFI runtime services, Management Mode service and any UEFI firmware interfaces which may invoked by the drivers, OS or external firmware payload.
 
-mentioned in the RISC-V EFL psABI Specification, and the RISC-V calling convention that gp and tp registers are not assigned a specific owner to save and restore their values (see links below), UEFI firmware must neither trust the values of tp and gp nor make an assumption of owning the write access to these register in any circumstances. (Such as in EFI Boot service, EFI Runtime service, EFI Management Mode service and any UEFI firmware interfaces which may invoked by the EFI drivers, OS or external firmware payload.)
-
-Preserve the values in gp or tp register if UEFI firmware needs to change them, and never touch them after ExitBootServices(). Whether and how to preserve gp and tp in the UEFI firmware environment is implementation-specific.
-
-See Links to UEFI Specification-Related Documents (https://uefi.org/uefi) under the heading "RISC-V EFL psABI Specification", and the RISC-V assembly programmer's handbook section in the RISC-V Unprivileged ISA specification.
+    \- Preserve the values in x3 and x4 registers if UEFI firmware needs to change them, and never touch them after ExitBootServices(). Whether and how to preserve x3 and x4 in the UEFI firmware environment is implementation-specific.
 
 
 .. _loongarch-platforms:
@@ -1493,20 +1314,33 @@ LoongArch UEFI will only be executed in PLV0 mode. PLV0 is the privilege level w
 
 The processor is in the following execution mode during boot service:
 
-- Total 32 general-purpose integer registers, r0-r31. 
-- FP unit can be used(CSR.EUEN.FPE to enable), calling convention refer to 2.3.8.2. If the FP unit is used, it is recommended to save and restore floating-point registers in exception context to improve security.
-- Instruction and Data caches enabled.
-- MMU enabled. 
-- Address space is uniform addressing.
-- The processor reset vactor has been fixed and the address is 0x1c00,0000.
-- Enable unaligned access support.
-- Control and Status Resgers(CSRs) are support.
-- I/O access is through memory map I/O.
-- The memory is in physical addressing mode. LoongArch architecture defines two memory access modes, namely direct address translation mode and mapped address translation mode. In driect address translation mode, the address load/store consistent cacheable type determined by CSR.DATM, and in the mapped address translation mode, the consistent cacheable type determined by TLB consistent cacheable type.
-- 128 KiB or more available stack space.
-- The stack must be 16-byte aligned.
-- Stable counter enabled.
-- Timer Interrupt enabled. 
+  \* Total 32 general-purpose integer registers, r0-r31. 
+
+  \* FP unit can be used(CSR.EUEN.FPE to enable), calling convention refer to 2.3.8.2. If the FP unit is used, it is recommended to save and restore floating-point registers in exception context to improve security.
+
+  \* Instruction and Data caches enabled.
+
+  \* MMU enabled.
+
+  \* Address space is uniform addressing.
+
+  \* The processor reset vactor has been fixed and the address is 0x1c00,0000.
+
+  \* Enable unaligned access support.
+
+  \* Control and Status Resgers(CSRs) are support.
+
+  \* I/O access is through memory map I/O.
+
+  \* The memory is in physical addressing mode. LoongArch architecture defines two memory access modes, namely direct address translation mode and mapped address translation mode. In driect address translation mode, the address load/store consistent cacheable type determined by CSR.DATM, and in the mapped address translation mode, the consistent cacheable type determined by TLB consistent cacheable type.
+
+  \* 128 KiB or more available stack space.
+
+  \* The stack must be 16-byte aligned.
+
+  \* Stable counter enabled.
+
+  \* Timer Interrupt enabled. 
 
 An application written to this specification may alter the processor execution mode, but the UEFI image must ensure firmware boot services and runtime services are executed with the prescribed execution environment. 
 
@@ -1514,25 +1348,36 @@ After an Operating System calls ExitBootServices(), firmware boot services are n
 
 For an operating system to use any UEFI runtime services, it must:
 
-- Preserve all memory in the memory map marked as runtime code and runtime data.
-- Call the runtime service functions, with the following conditions:
+  \* Preserve all memory in the memory map marked as runtime code and runtime data.
 
-  - In PLV0 mode.
-  - The system address regions described by all the entries in the EFI memory map that have the EFI_MEMORY_RUNTIME bit set must be identity mapped as they were for the EFI boot environment. If the OS Loader or OS used SetVirtualAddressMap() to relocate the runtime services in a virtual address space, then this condition does not have to be met. See description of SetVirtualAddressMap() for details of memory map after this function has been called.
-  - 16 KiB, or more, of available stack space.
-  - The stack must be 16-byte aligned (128-bit).
+  \* Call the runtime service functions, with the following conditions:
+
+     \- In PLV0 mode.
+
+     \- The system address regions described by all the entries in the EFI memory map that have the EFI_MEMORY_RUNTIME bit set must be identity mapped as they were for the EFI boot environment. If the OS Loader or OS used SetVirtualAddressMap() to relocate the runtime services in a virtual address space, then this condition does not have to be met. See description of SetVirtualAddressMap() for details of memory map after this function has been called.
+	 
+      \- 16 KiB, or more, of available stack space.
+
+      \- The stack must be 16-byte aligned (128-bit).
 
 If ACPI is supported:
 
-- ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS.
-- ACPI FACS must be contained in memory of type EfiACPIMemoryNVS. The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS.
-- EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 64 KiB boundary and must be a multiple of 64 KiB in size.
-- Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 64 KiB boundary and must be a multiple of 64 KiB in size.
-- An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
-- ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS. The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
-- In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesdata, EfiACPIReclaimMemory or EfiACPIMemoryNVS. Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
+  \* ACPI Tables loaded at boot time can be contained in memory of type EfiACPIReclaimMemory (recommended) or EfiACPIMemoryNVS.
 
-.. note:: Previous EFI specifications allowed ACPI tables loaded at runtime to be in the EfiReservedMemoryType and there was no guidance provided for other EFI Configuration Tables. EfiReservedMemoryType is not intended to be used by firmware. UEFI 2.0 clarified the situation moving forward. Also, only OSes conforming to UEFI Specification are guaranteed to handle SMBIOS table in memory of type EfiBootServiceData.
+  \* ACPI FACS must be contained in memory of type EfiACPIMemoryNVS. The system firmware must not request a virtual mapping for any memory descriptor of type EfiACPIReclaimMemory or EfiACPIMemoryNVS.
+
+  \* EFI memory descriptors of type EfiACPIReclaimMemory and EfiACPIMemoryNVS must be aligned on a 64 KiB boundary and must be a multiple of 64 KiB in size.
+
+  \* Any UEFI memory descriptor that requests a virtual mapping via the EFI_MEMORY_DESCRIPTOR having the EFI_MEMORY_RUNTIME bit set must be aligned on a 64 KiB boundary and must be a multiple of 64 KiB in size.
+
+  \* An ACPI Memory Op-region must inherit cacheability attributes from the UEFI memory map. If the system memory map does not contain cacheability attributes, the ACPI Memory Op-region must inherit its cacheability attributes from the ACPI name space. If no cacheability attributes exist in the system memory map or the ACPI name space, then the region must be assumed to be non-cacheable.
+
+  \* ACPI tables loaded at runtime must be contained in memory of type EfiACPIMemoryNVS. The cacheability attributes for ACPI tables loaded at runtime should be defined in the UEFI memory map. If no information about the table location exists in the UEFI memory map, cacheability attributes may be obtained from ACPI memory descriptors. If no information about the table location exists in the UEFI memory map or ACPI memory descriptors, the table is assumed to be non-cached.
+
+  \* In general, UEFI Configuration Tables loaded at boot time (e.g., SMBIOS table) can be contained in memory of type EfiRuntimeServicesData (recommended), EfiBootServicesdata, EfiACPIReclaimMemory or EfiACPIMemoryNVS. Tables loaded at runtime must be contained in memory of type EfiRuntimeServicesData (recommended) or EfiACPIMemoryNVS.
+
+.. note:: 
+   Previous EFI specifications allowed ACPI tables loaded at runtime to be in the EfiReservedMemoryType and there was no guidance provided for other EFI Configuration Tables. EfiReservedMemoryType is not intended to be used by firmware. UEFI 2.0 clarified the situation moving forward. Also, only OSes conforming to UEFI Specification are guaranteed to handle SMBIOS table in memory of type EfiBootServiceData.
 
 
 Handoff Statue
@@ -1540,11 +1385,11 @@ $$$$$$$$$$$$$$$
 
 All UEFI image takes two parameters, these are UEFI image handle and the pointer to EFI System. According the LoongArch calling convention, two registers are used to pass them. EFI_HANDLE is passed by a0, and EFI_SYSTEM_TABLE \* is passed by a1.
 
-- r4 - EFI_HANDLE(ABI name: a0)
+  \* r4 - EFI_HANDLE(ABI name: a0)
 
-- r5 - EFI_SYSTEM_TABLE \*(ABI name: a1)
+  \* r5 - EFI_SYSTEM_TABLE\*(ABI name: a1)
 
-- r1 - Return Address(ABI name: ra)
+  \* r1 - Return Address(ABI name: ra)
 
 
 Detailed Calling Convention
@@ -1553,8 +1398,8 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$
 LoongArch architecture defines 32 general-purpose registers, and the ABI refer to https://loongson.github.io/LoongArch-Documentation/LoongArch-ELF-ABI-EN.html. 
 The basic principle of the LoongArch procedure calling convention is to pass arguments in registers as much as possible (i.e. floating-point arguments are passed in floating-point registers and non floating-point arguments are passed in general-purpose registers, as much as possible); arguments are passed on the stack only when no appropriate register is available.
 
-Eight general-purpose register r4-r11(general-pupose argument registers, ABI name: a0-a7) used for pass integer arguments, with a0-a1 reused to return values. Eight floating-point registers f0-f7(floating-point argument registers, ABI name: fa0-fa7) used for pass floating-point arguments, and fa0-fa1 are also used to return values.
-Generally, the general-pupose argument registers are used to pass fixed-point arguments, and floating-point arguments when no floating-point argument register is available. Bit fields are stored in little endian. In addition, subroutines should ensure that the values of general-purpose registers r22-r31(ABI name: s0-s9) and floating-point registers f24-f31(ABI name: fs0-fs7) are preserved across procedure calls.
+Eight general-purpose register r4-r11(general-purpose argument registers, ABI name: a0-a7) used for pass integer arguments, with a0-a1 reused to return values. Eight floating-point registers f0-f7(floating-point argument registers, ABI name: fa0-fa7) used for pass floating-point arguments, and fa0-fa1 are also used to return values.
+Generally, the general-purpose argument registers are used to pass fixed-point arguments, and floating-point arguments when no floating-point argument register is available. Bit fields are stored in little endian. In addition, subroutines should ensure that the values of general-purpose registers r22-r31(ABI name: s0-s9) and floating-point registers f24-f31(ABI name: fs0-fs7) are preserved across procedure calls.
 
 
 .. _protocols:
@@ -1564,9 +1409,11 @@ Protocols
 
 The protocols that a device handle supports are discovered through the  :ref:`efi-boot-services-handleprotocol` Boot Service or  :ref:`efi-boot-services-openprotocol` Boot Service. Each protocol has a specification that includes the following:
 
--  The protocol’s globally unique ID (GUID)
--  The Protocol Interface structure
--  The Protocol Services
+  \* The protocol’s globally unique ID (GUID)
+
+  \* The Protocol Interface structure
+
+  \* The Protocol Services
 
 Unless otherwise specified a protocol’s interface structure is not allocated from runtime memory and the protocol member functions should not be called at runtime. If not explicitly specified a protocol member function can be called at a TPL level of less than or equal to TPL_NOTIFY ( :ref:`event-timer-and-task-priority-services` ). Unless otherwise specified a protocol’s member function is not reentrant or MP safe.
 
@@ -1802,13 +1649,13 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 Legacy option ROMs typically contain 16-bit real mode code for an IA-32 processor. This means that the legacy option ROM on a PCI card cannot be used in platforms that do not support the execution of IA-32 real mode binaries. Also, 16-bit real mode only allows the driver to access directly the lower 1 MiB of system memory. It is possible for the driver to switch the processor into modes other than real mode in order to access resources above 1 MiB, but this requires a lot of additional code, and causes interoperability issues with other option ROMs and the system BIOS. Also, option ROMs that switch the processor into to alternate execution modes are not compatible with Itanium Processors.
 
-UEFI *Driver Model* design considerations:
+UEFI Driver Model design considerations:
 
--  Drivers need flat memory mode with full access to system components.
+  \* Drivers need flat memory mode with full access to system components.
 
--  Drivers need to be written in C so they are portable between processor architectures.
+  \* Drivers need to be written in C so they are portable between processor architectures.
 
--  Drivers may be compiled into a virtual machine executable, allowing a single binary driver to work on machines using different processor architectures.
+  \* Drivers may be compiled into a virtual machine executable, allowing a single binary driver to work on machines using different processor architectures.
 
 
 .. _fixed-resources-for-working-with-option-roms:
@@ -1820,13 +1667,13 @@ Since legacy option ROMs can only directly address the lower 1 MiB of system mem
 
 Also, it is not easy for legacy option ROMs to allocate system memory. Their choices are to allocate memory from Extended BIOS Data Area (EBDA), allocate memory through a Post Memory Manager (PMM), or search for free memory based on a heuristic. Of these, only EBDA is standard, and the others are not used consistently between adapters, or between BIOS vendors, which adds complexity and the potential for conflicts.
 
-UEFI *Driver Model* design considerations:
+UEFI Driver Model design considerations:
 
--  Drivers need flat memory mode with full access to system components.
+  \* Drivers need flat memory mode with full access to system components.
 
--  Drivers need to be capable of being relocated so that they can be loaded anywhere in memory (PE/COFF Images)
+  \* Drivers need to be capable of being relocated so that they can be loaded anywhere in memory (PE/COFF Images)
 
--  Drivers should allocate memory through the boot services. These are well-specified interfaces, and can be guaranteed to function as expected across a wide variety of platform implementations.
+  \* Drivers should allocate memory through the boot services. These are well-specified interfaces, and can be guaranteed to function as expected across a wide variety of platform implementations.
 
 
 .. _matching-option-roms-to-their-devices:
@@ -1837,13 +1684,13 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 It is not clear which controller may be managed by a particular legacy option ROM. Some legacy option ROMs search the entire system for controllers to manage. This can be a lengthy process depending on the size and complexity of the platform. Also, due to limitation in BIOS design, all the legacy option ROMs must be executed, and they must scan for all the peripheral devices before an operating system can be booted. This can also be a lengthy process, especially if SCSI buses must be scanned for SCSI devices. This means that legacy option ROMs are making policy decision about how the platform is being initialized, and which controllers are managed by which legacy option ROMs. This makes it very difficult for a system designer to predict how legacy option ROMs will interact with each other. This can also cause issues with on-board controllers, because a legacy option ROM may incorrectly choose to manage the on-board controller.
 
-UEFI *Driver Model* design considerations:
+UEFI Driver Model design considerations:
 
--  Driver to controller matching must be deterministic
+  \* Driver to controller matching must be deterministic
 
--  Give OEMs more control through Platform Driver Override Protocol and Driver Configuration Protocol
+  \* Give OEMs more control through Platform Driver Override Protocol and Driver Configuration Protocol
 
--  It must be possible to start only the drivers and controllers required to boot an operating system.
+  \* It must be possible to start only the drivers and controllers required to boot an operating system.
 
 
 .. _ties-to-pc-at-system-design:
@@ -1853,9 +1700,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 Legacy option ROMs assume a PC-AT-like system architecture. Many of them include code that directly touches hardware registers. This can make them incompatible on legacy-free and headless platforms. Legacy option ROMs may also contain setup programs that assume a PC-AT-like system architecture to interact with a keyboard or video display. This makes the setup application incompatible on legacy-free and headless platforms.
 
-UEFI *Driver Model* design considerations:
+UEFI Driver Model design considerations:
 
--  Drivers should use well-defined protocols to interact with system hardware, system input devices, and systemoutput devices. 
+  \* Drivers should use well-defined protocols to interact with system hardware, system input devices, and systemoutput devices. 
 
 
 .. _ambiguities-in-specification-and-workarounds-born-of-experience:
@@ -1867,11 +1714,11 @@ Many legacy option ROMs and BIOS code contain workarounds because of incompatibi
 
 Also, interrupt chaining and boot device selection is very complex in legacy option ROMs. It is not always clear which device will be the boot device for the OS.
 
-UEFI *Driver Model* design considerations:
+UEFI Driver Model design considerations:
 
--  Drivers and firmware are written to follow this specification. Since both components have a clearly defined specification, compliance tests can be developed to prove that drivers and system firmware are compliant. This should eliminate the need to build workarounds into either drivers or system firmware (other than those that might be required to address specific hardware issues).
+  \* Drivers and firmware are written to follow this specification. Since both components have a clearly defined specification, compliance tests can be developed to prove that drivers and system firmware are compliant. This should eliminate the need to build workarounds into either drivers or system firmware (other than those that might be required to address specific hardware issues).
 
--  Give OEMs more control through Platform Driver Override Protocol and Driver Configuration Protocol and other OEM value-add components to manage the boot device selection process.
+  \* Give OEMs more control through Platform Driver Override Protocol and Driver Configuration Protocol and other OEM value-add components to manage the boot device selection process.
 
 
 .. _driver-initialization:
@@ -1889,7 +1736,7 @@ The file for a driver image must be loaded from some type of media. This could i
    **Image Handle**
 
 
-After a driver has been loaded with the boot service LoadImage(), it must be started with the boot service  :ref:`efi-boot-services-startimage`. This is true of all types of UEFI Applications and UEFI Drivers that can be loaded and started on an UEFI-compliant system. The entry point for a driver that follows the UEFI *Driver Model* must follow some strict rules. First, it is not allowed to touch any hardware. Instead, the driver is only allowed to install protocol instances onto its own *Image Handle*. A driver that follows the UEFI *Driver Model* is *required* to install an instance of the Driver Binding Protocol onto its own *Image Handle* . It may optionally install the Driver Configuration Protocol, the Driver Diagnostics Protocol, or the Component Name Protocol. In addition, if a driver wishes to be unloadable it may optionally update the Loaded Image Protocol ( :ref:`efi-loaded-image-protocol` ) to provide its own Unload()  :ref:`efi-loaded-image-protocol-unload` function. Finally, if a driver needs to perform any special operations when the boot service :ref:`efi-boot-services-exitbootservices` is called, it may optionally create an event with a notification function that is triggered when the boot service ExitBootServices() is called. An *Image Handle* that contains a Driver Binding Protocol instance is known as a *Driver Image Handle* .  :ref:`driver-image-handle` shows a possible configuration for the Image Handle from :numref:`overview-driver-image-handle` after the boot service StartImage() has been called.
+After a driver has been loaded with the boot service LoadImage(), it must be started with the boot service  :ref:`efi-boot-services-startimage`. This is true of all types of UEFI Applications and UEFI Drivers that can be loaded and started on an UEFI-compliant system. The entry point for a driver that follows the UEFI Driver Model must follow some strict rules. First, it is not allowed to touch any hardware. Instead, the driver is only allowed to install protocol instances onto its own *Image Handle*. A driver that follows the UEFI Driver Model is *required* to install an instance of the Driver Binding Protocol onto its own *Image Handle* . It may optionally install the Driver Configuration Protocol, the Driver Diagnostics Protocol, or the Component Name Protocol. In addition, if a driver wishes to be unloadable it may optionally update the Loaded Image Protocol ( :ref:`efi-loaded-image-protocol` ) to provide its own Unload()  :ref:`efi-loaded-image-protocol-unload` function. Finally, if a driver needs to perform any special operations when the boot service :ref:`efi-boot-services-exitbootservices` is called, it may optionally create an event with a notification function that is triggered when the boot service ExitBootServices() is called. An *Image Handle* that contains a Driver Binding Protocol instance is known as a *Driver Image Handle* .  :ref:`driver-image-handle` shows a possible configuration for the Image Handle from :numref:`overview-driver-image-handle` after the boot service StartImage() has been called.
 
 
 .. figure:: Images/Overview-9.png 
@@ -1926,7 +1773,7 @@ Each host bridge is represented in UEFI as a device handle that contains a Devic
    **PCI Root Bridge Device Handle**
 
 
-A PCI Bus Driver could connect to this PCI Root Bridge, and create child  handles for each of the PCI devices in the system. PCI Device Drivers should then be connected to these child handles, and produce I/O abstractions that may be used to boot a UEFI compliant OS. The following section describes the different types of drivers that can be implemented within the UEFI *Driver Model*. The UEFI *Driver Model* is very flexible, so all the possible types of drivers will not be discussed here. Instead, the major types will be covered that can be used as a starting point for designing and implementing additional driver types.
+A PCI Bus Driver could connect to this PCI Root Bridge, and create child  handles for each of the PCI devices in the system. PCI Device Drivers should then be connected to these child handles, and produce I/O abstractions that may be used to boot a UEFI compliant OS. The following section describes the different types of drivers that can be implemented within the UEFI Driver Model. The UEFI Driver Model is very flexible, so all the possible types of drivers will not be discussed here. Instead, the major types will be covered that can be used as a starting point for designing and implementing additional driver types.
 
 
 .. _device-drivers:
@@ -2009,7 +1856,7 @@ In general, adding support for hot-plug events greatly increases the complexity 
 EFI Services Binding
 ####################
 
-The UEFI *Driver Model* maps well onto hardware devices, hardware bus controllers, and simple combinations of software services that layer on top of hardware devices. However, the UEFI driver Model does not map well onto complex combinations of software services. As a result, an additional set of complementary protocols are required for more complex combinations of software services.
+The UEFI Driver Model maps well onto hardware devices, hardware bus controllers, and simple combinations of software services that layer on top of hardware devices. However, the UEFI driver Model does not map well onto complex combinations of software services. As a result, an additional set of complementary protocols are required for more complex combinations of software services.
 
 Figure below, :ref:`software-service-relationships` , contains three examples showing the different ways that software services relate to each other. In the first two cases, each service consumes one or more other services, and at most one other service consumes all of the services. Case #3 differs because two different services consume service A. The EFI_DRIVER_BINDING_PROTOCOL can be used to model cases #1 and #2, but it cannot be used to model case #3 because of the way that the UEFI Boot Service OpenProtocol() behaves. When used with the BY_DRIVER open mode, OpenProtocol() allows each protocol to have only at most one consumer. This feature is very useful and prevents multiple drivers from attempting to manage the same controller. However, it makes it difficult to produce sets of software services that look like case #3.
 
@@ -2080,77 +1927,81 @@ Platform-Specific Elements
 
 There are a number of elements that can be added or removed depending on the specific features that a platform requires. Platform firmware developers are required to implement UEFI elements based upon the features included. The following is a list of potential platform features and the elements that are required for each feature type:
 
-1. If a platform includes console devices, the :ref:`efi-simple-text-input-protocol`, :ref:`efi-simple-text-input-ex-protocol`, and  :ref:`efi-simple-text-output-protocol` must be implemented.
+  1. If a platform includes console devices, the :ref:`efi-simple-text-input-protocol`, :ref:`efi-simple-text-input-ex-protocol`, and  :ref:`efi-simple-text-output-protocol` must be implemented.
 
-2. If a platform includes a configuration infrastructure, then :ref:`efi-hii-database-protocol`, :ref:`efi-hii-string-protocol`, :ref:`efi-hii-configuration-routing-protocol-hii-configuration-processing-and-browser-protocol`, and :ref:`efi-hii-config-access-protocol-hii-configuration-processing-and-browser-protocol` are required. If you support bitmapped fonts, you must support :ref:`efi-hii-font-protocol` .
+  2. If a platform includes a configuration infrastructure, then :ref:`efi-hii-database-protocol`, :ref:`efi-hii-string-protocol`, :ref:`efi-hii-configuration-routing-protocol-hii-configuration-processing-and-browser-protocol`, and :ref:`efi-hii-config-access-protocol-hii-configuration-processing-and-browser-protocol` are required. If you support bitmapped fonts, you must support :ref:`efi-hii-font-protocol` .
 
-3. If a platform includes graphical console devices, then  :ref:`efi-graphics-output-protocol`, :ref:`efi-edid-discovered-protocol`, and :ref:`efi-edid-active-protocol` must be implemented. In order to support the  :ref:`efi-graphics-output-protocol` ; a platform must contain a driver to consume  :ref:`efi-graphics-output-protocol` and produce :ref:`efi-simple-text-output-protocol` even if the :ref:`efi-graphics-output-protocol` is produced by an external driver.
+  3. If a platform includes graphical console devices, then  :ref:`efi-graphics-output-protocol`, :ref:`efi-edid-discovered-protocol`, and :ref:`efi-edid-active-protocol` must be implemented. In order to support the  :ref:`efi-graphics-output-protocol` ; a platform must contain a driver to consume  :ref:`efi-graphics-output-protocol` and produce :ref:`efi-simple-text-output-protocol` even if the :ref:`efi-graphics-output-protocol` is produced by an external driver.
 
-4. If a platform includes a pointer device as part of its console support, :ref:`efi-simple-pointer-protocol` must be implemented.
+  4. If a platform includes a pointer device as part of its console support, :ref:`efi-simple-pointer-protocol` must be implemented.
 
-5. If a platform includes the ability to boot from a disk device, then :ref:`efi-block-io-protocol`, :ref:`efi-disk-io-protocol`, :ref:`efi-simple-file-system-protocol`, and :ref:`efi-unicode-collation-protocol-protocols-string-services` are required. In addition, partition support for MBR, GPT, and El Torito must be implemented. For disk devices supporting the security commands of the SPC-4 or ATA8-ACS command set :ref:`efi-storage-security-command-protocol` is also required. An external driver may produce the Block I/O Protocol and the :ref:`efi-storage-security-command-protocol` . All other protocols required to boot from a disk device must be carried as part of the platform. 
+  5. If a platform includes the ability to boot from a disk device, then :ref:`efi-block-io-protocol`, :ref:`efi-disk-io-protocol`, :ref:`efi-simple-file-system-protocol`, and :ref:`efi-unicode-collation-protocol-protocols-string-services` are required. In addition, partition support for MBR, GPT, and El Torito must be implemented. For disk devices supporting the security commands of the SPC-4 or ATA8-ACS command set :ref:`efi-storage-security-command-protocol` is also required. An external driver may produce the Block I/O Protocol and the :ref:`efi-storage-security-command-protocol` . All other protocols required to boot from a disk device must be carried as part of the platform. 
 
-6. If a platform includes the ability to perform a TFTP-based boot from a network device, then  :ref:`efi-pxe-base-code-protocol` is required. The platform must be prepared to produce this protocol on any of :ref:`efi-network-interface-identifier-protocol` (UNDI), :ref:`efi-simple-network-protocol`, or  :ref:`efi-managed-network-protocol` . If a platform includes the ability to validate a boot image received through a network device, it is also required that image verification be supported, including SetupMode equal zero and the boot image hash or a verification certificate corresponding to the image exist in the 'db' variable and not in the 'dbx' variable. An external driver may produce the UNDI interface. All other protocols required to boot from a network device must be carried by the platform.
+  6. If a platform includes the ability to perform a TFTP-based boot from a network device, then  :ref:`efi-pxe-base-code-protocol` is required. The platform must be prepared to produce this protocol on any of :ref:`efi-network-interface-identifier-protocol` (UNDI), :ref:`efi-simple-network-protocol`, or  :ref:`efi-managed-network-protocol` . If a platform includes the ability to validate a boot image received through a network device, it is also required that image verification be supported, including SetupMode equal zero and the boot image hash or a verification certificate corresponding to the image exist in the 'db' variable and not in the 'dbx' variable. An external driver may produce the UNDI interface. All other protocols required to boot from a network device must be carried by the platform.
 
-7. If a platform supports UEFI general purpose network applications, then the :ref:`efi-managed-network-protocol`, :ref:`efi-managed-network-service-binding-protocol`, :ref:`efi-arp-protocol`, :ref:`efi-arp-service-binding-protocol`, :ref:`efi-dhcp4-protocol`, :ref:`efi-dhcp4-service-binding-protocol`, :ref:`efi-tcp4-protocol`, :ref:`efi-tcp4-service-binding-protocol`, :ref:`efi-ip4-config2-protocol`, :ref:`efi-ip4-service-binding-protocol`,  :ref:`efi-ip4-config2-protocol`, :ref:`efi-udp4-protocol`, and :ref:`efi-udp4-service-binding-protocol` are required. If additional IPv6 support is needed for the platform, then :ref:`efi-dhcp6-protocol`, :ref:`efi-dhcp6-service-binding-protocol`, :ref:`efi-tcp6-protocol`, :ref:`efi-tcp6-service-binding-protocol`, :ref:`efi-ip6-protocol`, :ref:`efi-ip6-service-binding-protocol` , :ref:`efi-ip6-config-protocol` :ref:`efi-udp6-protocol` . :ref:`efi-udp6-service-binding-protocol` are additionally required. If the network application requires DNS capability, :ref:`efi-dns4-service-binding-protocol` and  :ref:`efi-dns4-protocol` are required for the IPv4 stack.  :ref:`efi-dns6-service-binding-protocol` and  :ref:`efi-dns6-protocol` are required for the IPv6 stack. If the network environment requires TLS feature, :ref:`efi-tls-service-binding-protocol`, :ref:`efi-tls-protocol` . :ref:`efi-tls-configuration-protocol` are required. If the network environment requires IPSEC feature, :ref:`efi-ipsec-config-protocol` and :ref:`efi-ipsec2-protocol` are required. If the network environment requires VLAN features, :ref:`efi_vlan_config_protocol` is required. 
+  7. If a platform supports UEFI general purpose network applications, then the :ref:`efi-managed-network-protocol`, :ref:`efi-managed-network-service-binding-protocol`, :ref:`efi-arp-protocol`, :ref:`efi-arp-service-binding-protocol`, :ref:`efi-dhcp4-protocol`, :ref:`efi-dhcp4-service-binding-protocol`, :ref:`efi-tcp4-protocol`, :ref:`efi-tcp4-service-binding-protocol`, :ref:`efi-ip4-config2-protocol`, :ref:`efi-ip4-service-binding-protocol`,  :ref:`efi-ip4-config2-protocol`, :ref:`efi-udp4-protocol`, and :ref:`efi-udp4-service-binding-protocol` are required. If additional IPv6 support is needed for the platform, then :ref:`efi-dhcp6-protocol`, :ref:`efi-dhcp6-service-binding-protocol`, :ref:`efi-tcp6-protocol`, :ref:`efi-tcp6-service-binding-protocol`, :ref:`efi-ip6-protocol`, :ref:`efi-ip6-service-binding-protocol` , :ref:`efi-ip6-config-protocol` :ref:`efi-udp6-protocol` . :ref:`efi-udp6-service-binding-protocol` are additionally required. If the network application requires DNS capability, :ref:`efi-dns4-service-binding-protocol` and  :ref:`efi-dns4-protocol` are required for the IPv4 stack.  :ref:`efi-dns6-service-binding-protocol` and  :ref:`efi-dns6-protocol` are required for the IPv6 stack. If the network environment requires TLS feature, :ref:`efi-tls-service-binding-protocol`, :ref:`efi-tls-protocol` . :ref:`efi-tls-configuration-protocol` are required. If the network environment requires IPSEC feature, :ref:`efi-ipsec-config-protocol` and :ref:`efi-ipsec2-protocol` are required. If the network environment requires VLAN features, :ref:`efi_vlan_config_protocol` is required. 
 
-8. If a platform includes a byte-stream device such as a UART, then the  :ref:`efi-serial-io-protocol`  must be implemented.
+  8. If a platform includes a byte-stream device such as a UART, then the  :ref:`efi-serial-io-protocol`  must be implemented.
 
-9. If a platform includes PCI bus support, then the :ref:`efi-pci-root-bridge-io-protocol`, the :ref:`efi-pci-io-protocol`, must be implemented.
+  9. If a platform includes PCI bus support, then the :ref:`efi-pci-root-bridge-io-protocol`, the :ref:`efi-pci-io-protocol`, must be implemented.
 
-10. If a platform includes USB bus support, then :ref:`efi-usb2-hc-protocol` and :ref:`efi-usb-io-protocol` must be implemented. An external device can support USB by producing a USB Host Controller Protocol.
+  10. If a platform includes USB bus support, then :ref:`efi-usb2-hc-protocol` and :ref:`efi-usb-io-protocol` must be implemented. An external device can support USB by producing a USB Host Controller Protocol.
 
-11. If a platform includes an NVM Express controller, then :ref:`efi-nvm-express-pass-thru-protocol` must be implemented.
+  11. If a platform includes an NVM Express controller, then :ref:`efi-nvm-express-pass-thru-protocol` must be implemented.
 
-12. If a platform supports booting from a block-oriented NVM Express controller, then :ref:`efi-block-io-protocol` must be implemented. An external driver may produce the :ref:`efi-nvm-express-pass-thru-protocol` . All other protocols required to boot from an NVM Express subsystem must be carried by the platform.
+  12. If a platform supports booting from a block-oriented NVM Express controller, then :ref:`efi-block-io-protocol` must be implemented. An external driver may produce the :ref:`efi-nvm-express-pass-thru-protocol` . All other protocols required to boot from an NVM Express subsystem must be carried by the platform.
 
-13. If a platform includes an I/O subsystem that utilizes SCSI command packets, then :ref:`efi-ext-scsi-pass-thru-protocol` must be implemented.
+  13. If a platform includes an I/O subsystem that utilizes SCSI command packets, then :ref:`efi-ext-scsi-pass-thru-protocol` must be implemented.
 
-14. If a platform supports booting from a block oriented SCSI peripheral, then :ref:`efi-scsi-io-protocol` and :ref:`efi-block-io-protocol`  must be implemented. An external driver may produce the :ref:`efi-ext-scsi-pass-thru-protocol` . All other protocols required to boot from a SCSI I/O subsystem must be carried by the platform.
+  14. If a platform supports booting from a block oriented SCSI peripheral, then :ref:`efi-scsi-io-protocol` and :ref:`efi-block-io-protocol`  must be implemented. An external driver may produce the :ref:`efi-ext-scsi-pass-thru-protocol` . All other protocols required to boot from a SCSI I/O subsystem must be carried by the platform.
 
-15. If a platform supports booting from an iSCSI peripheral, then the :ref:`efi-iscsi-initiator-name-protocol` and :ref:`efi-authentication-info-protocol` must be implemented.
+  15. If a platform supports booting from an iSCSI peripheral, then the :ref:`efi-iscsi-initiator-name-protocol` and :ref:`efi-authentication-info-protocol` must be implemented.
 
-16. If a platform includes debugging capabilities, then :ref:`efi-debug-support-protocol`, the :ref:`efi-debugport-protocol`, and the :ref:`efi-image-info` Table must be implemented.
+  16. If a platform includes debugging capabilities, then :ref:`efi-debug-support-protocol`, the :ref:`efi-debugport-protocol`, and the :ref:`efi-image-info` Table must be implemented.
 
-17. If a platform includes the ability to override the default driver to the controller matching algorithm provided by the UEFI Driver Model, then :ref:`efi-platform-driver-override-protocol-protocols-uefi-driver-model`  must be implemented.
+  17. If a platform includes the ability to override the default driver to the controller matching algorithm provided by the UEFI Driver Model, then :ref:`efi-platform-driver-override-protocol-protocols-uefi-driver-model`  must be implemented.
 
-18. If a platform includes an I/O subsystem that utilizes ATA command packets, then the :ref:`efi-ata-pass-thru-protocol`  must be implemented.
+  18. If a platform includes an I/O subsystem that utilizes ATA command packets, then the :ref:`efi-ata-pass-thru-protocol`  must be implemented.
 
-19. If a platform supports option ROMs from devices not permanently attached to the platform and it supports the ability to authenticate those option ROMs, then it must support the option ROM validation methods described in :ref:`network-protocols-udp-and-mtftp` and the authenticated EFI variables described in :ref:`exception-for-machine-check-init-and-nmi` .
+  19. If a platform supports option ROMs from devices not permanently attached to the platform and it supports the ability to authenticate those option ROMs, then it must support the option ROM validation methods described in :ref:`network-protocols-udp-and-mtftp` and the authenticated EFI variables described in :ref:`exception-for-machine-check-init-and-nmi` .
 
-20. If a platform includes the ability to authenticate UEFI images and the platform potentially supports more than one OS loader, it must support the methods described in :ref:`network-protocols-udp-and-mtftp`  and the authenticated UEFI variables described in :ref:`exception-for-machine-check-init-and-nmi`.
+  20. If a platform includes the ability to authenticate UEFI images and the platform potentially supports more than one OS loader, it must support the methods described in :ref:`secure-boot-and-driver-signing` and the authenticated UEFI variables described in :ref:`variable-services`.
 
-21. EBC support is no longer required as of UEFI Specification version 2.8. If an EBC interpreter is implemented, then it must produce the EFI_EBC_PROTOCOL interface.
+  21. EBC support is no longer required as of UEFI Specification version 2.8. If an EBC interpreter is implemented, then it must produce the EFI_EBC_PROTOCOL interface.
 
-22. If a platform includes the ability to perform a HTTP-based boot from a network device, then the :ref:`efi-http-service-binding-protocol`, :ref:`efi-http-protocol` and :ref:`efi_http_utilities-protocol` are required. If it includes the ability to perform a HTTPS-based boot from network device, besides above protocols  :ref:`efi-tls-service-binding-protocol`, :ref:`efi-tls-protocol` and :ref:`efi-tls-configuration-protocol` are also required. If it includes the ability to perform a HTTP(S)-based boot with DNS feature, then :ref:`efi-dns4-service-binding-protocol`, :ref:`efi-dns4-protocol` are required for the IPv4 stack;  :ref:`efi-dns6-service-binding-protocol` and :ref:`efi-dns6-protocol` are required for the IPv6 stack.
+  22. If a platform includes the ability to perform a HTTP-based boot from a network device, then the :ref:`efi-http-service-binding-protocol`, :ref:`efi-http-protocol` and :ref:`efi_http_utilities-protocol` are required. If it includes the ability to perform a HTTPS-based boot from network device, besides above protocols  :ref:`efi-tls-service-binding-protocol`, :ref:`efi-tls-protocol` and :ref:`efi-tls-configuration-protocol` are also required. If it includes the ability to perform a HTTP(S)-based boot with DNS feature, then :ref:`efi-dns4-service-binding-protocol`, :ref:`efi-dns4-protocol` are required for the IPv4 stack;  :ref:`efi-dns6-service-binding-protocol` and :ref:`efi-dns6-protocol` are required for the IPv6 stack.
 
-23. If a platform includes the ability to perform a wireless boot from a network device with EAP feature, and if this platform provides a standalone wireless EAP driver, then  :ref:`efi-eap-protocol`, :ref:`efi-eap-configuration-protocol`, and  :ref:`efi-eap-management2-protocol`  are required; if the platform provides a standalone wireless supplicant, then :ref:`efi-supplicant-protocol` and :ref:`efi-eap-configuration-protocol` are required. If it includes the ability to perform a wireless boot with TLS feature, then :ref:`efi-tls-service-binding-protocol`,  :ref:`efi-tls-protocol` and :ref:`efi-tls-configuration-protocol` are required.
+  23. If a platform includes the ability to perform a wireless boot from a network device with EAP feature, and if this platform provides a standalone wireless EAP driver, then  :ref:`efi-eap-protocol`, :ref:`efi-eap-configuration-protocol`, and  :ref:`efi-eap-management2-protocol`  are required; if the platform provides a standalone wireless supplicant, then :ref:`efi-supplicant-protocol` and :ref:`efi-eap-configuration-protocol` are required. If it includes the ability to perform a wireless boot with TLS feature, then :ref:`efi-tls-service-binding-protocol`,  :ref:`efi-tls-protocol` and :ref:`efi-tls-configuration-protocol` are required.
 
-24. If a platform supports classic Bluetooth, then :ref:`efi-bluetooth-hc-protocol`, :ref:`efi-bluetooth-io-protocol`, and :ref:`efi-bluetooth-config-protocol`  must be implemented, and :ref:`efi-bluetooth-attribute-protocol` may be implemented. If a platform supports Bluetooth Smart (Bluetooth Low Energy), then :ref:`efi-bluetooth-hc-protocol`, :ref:`efi-bluetooth-attribute-protocol`  and :ref:`efi-bluetooth-le-config-protocol` must be implemented. If a platform supports both Bluetooth classic and BluetoothLE, then both above requirements should be satisfied.
+  24. If a platform supports classic Bluetooth, then :ref:`efi-bluetooth-hc-protocol`, :ref:`efi-bluetooth-io-protocol`, and :ref:`efi-bluetooth-config-protocol`  must be implemented, and :ref:`efi-bluetooth-attribute-protocol` may be implemented. If a platform supports Bluetooth Smart (Bluetooth Low Energy), then :ref:`efi-bluetooth-hc-protocol`, :ref:`efi-bluetooth-attribute-protocol`  and :ref:`efi-bluetooth-le-config-protocol` must be implemented. If a platform supports both Bluetooth classic and BluetoothLE, then both above requirements should be satisfied.
 
-25. If a platform supports RESTful communication over HTTP or over an in-band path to a BMC, then the :ref:`efi-rest-protocol` or EFI_REST_EX_PROTOCOL must be implemented. If  EFI_REST_EX_PROTOCOL is implemented, EFI_REST_EX_SERVICE_BINDING_PROTOCOL must be implemented as well. If a platform supports Redfish communication over HTTP or over an in-band path to a BMC, the EFI_REDFISH_DISCOVER_PROTOCOL and :ref:`efi-rest-json-structure-protocol` may be implemented.
+  25. If a platform supports RESTful communication over HTTP or over an in-band path to a BMC, then the :ref:`efi-rest-protocol` or EFI_REST_EX_PROTOCOL must be implemented. If  EFI_REST_EX_PROTOCOL is implemented, EFI_REST_EX_SERVICE_BINDING_PROTOCOL must be implemented as well. If a platform supports Redfish communication over HTTP or over an in-band path to a BMC, the EFI_REDFISH_DISCOVER_PROTOCOL and :ref:`efi-rest-json-structure-protocol` may be implemented.
 
-26. If a platform includes the ability to use a hardware feature to create high quality random numbers, this capability should be exposed by instance of :ref:`efi-rng-protocol` with at least one EFI RNG Algorithm supported.
+  26. If a platform includes the ability to use a hardware feature to create high quality random numbers, this capability should be exposed by instance of :ref:`efi-rng-protocol` with at least one EFI RNG Algorithm supported.
 
-27. If a platform permits the installation of Load Option Variables, (Boot####, or Driver####, or SysPrep####), the platform must support and recognize all defined values for Attributes within the variable and report these capabilities in BootOptionSupport. If a platform supports installation of Load Option Variables of type Driver####, all installed Driver#### variables must be processed and the indicated driver loaded and initialized during every boot. And all installed SysPrep#### options must be processed prior to processing Boot#### options.
+  27. If a platform permits the installation of Load Option Variables, (Boot####, or Driver####, or SysPrep####), the platform must support and recognize all defined values for Attributes within the variable and report these capabilities in BootOptionSupport. If a platform supports installation of Load Option Variables of type Driver####, all installed Driver#### variables must be processed and the indicated driver loaded and initialized during every boot. And all installed SysPrep#### options must be processed prior to processing Boot#### options.
 
-28. If the platform supports UEFI secure boot as described in :ref:`secure-boot-and-driver-signing`, the platform must provide the PKCS verification functions described in :ref:`pkcs7-verify-protocol` . 
+  28. If the platform supports UEFI secure boot as described in :ref:`secure-boot-and-driver-signing`, the platform must provide the PKCS verification functions described in :ref:`pkcs7-verify-protocol` . 
 
-29. If a platform includes an I/O subsystem that utilizes SD or eMMC command packets, then the  :ref:`efi-sd-mmc-pass-thru-protocol`  must be implemented.
+  29. If a platform includes an I/O subsystem that utilizes SD or eMMC command packets, then the  :ref:`efi-sd-mmc-pass-thru-protocol`  must be implemented.
 
-30. If a platform includes the ability to create/destroy a specified RAM disk, the :ref:`efi-ram-disk-protocol` must be implemented and only one instance of this protocol exists.
+  30. If a platform includes the ability to create/destroy a specified RAM disk, the :ref:`efi-ram-disk-protocol` must be implemented and only one instance of this protocol exists.
 
-31. If a platform includes a mass storage device which supports hardware-based erase on a specified range, then :ref:`efi-erase-block-protocol` must be implemented.
+  31. If a platform includes a mass storage device which supports hardware-based erase on a specified range, then :ref:`efi-erase-block-protocol` must be implemented.
 
-32. If a platform includes the ability to register for notifications when a call to ResetSystem is called, then the  :ref:`efi-reset-notification-protocol-micellaneous-protocols`  must be implemented.
+  32. If a platform includes the ability to register for notifications when a call to ResetSystem is called, then the  :ref:`efi-reset-notification-protocol-micellaneous-protocols`  must be implemented.
 
-33. If a platform includes UFS devices, the :ref:`efi-ufs-device-config-protocol` must be implemented.
+  33. If a platform includes UFS devices, the :ref:`efi-ufs-device-config-protocol` must be implemented.
 
-34. If a platform cannot support calls defined in :ref:`efi-runtime-services` after ExitBootServices() is called, that platform is permitted to provide implementations of those runtime services that return EFI_UNSUPPORTED when invoked at runtime. On such systems, an EFI_RT_PROPERTIES_TABLE configuration table should be published describing which runtime services are supported at runtime.
+  34. If a platform cannot support calls defined in :ref:`efi-runtime-services` after ExitBootServices() is called, that platform is permitted to provide implementations of those runtime services that return EFI_UNSUPPORTED when invoked at runtime. On such systems, an EFI_RT_PROPERTIES_TABLE configuration table should be published describing which runtime services are supported at runtime.
 
-35. If a platform includes support for CXL devices with coherent memory, then the platform must support extracting the Coherent Device Attribute Table (CDAT) from the device, using either the CXL Data Object Exchange services (as defined in the CXL 2.0 Specification) or the EFI_ADAPTER_INFORMATION_PROTOCOL instance (with EFI_ADAPTER_INFO_CDAT_TYPE_GUID type) installed on that device.
+  35. If a platform includes support for CXL devices with coherent memory, then the platform must support extracting the Coherent Device Attribute Table (CDAT) from the device, using either the CXL Data Object Exchange services (as defined in the CXL 2.0 Specification) or the EFI_ADAPTER_INFORMATION_PROTOCOL instance (with EFI_ADAPTER_INFO_CDAT_TYPE_GUID type) installed on that device.
 
-**Note**: *Some of the required protocol instances are created by the corresponding Service Binding Protocol. For example*, EFI_IP4_PROTOCOL *is created by* EFI_IP4_SERVICE_BINDING_PROTOCOL. *Please refer to the corresponding sections of Service Binding Protocol for the details*.
+  36. RISC-V platform firmware must implement the RISCV_EFI_BOOT_PROTOCOL. OS loaders should use the RISCV_EFI_BOOT_PROTOCOL.GetBootHartId() to obtain the boot hart ID. The boot hart ID information provided by either SMBIOS or Device Tree is to be ignored by OS loaders. See “Links to UEFI Specification-Related Document” on https://uefi.org/uefi under the heading "RISC-V EFI Boot Protocol."
+
+.. note::
+   Some of the required protocol instances are created by the corresponding Service Binding Protocol. For example, EFI_IP4_PROTOCOL is created by EFI_IP4_SERVICE_BINDING_PROTOCOL. Please refer to the corresponding sections of Service Binding Protocol for the details.
+
 
 .. _driver-specific-elements:
 
@@ -2165,19 +2016,19 @@ The following list includes possible driver features, and the UEFI elements that
 
 #. If a driver requires configuration information, the driver must use the :ref:`efi-hii-database-protocol`  . A driver should not otherwise display information to the user or request information from the user.
 
-3. If a driver requires diagnostics, the :ref:`efi-driver-diagnostics2-protocol-protocols-uefi-driver-model`  must be implemented. In order to support low boot times, limit diagnostics during normal boots. Time consuming diagnostics should be deferred until the :ref:`efi-driver-diagnostics2-protocol-protocols-uefi-driver-model`  is invoked.
+#. If a driver requires diagnostics, the :ref:`efi-driver-diagnostics2-protocol-protocols-uefi-driver-model`  must be implemented. In order to support low boot times, limit diagnostics during normal boots. Time consuming diagnostics should be deferred until the :ref:`efi-driver-diagnostics2-protocol-protocols-uefi-driver-model`  is invoked.
 
-4. If a bus supports devices that are able to provide containers for drivers (e.g. option ROMs), then the bus driver for that bus type must implement the :ref:`efi-bus-specific-driver-override-protocol-protocols-uefi-driver-model` . 
+#. If a bus supports devices that are able to provide containers for drivers (e.g. option ROMs), then the bus driver for that bus type must implement the :ref:`efi-bus-specific-driver-override-protocol-protocols-uefi-driver-model` . 
 
-5. If a driver is written for a console output device, then the :ref:`efi-simple-text-output-protocol`  must be implemented.
+#. If a driver is written for a console output device, then the :ref:`efi-simple-text-output-protocol`  must be implemented.
 
-6. If a driver is written for a graphical console output device, then the :ref:`efi-graphics-output-protocol`, :ref:`efi-edid-discovered-protocol`  and  :ref:`efi-edid-active-protocol`  must be implemented.
+#. If a driver is written for a graphical console output device, then the :ref:`efi-graphics-output-protocol`, :ref:`efi-edid-discovered-protocol`  and  :ref:`efi-edid-active-protocol`  must be implemented.
 
-7. If a driver is written for a console input device, then the :ref:`efi-simple-text-input-protocol`  and :ref:`efi-simple-text-input-ex-protocol` must be implemented.
+#. If a driver is written for a console input device, then the :ref:`efi-simple-text-input-protocol`  and :ref:`efi-simple-text-input-ex-protocol` must be implemented.
 
-8. If a driver is written for a pointer device, then the  :ref:`efi-simple-pointer-protocol` must be implemented.
+#. If a driver is written for a pointer device, then the  :ref:`efi-simple-pointer-protocol` must be implemented.
 
-9. If a driver is written for a network device, then the  :ref:`efi-network-interface-identifier-protocol`, :ref:`efi-simple-network-protocol`  or  :ref:`efi-managed-network-protocol`  must be implemented. If VLAN is supported in hardware, then driver for the network device may implement the  :ref:`efi_vlan_config_protocol` . If a network device chooses to only produce the  :ref:`efi-managed-network-protocol`, then the driver for the network device must implement the  :ref:`efi_vlan_config_protocol` . If a driver is written for a network device to supply wireless feature, besides above protocols, :ref:`efi-adapter-information-protocol-protocols-uefi-driver-model`  must be implemented. If the wireless driver does not provide user configuration capability, :ref:`efi-wireless-mac-connection-ii-protocol` must be implemented. If the wireless driver is written for a platform which provides a standalone wireless EAP driver, :ref:`efi-eap-protocol` must be implemented.
+#. If a driver is written for a network device, then the  :ref:`efi-network-interface-identifier-protocol`, :ref:`efi-simple-network-protocol`  or  :ref:`efi-managed-network-protocol`  must be implemented. If VLAN is supported in hardware, then driver for the network device may implement the  :ref:`efi_vlan_config_protocol` . If a network device chooses to only produce the  :ref:`efi-managed-network-protocol`, then the driver for the network device must implement the  :ref:`efi_vlan_config_protocol` . If a driver is written for a network device to supply wireless feature, besides above protocols, :ref:`efi-adapter-information-protocol-protocols-uefi-driver-model`  must be implemented. If the wireless driver does not provide user configuration capability, :ref:`efi-wireless-mac-connection-ii-protocol` must be implemented. If the wireless driver is written for a platform which provides a standalone wireless EAP driver, :ref:`efi-eap-protocol` must be implemented.
 
 #. If a driver is written for a disk device, then the  :ref:`efi-block-io-protocol`  and the  :ref:`efi-block-io2-protocol` must be implemented. In addition, the :ref:`efi-storage-security-command-protocol` must be implemented for disk devices supporting the security commands of the SPC-4 or ATA8-ACS command set. In addition, for devices that support incline encryption in the host storage controller, the  :ref:`efi-block-io-crypto-protocol` must be supported.
 

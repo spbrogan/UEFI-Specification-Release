@@ -311,23 +311,6 @@ $$$$$$$$$$$$$$$$$$$
 
 The following table gives the *EFI_GUID* for standard hash algorithms and the corresponding ASN.1 OID (Object Identifier):
 
-**NOTE**: *Use of the following algorithms with EFI_HASH_PROTOCOL is
-deprecated*.
-
--  EFI_HASH_ALGORITHM_SHA1_GUID
-
--  EFI_HASH_ALGORITHM_SHA224_GUID
-
--  EFI_HASH_ALGORITHM_SHA256_GUID
-
--  EFI_HASH_ALGORITHM_SHA384_GUID
-
--  EFI_HASH_ALGORITHM_SHA512_GUID
-
--  EFI_HASH_ALGORTIHM_MD5_GUID
-
-
-
 .. list-table:: EFI Hash Algorithms
    :name: efi-hash-algorithms-1
    :widths: 15 45 45
@@ -344,7 +327,7 @@ deprecated*.
      - *id-sha256 OBJECT IDENTIFIER ::= { joint-iso-itu-t (2) country (16) us (840) organization (1) gov (101) csor (3) nistalgorithm (4) hashalgs (2) 1}*
 
 
-**NOTE**: *For the* EFI_HASH_ALGORITHM_SHA1_NOPAD_GUID *and the*  EFI_HASH_ALGORITHM_SHA256_NOPAD_GUID, *the following apply*:
+**Note**: For the EFI_HASH_ALGORITHM_SHA1_NOPAD_GUID and the EFI_HASH_ALGORITHM_SHA256_NOPAD_GUID, the following apply:
 
 -  The *EFI_HASH_PROTOCOL.Hash()* function does not perform padding of message data for these algorithms. Hence, *MessageSize* shall always be an integer multiple of the *HashAlgorithm* block size, and the final supplied *Message* in a sequence of invocations shall contain caller-provided padding. This will ensure that the final *Hash* output will be the correct hash of the provided message(s).
 
@@ -412,7 +395,7 @@ $$$$$$$$$$$$$$$$$$
 
 **Summary**
 
-This protocol describes hashing functions for which the algorithm-required message padding and finalization are performed by the supporting driver. In previous versions of the specification, the algorithms supported by *EFI_HASH2_PROTOCOL* were also available for use with *EFI_HASH_PROTOCOL* but this usage has been deprecated.
+This protocol describes hashing functions for which the algorithm-required message padding and finalization are performed by the supporting driver. 
 
 
 **GUID**
@@ -1028,10 +1011,10 @@ ProtocolVersion
   The version of this *EFI_KMS_PROTOCOL* structure. This must be set to 0x00020040 for the initial version of this protocol.
 
 ServiceId
-  Optional GUID used to identify a specific KMS. This GUID may be supplied by the provider, by the implementation, or may be null. If it is null, then the*ServiceName* must not be null.
+  Optional GUID used to identify a specific KMS. This GUID may be supplied by the provider, by the implementation, or may be null. If it is null, then the *ServiceName* must not be null.
 
 ServiceName   
-  Optional pointer to a unicode string which may be used to identify the KMS or provide other information about the supplier.
+  Optional pointer to a Unicode string which may be used to identify the KMS or provide other information about the supplier.
 
 ServiceVersion
   Optional 32-bit value which may be used to indicate the version of the KMS provided by the supplier.
@@ -1078,7 +1061,7 @@ KeyIdVariableLenSupported
 
   **FALSE** if a fixed length key identifier is supported.
 
-KeyIdMaxLen 
+KeyIdMaxSize
   If KeyIdVariableLenSupported is **TRUE**, this is the maximum supported key identifier length in bytes. Otherwise this is the fixed length of key identifier supported. Key ids shorter than the fixed length will be padded on the right with blanks.
 
 KeyFormatsCount
@@ -1100,7 +1083,7 @@ KeyAttributeIdStringTypes
   The key attribute identifier string type(s) supported by the KMS service. If key attributes are not supported, this field will be set to *EFI_KMS_DATA_TYPE_NONE.* Otherwise, it will be set to the inclusive ‘OR’ of all key attribute identifier string types supported. *EFI_KMS_DATA_TYPE_BINARY* is not valid for this field.
 
 KeyAttributeIdMaxCount
-  The maximum number of characters allowed for the client name.
+  The maximum number of characters allowed for the *EFI_KMS_KEY_ATTRIBUTE.KeyAttributeIdentifierCount*.
 
 KeyAttributesCount
   The number of predefined *KeyAttributes* structures returned in the *KeyAttributes* parameter. If the KMS does not support predefined key attributes, or if it does not provide a method to obtain predefined key attributes data, then this field must be zero.
@@ -1332,6 +1315,7 @@ The encryption algorithms defined above have the following properties
 .. code-block::
 
    typedef struct {
+     UINT8           KeyIdentifierType;
      UINT8           KeyIdentifierSize;
      VOID            *KeyIdentifier;
      EFI_GUID        KeyFormat;
@@ -1339,6 +1323,8 @@ The encryption algorithms defined above have the following properties
      EFI_STATUS      KeyStatus;
    }   EFI_KMS_KEY_DESCRIPTOR;
 
+KeyIdentifierType
+  The data type used for the *KeyIdentifier* field. Values for this field are defined by the *EFI_KMS_DATA_TYPE* constants, except that *EFI_KMS_DATA_TYPE_BINARY* is not valid for this field.
 
 KeyIdentifierSize
   The size of the *KeyIdentifier* field in bytes. This field is limited to the range 0 to 255.
@@ -1495,7 +1481,7 @@ KeyAttributeStatus
    * - EFI_INVALID_PARAMETER
      - A field in the *EFI_KMS_KEY_ATTRIBUTE* structure is invalid.                       
    * - EFI_NOT_FOUND
-     - The key attribute does not exist on the  KMS.
+     - The key attribute does not exist on the KMS.
 
 
 **Description**
@@ -1951,7 +1937,7 @@ KeyDescriptorCount
   Pointer to a count of the number of keys to be processed by this operation. On normal returns, this number will be updated with number of keys successfully processed.
 
 KeyDescriptors
-  Pointer to an array of *EFI_KMS_KEY_DESCRIPTOR* structures which describe the keys to be deleted. On input, the KeyId field for first key must contain valid identifier data to be used for adding a key to the KMS. The values for these fields in this key definition will be considered default values for subsequent keys requested in this operation. A value of 0 in any subsequent *KeyId* field will be replaced with the current default value. The *KeyFormat* and *KeyValue* fields are ignored, but should be 0. On return, the *KeyStatus* field will reflect the result of the operation for each key request.
+  Pointer to an array of *EFI_KMS_KEY_DESCRIPTOR* structures that describe the keys to be deleted. On input, the *KeyIdentifierSize* and the *KeyIdentifier* must specify an identifier to be used to delete a specific key. All other fields in the descriptor should be *NULL*. On return, the *KeyStatus* field will reflect the result of the request relative to the individual key descriptor.
 
 ClientDataSize
   Pointer to the size, in bytes, of an arbitrary block of data specified by the *ClientData* parameter. This parameter may be **NULL**, in which case the *ClientData* parameter will be ignored and no data will be transferred to or from the KMS. If the parameter is not **NULL,** then *ClientData* must be a valid pointer. If the value pointed to is 0, no data will be transferred to the KMS, but data may be returned by the KMS. For all non-zero values \**ClientData* will be transferred to the KMS, which may also return data to the caller. In all cases, the value upon return to the caller will be the size of the data block returned to the caller, which will be zero if no data is returned from the KMS. 
@@ -2919,7 +2905,11 @@ The "raw" algorithm, when supported, is intended to provide entropy directly fro
    #define EFI_RNG_ALGORITHM_RAW \  
     {0xe43176d7, 0xb6e8, 0x4827,\  
       {0xb7, 0x84, 0x7f, 0xfd, 0xc4, 0xb6, 0x85, 0x61}}
-  
+
+   #define EFI_RNG_ALGORITHM_ARM_RNDR \
+    {0x43d2fde3, 0x9d4e, 0x4d79,\
+      {0x02, 0x96, 0xa8, 0x9b, 0xca, 0x78, 0x08, 0x41}}
+
 
 .. _rng-references:
 
@@ -3613,7 +3603,7 @@ Smart Card aware application invokes this protocol to get access to an inserted 
 **Members**
 
 GetContext
-  Request the driver contex.
+  Request the driver context.
 
 Connect
   Request a connection to the Smart Card.
