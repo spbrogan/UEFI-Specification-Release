@@ -1037,9 +1037,9 @@ ToBeSignedHash
   The SHA256 hash of an X.509 certificate’s To-Be-Signed contents.
 
 TimeOfRevocation
-  The time that the certificate shall be considered to be revoked. 
+  No longer supported.  This should always be zero. 
 
-  This identifies a signature containing the SHA256 hash of an X.509 certificate’s To-Be-Signed contents, and a time of revocation. If the signature is in a device signature variable, this signature is a SHA256 hash of a root certificate authority (CA) certificate or an intermediate certificate for the device. The *SignatureHeader* size shall always be 0. The *SignatureSize* shall always be 16 (size of the *SignatureOwner* component) + 48 bytes for an *EFI_CERT_X509_SHA256* structure. If the *TimeOfRevocation* is non-zero, the certificate should be considered to be revoked from that time and onwards, and otherwise the certificate shall be considered to always be revoked.
+  This identifies a signature containing the SHA256 hash of an X.509 certificate’s To-Be-Signed contents. If the signature is in a device signature variable, this signature is a SHA256 hash of a root certificate authority (CA) certificate or an intermediate certificate for the device. The *SignatureHeader* size shall always be 0. The *SignatureSize* shall always be 16 (size of the *SignatureOwner* component) + 48 bytes for an *EFI_CERT_X509_SHA256* structure. The *TimeOfRevocation* must be treated as zero and the certificate shall be considered to always be revoked.
 
 
 .. code-block::
@@ -1067,9 +1067,9 @@ ToBeSignedHash
   The SHA384 hash of an X.509 certificate’s To-Be-Signed contents.
 
 TimeOfRevocation
-  The time that the certificate shall be considered to be revoked. 
+  No longer supported.  This should always be zero. 
 
-This identifies a signature containing the SHA384 hash of an X.509 certificate’s To-Be-Signed contents, and a time of revocation. If the signature is in a device signature variable, this signature is a SHA384 hash of a root certificate authority (CA) certificate or an intermediate certificate for the device. The *SignatureHeader* size shall always be 0. The *SignatureSize* shall always be 16 (size of the *SignatureOwner* component) + 64 bytes for an *EFI_CERT_X509_SHA384* structure. If the *TimeOfRevocation* is non-zero, the certificate should be considered to be revoked from that time and onwards, and otherwise the certificate shall be considered to always be revoked.
+This identifies a signature containing the SHA384 hash of an X.509 certificate’s To-Be-Signed contents. If the signature is in a device signature variable, this signature is a SHA384 hash of a root certificate authority (CA) certificate or an intermediate certificate for the device. The *SignatureHeader* size shall always be 0. The *SignatureSize* shall always be 16 (size of the *SignatureOwner* component) + 64 bytes for an *EFI_CERT_X509_SHA384* structure. The *TimeOfRevocation* must be treated as zero and the certificate shall be considered to always be revoked.
 
 .. code-block::
 
@@ -1096,10 +1096,10 @@ ToBeSignedHash
   The SHA512 hash of an X.509 certificate’s To-Be-Signed contents.
 
 TimeOfRevocation
-  The time that the certificate shall be considered to be revoked.
+  No longer supported.  This should always be zero. 
 
 
-This identifies a signature containing the SHA512 hash of an X.509 certificate’s To-Be-Signed contents, and a time of revocation. If the signature is in a device signature variable, this signature is a SHA512 hash of a root certificate authority (CA) certificate or an intermediate certificate for the device. The *SignatureHeader* size shall always be 0. The *SignatureSize* shall always be 16 (size of the *SignatureOwner* component) + 80 bytes for an *EFI_CERT_X509_SHA512* structure. If the *TimeOfRevocation* is non-zero, the certificate should be considered to be revoked from that time and onwards, and otherwise the certificate shall be considered to always be revoked.
+This identifies a signature containing the SHA512 hash of an X.509 certificate’s To-Be-Signed contents. If the signature is in a device signature variable, this signature is a SHA512 hash of a root certificate authority (CA) certificate or an intermediate certificate for the device. The *SignatureHeader* size shall always be 0. The *SignatureSize* shall always be 16 (size of the *SignatureOwner* component) + 80 bytes for an *EFI_CERT_X509_SHA512* structure. The *TimeOfRevocation* must be treated as zero and the certificate shall be considered to always be revoked.
 
 
 .. code-block::
@@ -1124,8 +1124,8 @@ The SignatureSize shall always be 16 (size of SignatureOwner component) + 32 byt
    typedef UINT8 EFI_SM3_HASH[32];
    #pragma pack(1)
    typedef struct _EFI_CERT_X509_SM3 {
-     EFI_SM3_HASH ToBeSignedHash;
-     EFI_TIME TimeOfRevocation;
+     EFI_SM3_HASH             ToBeSignedHash;
+     EFI_TIME                 TimeOfRevocation;
    } EFI_CERT_X509_SM3;
    #pragma pack()
 
@@ -1135,9 +1135,9 @@ ToBeSignedHash
    The SM3 hash of an X.509 certificate’s To-Be-Signed contents.
 
 TimeOfRevocation
-   The time that the certificate shall be considered to be revoked.
+   No longer supported.  This should always be zero.
 
-This identifies a signature containing the SM3 hash of an X.509 certificate's To-Be-Signed contents, and a time of revocation. The SignatureHeader size shall always be 0. The SignatureSize shall always be 16 (size of the SignatureOwner component) + 32 bytes for an EFI_CERT_X509_SM3 structure. If the TimeOfRevocation is non-zero, the certificate should be considered to be revoked from that time and onwards, and otherwise the certificate shall be considered to always be revoked.
+This identifies a signature containing the SM3 hash of an X.509 certificate's To-Be-Signed contents. The SignatureHeader size shall always be 0. The SignatureSize shall always be 16 (size of the SignatureOwner component) + 32 bytes for an EFI_CERT_X509_SM3 structure. The *TimeOfRevocation* must be treated as zero and the certificate shall be considered to always be revoked.
 
 
 .. code-block::
@@ -1305,8 +1305,7 @@ It also requires that the platform firmware maintain a signature database with e
 
 The signature database is checked when the UEFI Boot Manager is about to start a UEFI image. If the UEFI image’s signature is not found in the authorized database, or is found in the forbidden database, the UEFI image will be deferred and information placed in the Image Execution Information Table. In the case of OS Loaders, the next boot option will be selected. The signature databases may be updated by the firmware, by a pre-OS application or by an OS application or driver. 
 
-If a firmware supports the *EFI_CERT_X509_SHA*_GUID* signature types, it should support the RFC3161 timestamp specification. Images whose signature matches one of these types in the forbidden signature database shall only be considered forbidden if the firmware either does not support timestamp verification, or the signature type has a time of revocation equal to zero, or the timestamp does not pass verification against the authorized timestamp and forbidden signature databases, or finally the signature type's time of revocation is less than or equal to the time recorded in the image signature's timestamp. If the timestamp's signature is authorized by the authorized timestamp database and the time recorded in the timestamp is less than the time of revocation, the image shall not be considered forbidden provided it is not forbidden by any other entry in the forbidden signature database. Finally, this requires that firmware supporting timestamp verification must support the authorized timestamp database and have a suitable time stamping authority certificate in that database. 
-
+If a firmware supports the *EFI_CERT_X509_SHA*_GUID* signature types, the time of revocation should always be treated as zero and the certificate should be considered revoked.  Firmware should not support RFC3161 timestamps.
 
 .. _authorized-user:
 
@@ -1321,15 +1320,16 @@ An *authorized user* (for the purposes of UEFI image security) is one who posses
 Signature Database Update
 #########################
 
-The Authorized, Forbidden, Timestamp, and Recovery signature databases are stored as UEFI authenticated variables (see :ref:`variable-services`) for the GUID.
+The Authorized, Forbidden, and Recovery signature databases are stored as UEFI authenticated variables (see :ref:`variable-services`) for the GUID.
 
 | *EFI_IMAGE_SECURITY_DATABASE_GUID* and the names 
 | *EFI_IMAGE_SECURITY_DATABASE,*
-| *EFI_IMAGE_SECURITY_DATABASE1,*
-| *EFI_IMAGE_SECURITY_DATABASE2,* and
+| *EFI_IMAGE_SECURITY_DATABASE1,* and
 | *EFI_IMAGE_SECURITY_DATABASE3,* respectively.
 
-These authenticated UEFI variables that store the signature databases (db, dbx, dbr, or dbt) can always be read but can only be written if:
+Note: EFI_IMAGE_SECURITY_DATABASE2 is no longer supported and should not be used.
+
+These authenticated UEFI variables that store the signature databases (db, dbx, or dbr) can always be read but can only be written if:
 
 - The platform is in user mode and the provided variable data is signed with the private half of a previously enrolled key exchange key (KEKpriv \*), or the platform private key (PK\ :sub:`priv`\ ); 
 
@@ -1339,9 +1339,9 @@ These authenticated UEFI variables that store the signature databases (db, dbx, 
 
 The signature databases are in the form of Signature Databases, as described in "Signature Database" above. 
 
-The platform vendor may provide a default set of entries for the Signature Database in the dbDefault, dbxDefault, dbtDefault, and dbrDefault variables described in :ref:`globally-defined-variables`. If present, these keys (or a subset) may optionally be used when performing the initial enrollment of signature database entries. If any are to be used, they may be parsed from the variable and enrolled as described below. 
+The platform vendor may provide a default set of entries for the Signature Database in the dbDefault, dbxDefault, and dbrDefault variables described in :ref:`globally-defined-variables`. If present, these keys (or a subset) may optionally be used when performing the initial enrollment of signature database entries. If any are to be used, they may be parsed from the variable and enrolled as described below. 
 
-If, when adding a signature to the signature database, *SetVariable()* returns *EFI_OUT_OF_RESOURCES,* indicating there is no more room, the updater may discard the new signature or it may decide to discard one of the database entries. These authenticated UEFI variables that store the signature databases (db, or dbx, dbt, or dbr) can always be read but can only be written if: 
+If, when adding a signature to the signature database, *SetVariable()* returns *EFI_OUT_OF_RESOURCES,* indicating there is no more room, the updater may discard the new signature or it may decide to discard one of the database entries. These authenticated UEFI variables that store the signature databases (db, dbx, or dbr) can always be read but can only be written if: 
 
 The following diagram illustrates the process for adding a new signature by the OS or an application that has access to a previously enrolled key exchange key using *SetVariable()*. In the diagram, the *EFI_VARIABLE_APPEND_WRITE* attribute is not used. If *EFI_VARIABLE_APPEND_WRITE* had been used, then steps 2 and 3 could have been omitted and step 7 would have included setting the *EFI_VARIABLE_APPEND_WRITE* attribute. 
 
@@ -1536,7 +1536,6 @@ Constants used for UEFI signature database variable access.
      { 0xa3, 0xbc, 0xda, 0xd0, 0x0e, 0x67, 0x65, 0x6f }}
    #define EFI_IMAGE_SECURITY_DATABASE L"db"
    #define EFI_IMAGE_SECURITY_DATABASE1 L"dbx"
-   #define EFI_IMAGE_SECURITY_DATABASE2 L"dbt"
    #define EFI_IMAGE_SECURITY_DATABASE3 L"dbr"
 
 
@@ -1548,13 +1547,11 @@ Constants used for UEFI signature database variable access.
 
 -  The *EFI_IMAGE_SECURITY_DATABASE_GUID* and *EFI_IMAGE_SECURITY_DATABASE1* are used to retrieve and change the forbidden signature database.
 
--  The *EFI_IMAGE_SECURITY_DATABASE_GUID* and *EFI_IMAGE_SECURITY_DATABASE2* are used to retrieve and change the authorized timestamp signature database.
-
 -  The *EFI_IMAGE_SECURITY_DATABASE_GUID* and *EFI_IMAGE_SECURITY_DATABASE3* are used to retrieve and change the authorized recovery signature database.
 
 -  Firmware shall support the *EFI_VARIABLE_APPEND_WRITE* flag (:ref:`variable-services`) for the UEFI signature database variables.
 
--  The signature database variables db, dbt, dbx, and dbr must be stored in tamper-resistant non-volatile storage.
+-  The signature database variables db, dbx, and dbr must be stored in tamper-resistant non-volatile storage.
 
 
 .. _uefi-device-signature-variable-guid-and-variable-name:

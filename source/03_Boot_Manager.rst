@@ -528,9 +528,6 @@ To prevent name collisions with possible future globally defined variables, othe
    * - dbrDefault
      - BS, RT
      - The OEM's default OS Recovery signature store. Should be treated as read-only.
-   * - dbtDefault
-     - BS, RT
-     - The OEM's default secure boot timestamp signature store. Should be treated as read-only.
    * - dbxDefault
      - BS, RT
      - The OEM's default secure boot blacklist signature store. Should be treated as read-only.
@@ -672,8 +669,6 @@ The *PKDefault* variable, if present, contains the platform-defined Platform Key
 The *dbDefault* variable, if present, contains the platform-defined secure boot signature database. This is not used at runtime but is provided in order to allow the OS to recover the OEM's default key setup. The contents of this variable do not include an *EFI_VARIABLE_AUTHENTICATION2* structure.
 
 The *dbrDefault* variable, if present, contains the platform-defined secure boot authorized recovery signature database. This is not used at runtime but is provided in order to allow the OS to recover the OEM's default key setup. The contents of this variable do not include an *EFI_VARIABLE_AUTHENTICATION2* structure.
-
-The *dbtDefault* variable, if present, contains the platform-defined secure boot timestamp signature database. This is not used at runtime but is provided in order to allow the OS to recover the OEM's default key setup. The contents of this variable do not include an *EFI_VARIABLE_AUTHENTICATION2* structure.
 
 The *dbxDefault* variable, if present, contains the platform-defined secure boot blacklist signature database. This is not used at runtime but is provided in order to allow the OS to recover the OEM's default key setup. The contents of this variable do not include an *EFI_VARIABLE_AUTHENTICATION2* structure.
 
